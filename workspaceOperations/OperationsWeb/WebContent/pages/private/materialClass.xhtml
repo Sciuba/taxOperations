@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{classBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbMaterialClass" var="class"	value="#{classBBean.listaMaterialClass}"  rowKey="#{class.id}" 
+					paginator="true" rows="50" emptyMessage="#{msg.sem_registros}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+	                 			rowsPerPageTemplate="10,50,100"
+	                 				rendered="#{!classBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_dialog_material_class}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('classDialog').show()" value="#{msg.bt_add}" disabled="#{classBBean.disabled}"/>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":classEditDetail" oncomplete="PF('classEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{class}" target="#{classBBean.materialClassSelecionado}" />
+						</p:commandButton>
+					</p:column>
+										
+					<p:column headerText="#{msg.label_ncm}" filterBy="#{class.sNcm}" sortBy="#{class.sNcm}">
+						<h:outputText value="#{class.sNcm}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_description}" filterBy="#{class.sDescription}" sortBy="#{class.sDescription}">
+						<h:outputText value="#{class.sDescription}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_ipi} %" >
+						<h:outputText value="#{class.rIpi}">
+							<f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_icms} %" >
+						<h:outputText value="#{class.rIcms}">
+							<f:convertNumber maxFractionDigits="2" minFractionDigits="2"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_product_type}" filterBy="#{class.tbAdmProductType.sLabel}" sortBy="#{class.tbAdmProductType.sLabel}"> 
+						<h:outputText value="#{class.tbAdmProductType.sLabel}"/>
+					</p:column>
+					
+					<ui:remove>
+						<p:column headerText="#{msg.label_iss_especial}" filterBy="#{class.issEspecial}" sortBy="#{class.issEspecial}">
+							<h:outputText value="#{class.issEspecial}"/>
+						</p:column>
+					</ui:remove>
+					
+					<p:column headerText="#{msg.label_subs_trib}" filterBy="#{class.subsTributaria}" sortBy="#{class.subsTributaria}">
+						<h:outputText value="#{class.subsTributaria}"/>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{classBBean.disabled}">
+							<f:setPropertyActionListener value="#{class}" target="#{classBBean.materialClassSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+				
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_material_class}" widgetVar="classDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="1000" height="560">
+			<h:form id="classDetail" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<p:messages id="msgDetailClass" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="6" style="width: 100%">
+				
+					<h:outputText value="#{msg.label_ncm}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.novoMaterialClass.sNcm}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+					<h:selectOneRadio layout="lineDirection" value="#{classBBean.novoMaterialClass.fAvailable}">
+						<f:selectItem itemValue="true" itemLabel="Yes"/>
+						<f:selectItem itemValue="false" itemLabel="No"/>
+					</h:selectOneRadio>
+					
+					<h:outputText value="Substituição Tributária:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+					<h:selectOneRadio layout="lineDirection" value="#{classBBean.novoMaterialClass.fSubstituicaoTributaria}">
+						<f:selectItem itemValue="true" itemLabel="Yes"/>
+						<f:selectItem itemValue="false" itemLabel="No"/>
+					</h:selectOneRadio>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_iss_especial}:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+						<h:selectOneRadio layout="lineDirection" value="#{classBBean.novoMaterialClass.fIssEspecial}">
+							<f:selectItem itemValue="true" itemLabel="Yes"/>
+							<f:selectItem itemValue="false" itemLabel="No"/>
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.novoMaterialClass.sDescription}" style="width: 420px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_icms} %:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.novoMaterialClass.rIcms}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_ipi} %:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.novoMaterialClass.rIpi}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_product_type}:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+					<h:selectOneMenu value="#{classBBean.productTypeSelecionado}" style="padding: 4px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{classBBean.listaProduct}" var="p" itemLabel="#{p.sLabel}" itemValue="#{p.id}"/>
+					</h:selectOneMenu>					
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<p:dataTable value="#{classBBean.listaMaterialClassDestination}" var="dest" scrollable="true" scrollHeight="350" style="width: 100%;">
+					
+					<p:column headerText="#{msg.label_destination}" style="text-align:left">
+						<h:outputText value="#{dest.tbAdmDestination.sCode} - #{dest.tbAdmDestination.sLocale}" style="width: 70px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_iva}" style="text-align:right">
+						<h:inputText value="#{dest.rIva}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_iva_mi}" style="text-align:right">
+						<h:inputText value="#{dest.rIvaMaterialImportado}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_icms_internal}" style="text-align:right">
+						<h:inputText value="#{dest.rIcmsInterno}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>					
+					</p:column>
+					
+					<p:column headerText="#{msg.label_icms_interstate}" style="text-align:right">
+						<h:inputText value="#{dest.rIcmsInterEstadual}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>					
+					</p:column>
+					
+				</p:dataTable>					
+					
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{classBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailClass">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbMaterialClass" onclick="PF('classDialog').hide()" />
+				</div>
+
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_edit_material_class}" widgetVar="classEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="1000" height="560">
+			<h:form id="classEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<p:messages id="msgDetailEditClass" showDetail="false" showSummary="true"/>
+			
+				<h:panelGrid columns="6" style="width: 100%">
+				
+					<h:outputText value="#{msg.label_ncm}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.materialClassSelecionado.sNcm}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+					<h:selectOneRadio layout="lineDirection" value="#{classBBean.materialClassSelecionado.fAvailable}">
+						<f:selectItem itemValue="true" itemLabel="Yes"/>
+						<f:selectItem itemValue="false" itemLabel="No"/>
+					</h:selectOneRadio>
+					
+					<h:outputText value="Substituição Tributária:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+					<h:selectOneRadio layout="lineDirection" value="#{classBBean.materialClassSelecionado.fSubstituicaoTributaria}">
+						<f:selectItem itemValue="true" itemLabel="Yes"/>
+						<f:selectItem itemValue="false" itemLabel="No"/>
+					</h:selectOneRadio>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_iss_especial}:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+						<h:selectOneRadio layout="lineDirection" value="#{classBBean.materialClassSelecionado.fIssEspecial}">
+							<f:selectItem itemValue="true" itemLabel="Yes"/>
+							<f:selectItem itemValue="false" itemLabel="No"/>
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.materialClassSelecionado.sDescription}" style="width: 420px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_icms} %:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.materialClassSelecionado.rIcms}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_ipi} %:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{classBBean.materialClassSelecionado.rIpi}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_product_type}:" styleClass="labelBold" style="padding: 4px; float: right;"/>
+					<h:selectOneMenu value="#{classBBean.productTypeSelecionado}" style="padding: 4px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{classBBean.listaProduct}" var="p" itemLabel="#{p.sLabel}" itemValue="#{p.id}"/>
+					</h:selectOneMenu>
+					
+				</h:panelGrid>
+			
+				<br/>
+				
+				<p:dataTable value="#{classBBean.listaMaterialClassDestination}" var="dest" scrollable="true" scrollHeight="350"  style="width: 100%;">
+					
+					<p:column headerText="#{msg.label_destination}" style="text-align:left">
+						<h:outputText value="#{dest.tbAdmDestination.sCode} - #{dest.tbAdmDestination.sLocale}" style="width: 70px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_iva} %" style="text-align:right">
+						<h:inputText value="#{dest.rIva}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_iva_mi} %" style="text-align:right">
+						<h:inputText value="#{dest.rIvaMaterialImportado}" style="width: 100%;">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_icms_internal} %" style="text-align:right">
+						<h:inputText value="#{dest.rIcmsInterno}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>					
+					</p:column>
+					
+					<p:column headerText="#{msg.label_icms_interstate} %" style="text-align:right">
+						<h:inputText value="#{dest.rIcmsInterEstadual}" style="width: 100%;" >
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>					
+					</p:column>
+					
+				</p:dataTable>
+										
+				
+				<div style="float: right;">
+					<p:commandLink action="#{classBBean.alter}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailEditClass" disabled="#{classBBean.disabled}">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbMaterialClass" onclick="PF('classEditDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		
+		
+		<p:dialog header="#{msg.header_dialog_delete_material_class}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{classBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbMaterialClass" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbMaterialClass" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

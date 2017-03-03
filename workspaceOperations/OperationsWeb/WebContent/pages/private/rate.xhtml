@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />
+				
+				<p:panel id="panelRate" header="#{msg.header_rate}" closable="false" >
+				
+					<p:commandButton value="#{msg.bt_update}" action="#{rateBBean.update}" ajax="false" update=":form:panelRate" style="float: right" rendered="#{!rateBBean.enable}"/>
+					
+					<div align="center">
+						<h:panelGrid columns="2" cellspacing="20" rendered="#{!rateBBean.enable}">
+						
+							<h:outputText value="#{msg.label_pis} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{rateBBean.rate.rPis}" style="width: 50px; padding: 4px;">
+								<f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+							</h:outputText>
+							
+							<h:outputText value="#{msg.label_cofins} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{rateBBean.rate.rCofins}" style="width: 50px; padding: 4px;">
+								<f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+							</h:outputText>
+							
+							<h:outputText value="#{msg.label_destination_default}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{rateBBean.rate.tbAdmDestination.sCode} - #{rateBBean.rate.tbAdmDestination.sLocale}" style="width: 200px; padding: 4px;"/>
+							
+							<ui:remove>
+								<h:outputText value="#{msg.label_ppb_ipi} (%):" styleClass="labelBold" style="padding: 4px;"/>
+								<h:outputText value="#{rateBBean.rate.rIpiPPB}" style="width: 50px; padding: 4px;"/>
+							
+								<h:outputText value="#{msg.label_fixed_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+								<h:outputText value="#{rateBBean.rate.fixedTaxRate}" style="width: 50px; padding: 4px;"/>
+								
+								<h:outputText value="#{msg.label_dollar_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+								<h:outputText value="#{rateBBean.rate.rDollarQuote}" style="width: 50px; padding: 4px;"/>
+								
+								<h:outputText value="#{msg.label_minimum}:" styleClass="labelBold" style="padding: 4px;"/>
+								<h:outputText value="US$ #{rateBBean.rate.mMandatoryRackMinValue}" style="width: 100px; padding: 4px;"/>
+							</ui:remove>					
+						
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" cellspacing="20" rendered="#{rateBBean.enable}">
+						
+							<h:outputText value="#{msg.label_pis} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{rateBBean.rate.rPis}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_cofins} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{rateBBean.rate.rCofins}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_destination_default}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:selectOneMenu value="#{rateBBean.destinationSelecionado}" style="padding: 4px;">
+								<f:selectItem itemLabel=" " itemValue="-1"/>
+								<f:selectItems value="#{rateBBean.listaDestination}" var="d" itemLabel="#{d.sCode} - #{d.sLocale}" itemValue="#{d.id}"/>
+							</h:selectOneMenu>
+							
+							<ui:remove>
+								<h:outputText value="#{msg.label_ppb_ipi} (%):" styleClass="labelBold" style="padding: 4px;"/>
+								<h:inputText value="#{rateBBean.rate.rIpiPPB}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+									<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+								</h:inputText>
+								
+								<h:outputText value="#{msg.label_fixed_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+								<h:selectOneMenu value="#{rateBBean.rate.fFixedTaxRate}" style="padding: 4px;">
+									<f:selectItem itemLabel="Yes" itemValue="true"/>
+									<f:selectItem itemLabel="No" itemValue="false"/>
+								</h:selectOneMenu>
+								
+								<h:outputText value="#{msg.label_dollar_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+								<h:inputText value="#{rateBBean.rate.rDollarQuote}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+									<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+								</h:inputText>
+								
+								<h:outputText value="#{msg.label_minimum}:" styleClass="labelBold" style="padding: 4px;"/>
+								<h:inputText value="#{rateBBean.rate.mMandatoryRackMinValue}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+									<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+								</h:inputText>	
+							</ui:remove>				
+						
+						</h:panelGrid>
+					</div>
+					
+					<br/><br/>
+					
+					<div style="float: right; margin-top: -24px;">	
+						<p:commandButton ajax="false" action="#{rateBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check" update=":form:panelRate" rendered="#{rateBBean.enable and rateBBean.rate.id == 0}"/>
+						<p:commandButton ajax="false" action="#{rateBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check" update=":form:panelRate" rendered="#{rateBBean.enable and rateBBean.rate.id > 0}"/>
+						&nbsp;&nbsp;
+						<p:commandButton ajax="false" action="#{rateBBean.cancel}" value="#{msg.bt_cancel}" icon="ui-icon-close" rendered="#{rateBBean.enable}" update=":form:panelRate"/>
+					</div>
+					
+				</p:panel>
+				
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

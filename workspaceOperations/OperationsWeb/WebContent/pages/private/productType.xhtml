@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{productBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbProductType" var="product" value="#{productBBean.listaProdutos}"  rowKey="#{product.id}" 
+					paginator="true" rows="20" emptyMessage="#{msg.sem_registros}" rendered="#{!productBBean.disabledAll}">
+				
+					<f:facet name="header">
+	             		<h:panelGroup layout="block" style="text-align: left;">
+			           		<h:outputText value="#{msg.header_dialog_product_type}" styleClass="labelBold"/>
+		           		</h:panelGroup>			           			          
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":productEditDetail" oncomplete="PF('productEditDialog').show()" icon="ui-icon-search" title="View" disabled="#{productBBean.disabled}">
+							<f:setPropertyActionListener value="#{product}" target="#{productBBean.produtoSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_tax_model}" filterBy="#{product.taxModel}" sortBy="#{product.taxModel}">
+						<h:outputText value="#{product.taxModel}"/>
+					</p:column>
+					
+					<ui:remove>
+						<p:column headerText="#{msg.label_rev_revog}" filterBy="#{product.revRevog}" sortBy="#{product.revRevog}">
+							<h:outputText value="#{product.revRevog}"/>
+						</p:column>
+					</ui:remove>
+					
+					<p:column headerText="#{msg.label_label}" filterBy="#{product.sLabel}" sortBy="#{product.sLabel}">
+						<h:outputText value="#{product.sLabel}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_description}" filterBy="#{product.sDescription}" sortBy="#{product.sDescription}">
+						<h:outputText value="#{product.sDescription}"/>
+					</p:column>
+					
+					<ui:remove>
+						<p:column headerText="#{msg.label_calculation_method}" filterBy="#{product.calculationMethod}" sortBy="#{product.calculationMethod}">
+							<h:outputText value="#{product.calculationMethod}"/>
+						</p:column>
+					</ui:remove>
+					
+					<ui:remove>
+						<p:column headerText="#{msg.label_sugested_margin}(%)" >
+							<h:outputText value="#{product.rSuggestedMargin}"/>
+						</p:column>
+					</ui:remove>
+					
+					<p:column headerText="#{msg.label_pis}(%)" >
+						<h:outputText value="#{product.rPIS}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_cofins}(%)" >
+						<h:outputText value="#{product.rCofins}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_ir}(%)" >
+						<h:outputText value="#{product.rIR}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_cssl}(%)" >
+						<h:outputText value="#{product.rCssl}"/>
+					</p:column>
+					
+				</p:dataTable>
+				
+			</div>
+			
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_edit_product_type}" widgetVar="productEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="500" height="300">
+			<h:form id="productEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="#{msg.label_tax_model}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:outputText value="#{productBBean.produtoSelecionado.taxModel}" style="padding: 4px; font-size: 12px;"/>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_revenue}:" styleClass="labelBold" style="padding: 4px; margin-left: 20px;"/>
+						<h:selectOneRadio value="#{productBBean.produtoSelecionado.fRevRecog}" layout="lineDirection" style="padding: 4px; margin-right: 20px;">
+							<f:selectItem itemValue="true" itemLabel="Yes"/>
+							<f:selectItem itemValue="false" itemLabel="No"/>
+						</h:selectOneRadio>
+					</ui:remove>
+				
+					<h:outputText value="#{msg.label_label}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{productBBean.produtoSelecionado.sLabel}" style="padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">	
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{productBBean.produtoSelecionado.sDescription}" style="padding: 4px; width: 200px;"/>
+				</h:panelGrid>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_calculation_method}:" styleClass="labelBold" style="padding: 4px; margin-left: 20px;" rendered="#{productBBean.produtoSelecionado.iTaxModel == 1 or productBBean.produtoSelecionado.iTaxModel == 2}"/>
+						<h:selectOneRadio value="#{productBBean.produtoSelecionado.fCalculationMethod}" layout="lineDirection" style="padding: 4px; margin-right: 20px;" rendered="#{productBBean.produtoSelecionado.iTaxModel == 1 or productBBean.produtoSelecionado.iTaxModel == 2}">
+							<f:selectItem itemValue="true" itemLabel="BLP / Rep Floor Price"/>
+							<f:selectItem itemValue="false" itemLabel="Deal Price"/>
+						</h:selectOneRadio>
+					
+						<h:outputText value="#{msg.label_sugested_margin}(%):" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{productBBean.produtoSelecionado.rSuggestedMargin}" style="padding: 4px;" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</ui:remove>
+									
+				
+				<br/>
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="#{msg.label_pis}(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{productBBean.produtoSelecionado.rPIS}" style="padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_cofins}(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{productBBean.produtoSelecionado.rCofins}" style="padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_ir}(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{productBBean.produtoSelecionado.rIR}" style="padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_cssl}(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{productBBean.produtoSelecionado.rCssl}" style="padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_tp_rate_rep_floor}(%):" styleClass="labelBold" style="padding: 4px;" rendered="#{productBBean.produtoSelecionado.iTaxModel == 1 or productBBean.produtoSelecionado.iTaxModel == 2}"/>
+						<h:inputText value="#{productBBean.produtoSelecionado.rTransferPriceRate}" style="padding: 4px;" rendered="#{productBBean.produtoSelecionado.iTaxModel == 1 or productBBean.produtoSelecionado.iTaxModel == 2}" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+						
+						<h:outputText value="#{msg.label_tp_rate_deal}(%):" styleClass="labelBold" style="padding: 4px;" rendered="#{productBBean.produtoSelecionado.iTaxModel == 1 or productBBean.produtoSelecionado.iTaxModel == 2}"/>
+						<h:inputText value="#{productBBean.produtoSelecionado.rTpDealPrice}" style="padding: 4px;" rendered="#{productBBean.produtoSelecionado.iTaxModel == 1 or productBBean.produtoSelecionado.iTaxModel == 2}" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</ui:remove>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div style="float:right;">
+					<p:commandButton ajax="false" action="#{productBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+						update=":form:tbProductType" onclick="PF('productEditDialog').hide()" disabled="#{productBBean.disabled}"/>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbProductType" onclick="PF('productEditDialog').hide()" />
+				</div>
+							
+			</h:form>			
+		</p:dialog>					
+					
+	</ui:define>
+	
+</ui:composition>
+</html>

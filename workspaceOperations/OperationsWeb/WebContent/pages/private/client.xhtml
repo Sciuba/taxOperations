@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+						
+				<p:dataTable id="tbClient" var="cliente"
+					value="#{clienteBBean.listaClient}" 
+					rowKey="#{cliente.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_special_costumer}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('clienteDialog').show()" value="#{msg.bt_add}" style="margin-right: 5px;"/>
+				           		<p:commandButton value="Print" type="button" icon="ui-icon-print">
+								    <p:printer target="tbClient"/>
+								</p:commandButton>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":clienteEditDetail" oncomplete="PF('clienteEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{cliente}" target="#{clienteBBean.clienteSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_razao_social}" filterBy="#{cliente.SRazaoSocial}" sortBy="#{cliente.SRazaoSocial}">
+						<h:outputText value="#{cliente.SRazaoSocial}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_cnpj}" filterBy="#{cliente.sCNPJ}" sortBy="#{cliente.sCNPJ}">
+						<h:outputText value="#{cliente.sCNPJ}"/>
+					</p:column>
+
+					<p:column headerText="Isenção de ICMS" filterBy="#{cliente.icms}" sortBy="#{cliente.icms}">
+						<h:outputText value="#{cliente.icms}"/>
+					</p:column>
+										
+					<p:column headerText="Isenção de IPI" filterBy="#{cliente.ipi}" sortBy="#{cliente.ipi}">
+						<h:outputText value="#{cliente.ipi}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de PIS" filterBy="#{cliente.pis}" sortBy="#{cliente.pis}">
+						<h:outputText value="#{cliente.pis}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de COFINS" filterBy="#{cliente.cofins}" sortBy="#{cliente.cofins}">
+						<h:outputText value="#{cliente.cofins}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de ISS" filterBy="#{cliente.iss}" sortBy="#{cliente.iss}">
+						<h:outputText value="#{cliente.iss}"/>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{cliente}" target="#{clienteBBean.clienteSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_special_costumer}" widgetVar="clienteDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="580" height="280">
+			<h:form id="clienteDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_razao_social}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{clienteBBean.novoClient.SRazaoSocial}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_cnpj}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{clienteBBean.novoClient.sCNPJ}" style="width: 300px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<p:panel header="Isenção Fiscal de:">
+					
+					<h:panelGrid columns="10" style="width: 100%;">
+						
+						<h:outputText value="#{msg.label_icms}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.novoClient.fIcms}"/>
+						
+						<h:outputText value="#{msg.label_ipi}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.novoClient.fIpi}"/>
+						 
+						<h:outputText value="#{msg.label_pis}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.novoClient.fPis}"/> 
+						
+						<h:outputText value="#{msg.label_cofins}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.novoClient.fCofins}"/>
+						 
+						<h:outputText value="#{msg.label_iss}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.novoClient.fIss}"/>
+					</h:panelGrid>
+					
+				</p:panel>
+				
+								
+				<br/><br/><br/><br/>
+				
+				<div style="float: right;">
+					<p:commandButton ajax="false" action="#{clienteBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+						update=":form:tbClient" onclick="PF('clienteDialog').hide()" />
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbClient" onclick="PF('clienteDialog').hide()" />
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_special_costumer}" widgetVar="clienteEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="580" height="280">
+			<h:form id="clienteEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_razao_social}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{clienteBBean.clienteSelecionado.SRazaoSocial}" style="width: 300px; padding: 4px;"/>
+					
+				<h:outputText value="#{msg.label_cnpj}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{clienteBBean.clienteSelecionado.sCNPJ}" style="width: 300px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<p:panel header="Isenção Fiscal de:">
+					
+					<h:panelGrid columns="10" style="width: 100%;">
+						
+						<h:outputText value="#{msg.label_icms}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.clienteSelecionado.fIcms}"/>
+						
+						<h:outputText value="#{msg.label_ipi}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.clienteSelecionado.fIpi}"/>
+						
+						<h:outputText value="#{msg.label_pis}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.clienteSelecionado.fPis}"/> 
+						
+						<h:outputText value="#{msg.label_cofins}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.clienteSelecionado.fCofins}"/>
+						
+						<h:outputText value="#{msg.label_iss}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{clienteBBean.clienteSelecionado.fIss}"/>
+						
+					</h:panelGrid>
+					
+				</p:panel>
+				
+				<br/><br/><br/><br/>
+				
+				<div style="float: right;">					
+					<p:commandButton ajax="false" action="#{clienteBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+						update=":form:tbClient" onclick="PF('clienteEditDialog').hide()" />
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbClient" onclick="PF('clienteEditDialog').hide()" />
+				</div>	
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_delete_special_costumer}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<div style="float: right;">
+						<h:panelGrid columns="2">
+							<p:commandButton ajax="false" action="#{clienteBBean.delete}" value="Yes" icon="ui-icon-check"
+								update=":form:tbClient" onclick="PF('deleteDialog').hide()" />
+								
+							<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+								update=":form:tbClient" onclick="PF('deleteDialog').hide()" />
+						</h:panelGrid>
+					</div>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{materialCategorySupBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />
+				
+				<p:dataTable id="tbmatCat" var="cat"
+					value="#{materialCategorySupBBean.listaCategory}" 
+					rowKey="#{cat.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}" rendered="#{!materialCategorySupBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 12%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="Material Category Support" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('matCatDialog').show()" value="#{msg.bt_add}" disabled="#{materialCategorySupBBean.disabled}"
+				           			action="#{materialCategorySupBBean.newMaterialCategorySupport}" update=":formDialog"/>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+					
+					<p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":formEditDialog" action="#{materialCategorySupBBean.editMateriaSupport}" oncomplete="PF('matCatEditDialog').show()" icon="ui-icon-search" title="View" disabled="#{materialCategorySupBBean.disabled}">
+							<f:setPropertyActionListener value="#{cat}" target="#{materialCategorySupBBean.support}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="Name" sortBy="#{cat.sName}" filterBy="#{cat.sName}" >
+						<h:outputText value="#{cat.sName}"/>
+					</p:column>
+					
+					<p:column headerText="Rate" sortBy="#{cat.rRate}" filterBy="#{cat.rRate}" >
+						<h:outputText value="#{cat.rRate}">
+							<f:convertNumber pattern="#0.00" minFractionDigits="2" maxFractionDigits="2"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Material" sortBy="#{cat.tbAdmMaterial.sInternalModel}" filterBy="#{cat.tbAdmMaterial.sInternalModel}" >
+						<h:outputText value="#{cat.tbAdmMaterial.sInternalModel}"/> 
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{materialCategorySupBBean.disabled}">
+							<f:setPropertyActionListener value="#{cat}" target="#{materialCategorySupBBean.support}" />
+						</p:commandButton>
+					</p:column>	
+					
+				</p:dataTable>
+				
+			</div>
+		</h:form>
+		
+		<p:dialog header="Delete Material Category Support" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{materialCategorySupBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbmatCat" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbmatCat" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="New Material Category Support" widgetVar="matCatDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="450" height="250">
+			
+			<h:form id="formDialog">
+				
+				<p:messages id="msgDetailMaterial" showDetail="false" showSummary="true"/>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="Available:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectBooleanCheckbox value="#{materialCategorySupBBean.support.fAvailable}" style="padding: 4px;"/>
+					
+					<h:outputText value="Name:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialCategorySupBBean.support.sName}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="Rate:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialCategorySupBBean.support.rRate}" style="padding: 4px;">
+						<f:convertNumber pattern="#0.00" minFractionDigits="2" maxFractionDigits="2"/>
+					</h:inputText>
+					
+					<h:outputText value="Material:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialCategorySupBBean.material}" style="padding: 4px; width: 200px;"/>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div style="float: right;">
+					<p:commandLink action="#{materialCategorySupBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailMaterial">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbmatCat" onclick="PF('matCatDialog').hide()" />
+				</div>
+				
+			</h:form>
+		
+		</p:dialog>
+		
+		<p:dialog header="Edit Material Category Support" widgetVar="matCatEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="450" height="250">
+			
+			<h:form id="formEditDialog">
+				
+				<p:messages id="msgDetailMaterial" showDetail="false" showSummary="true"/>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="Available:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectBooleanCheckbox value="#{materialCategorySupBBean.support.fAvailable}" style="padding: 4px;"/>
+					
+					<h:outputText value="Name:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialCategorySupBBean.support.sName}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="Rate:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialCategorySupBBean.support.rRate}" style="padding: 4px;">
+						<f:convertNumber pattern="#0.00" minFractionDigits="2" maxFractionDigits="2"/>
+					</h:inputText>
+					
+					<h:outputText value="Material:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialCategorySupBBean.material}" style="padding: 4px; width: 200px;"/>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div style="float: right;">
+					<p:commandLink action="#{materialCategorySupBBean.alter}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailMaterial">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbmatCat" onclick="PF('matCatEditDialog').hide()" />
+				</div>
+				
+			</h:form>
+		
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>

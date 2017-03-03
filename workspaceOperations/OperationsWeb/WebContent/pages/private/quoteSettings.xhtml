@@ -1,0 +1,482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8" lang="pt_BR">
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{parametersBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />
+				
+				<p:panel id="panelQuote" header="Quote Settings" closable="false" rendered="#{!parametersBBean.disabledAll}">
+					
+					
+					<p:commandButton ajax="false" action="#{parametersBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check" update=":form:panelQuote" rendered="#{parametersBBean.enable and parametersBBean.quoteParameters.id == 0}" disabled="#{parametersBBean.disabled}"/>
+					<p:commandButton ajax="false" action="#{parametersBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check" update=":form:panelQuote" rendered="#{parametersBBean.enable and parametersBBean.quoteParameters.id > 0}" disabled="#{parametersBBean.disabled}"/>
+					&nbsp;&nbsp;
+					<p:commandButton ajax="false" action="#{parametersBBean.cancel}" value="#{msg.bt_cancel}" icon="ui-icon-check" update=":form:panelQuote" rendered="#{parametersBBean.enable}" />
+					
+					<p:commandButton value="#{msg.bt_update}" action="#{parametersBBean.update}" ajax="false" update=":form:panelQuote" style="float: right" rendered="#{!parametersBBean.enable}"/>
+					<br/>
+					<br/>
+					<br/>
+					
+					<h4><h:outputText value="#{msg.general}" styleClass="labelBold"/></h4>
+					<br/>
+					<h:outputText value="#{msg.email_quote_admin}" styleClass="labelBold" rendered="#{parametersBBean.enable}"/>
+					<br/>
+					<h:panelGrid columns="2" cellspacing="10" rendered="#{!parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_email_admin}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{parametersBBean.quoteParameters.sEmail}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_defaul_sales_dest}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{parametersBBean.quoteParameters.tbAdmDestination.sLocale}" style="width: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_low_boundary_rate} %:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{parametersBBean.quoteParameters.rDiscount}" style="width: 100px; padding: 4px;"/>
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_add_percent_rate_dollar_oracle} %:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rAdditionalPercentRateDollar}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_sugested_margin} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rSuggestedMargin}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_iss_stand_serv_mt_st} (%):" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_serv}"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rIssStandard}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_iss_stand_mt_esp} (%):" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_mt_esp}"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rIssStandardMtesp}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_calc_abs}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_calc}"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.zeroAbsoluto}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_relevancia}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_relevancia}"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rFatorRelevanciaMaxima}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_icms_entrada}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_icms_ent}"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rIcmsEntradaPadrao}" style="width: 100px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_icms_saida}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_icms_saida}"/>
+							<h:outputText value="#{parametersBBean.quoteParameters.rIcmsSaidaPadrao}" style="width: 100px; padding: 4px;"/>
+						</ui:remove>
+						
+						<h:outputText value="#{msg.label_mensagem_alert}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMsgRate}" style="width: 400px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email_alert}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sEmailAlertMatNoClassified}" style="width: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email_material_sales_rep}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{parametersBBean.quoteParameters.sendEmailSalesRep}"/>
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_import_order_email}:" styleClass="labelBold" style="padding: 4px;" />
+							<h:outputText value="#{parametersBBean.quoteParameters.sImportOrderEmail}" style="width: 100px; padding: 4px;"/>
+						</ui:remove>
+					
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" cellspacing="10" rendered="#{parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_email_admin}*:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputTextarea value="#{parametersBBean.quoteParameters.sEmail}"  style="width: 400px; height: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_defaul_sales_dest}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneMenu value="#{parametersBBean.destinationSelecionado}" style="padding: 4px;">
+							<f:selectItem itemLabel=" " itemValue="-1"/>
+							<f:selectItems value="#{parametersBBean.listaDestination}" var="d" itemValue="#{d.id}" itemLabel="#{d.sLocale}"/>
+						</h:selectOneMenu>
+						
+						<h:outputText value="#{msg.label_low_boundary_rate} %:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{parametersBBean.quoteParameters.rDiscount}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_add_percent_rate_dollar_oracle} %:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rAdditionalPercentRateDollar}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_sugested_margin} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rSuggestedMargin}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_iss_stand_serv_mt_st} (%):" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_serv}"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rIssStandard}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_iss_stand_mt_esp} (%):" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_mt_esp}"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rIssStandardMtesp}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_calc_abs}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_calc}"/>
+							<h:selectOneMenu value="#{parametersBBean.quoteParameters.fAbsoluteZeroModel}" style="padding: 4px;">
+								<f:selectItem itemLabel="Sim" itemValue="true"/>
+								<f:selectItem itemLabel="Não" itemValue="false"/>
+							</h:selectOneMenu>
+							
+							<h:outputText value="#{msg.label_relevancia}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_relevancia}"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rFatorRelevanciaMaxima}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_icms_entrada}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_icms_ent}"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rIcmsEntradaPadrao}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_icms_saida}:" styleClass="labelBold" style="padding: 4px;" title="#{msg.note_quote_icms_saida}"/>
+							<h:inputText value="#{parametersBBean.quoteParameters.rIcmsSaidaPadrao}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+						</ui:remove>
+						
+						<h:outputText value="#{msg.label_mensagem_alert}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMsgRate}" style="width: 400px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email_alert}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputTextarea value="#{parametersBBean.quoteParameters.sEmailAlertMatNoClassified}" style="width: 400px; height: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email_material_sales_rep}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneRadio value="#{parametersBBean.quoteParameters.fSendEmailSalesRep}">
+							<f:selectItem itemLabel="Yes" itemValue="true"/>
+							<f:selectItem itemLabel="No" itemValue="false"/>
+						</h:selectOneRadio>
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_import_order_email}:" styleClass="labelBold" style="padding: 4px;" />
+							<h:inputTextarea value="#{parametersBBean.quoteParameters.sImportOrderEmail}"  style="width: 400px; height: 100px; padding: 4px;"/>
+						</ui:remove>
+						
+					</h:panelGrid>
+					
+					<br/>
+					<br/>
+					
+					<p:separator></p:separator>
+					
+					<br/>
+					<br/>
+					
+					
+					<h4><h:outputText value="#{msg.header_rate}" styleClass="labelBold"/></h4>
+					
+					<br/>
+					<br/>
+					
+					<h:panelGrid columns="2" cellspacing="10" rendered="#{!parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_pis} (%):" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{parametersBBean.rate.rPis}" style="width: 50px; padding: 4px;">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+						</h:outputText>
+						
+						<h:outputText value="#{msg.label_cofins} (%):" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{parametersBBean.rate.rCofins}" style="width: 50px; padding: 4px;">
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+						</h:outputText>
+						
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_ppb_ipi} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{parametersBBean.rate.rIpiPPB}" style="width: 50px; padding: 4px;"/>
+						
+							<h:outputText value="#{msg.label_fixed_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{parametersBBean.rate.fixedTaxRate}" style="width: 50px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_dollar_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="#{parametersBBean.rate.rDollarQuote}" style="width: 50px; padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_minimum}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:outputText value="US$ #{parametersBBean.rate.mMandatoryRackMinValue}" style="width: 100px; padding: 4px;"/>
+						</ui:remove>					
+					
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" cellspacing="10" rendered="#{parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_pis} (%):" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{parametersBBean.rate.rPis}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+						
+						<h:outputText value="#{msg.label_cofins} (%):" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{parametersBBean.rate.rCofins}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_ppb_ipi} (%):" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{parametersBBean.rate.rIpiPPB}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_fixed_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:selectOneMenu value="#{parametersBBean.rate.fFixedTaxRate}" style="padding: 4px;">
+								<f:selectItem itemLabel="Yes" itemValue="true"/>
+								<f:selectItem itemLabel="No" itemValue="false"/>
+							</h:selectOneMenu>
+							
+							<h:outputText value="#{msg.label_dollar_tax}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{parametersBBean.rate.rDollarQuote}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+							
+							<h:outputText value="#{msg.label_minimum}:" styleClass="labelBold" style="padding: 4px;"/>
+							<h:inputText value="#{parametersBBean.rate.mMandatoryRackMinValue}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>	
+						</ui:remove>				
+					
+					</h:panelGrid>
+					
+					<br/>
+					<br/>
+					
+					<p:separator></p:separator>
+					
+					<br/>
+					<br/>
+					
+					<ui:remove>
+					<h4><h:outputText value="#{msg.nivel_discount}" title="#{msg.nivel_discount_msg}" styleClass="labelBold"/></h4>
+					
+					<br/>
+					<br/>
+										
+					<h:panelGrid columns="2" rendered="#{!parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_discount_level}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteDiscountLevel.discountModulePerLevel}" style="width: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_min_margin_level1}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteDiscountLevel.rMinimumMarginLevel1}" style="width: 100px; padding: 4px;"/>
+					
+						<h:outputText value="#{msg.label_min_margin_level2}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteDiscountLevel.rMinimumMarginLevel2}" style="width: 100px; padding: 4px;"/>
+					
+						<h:outputText value="#{msg.label_min_margin_level3}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteDiscountLevel.rMinimumMarginLevel3}" style="width: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_min_margin_level4}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{msg.msg_level_director}" style="width: 100px; padding: 4px;"/>
+					
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" rendered="#{parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_discount_level}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:selectOneMenu value="#{parametersBBean.quoteDiscountLevel.fDiscountModulePerLevel}" style="padding: 4px;">
+							<f:selectItem itemLabel="Yes" itemValue="true"/>
+							<f:selectItem itemLabel="No" itemValue="false"/>
+						</h:selectOneMenu>
+						
+						<h:outputText value="#{msg.label_min_margin_level1}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputFormat value="">
+							#{msg.msg_from}&nbsp;<b>100%</b>&nbsp;#{msg.msg_to}&nbsp;
+							<h:inputText value="#{parametersBBean.quoteDiscountLevel.rMinimumMarginLevel1}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+						</h:outputFormat>
+						
+						<h:outputText value="#{msg.label_min_margin_level2}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputFormat value="">
+							#{msg.msg_from}&nbsp;<b>-0.01</b>&nbsp;#{msg.msg_to}&nbsp;
+							<h:inputText value="#{parametersBBean.quoteDiscountLevel.rMinimumMarginLevel2}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+						</h:outputFormat>
+						
+						<h:outputText value="#{msg.label_min_margin_level3}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputFormat value="">
+							#{msg.msg_from}&nbsp;<b>-0.01</b>&nbsp;#{msg.msg_to}&nbsp;
+							<h:inputText value="#{parametersBBean.quoteDiscountLevel.rMinimumMarginLevel3}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+								<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+							</h:inputText>
+						</h:outputFormat>
+						
+						<h:outputText value="#{msg.label_min_margin_level4}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputFormat value="">
+							#{msg.msg_from}&nbsp;<b>-0.01</b>&nbsp;#{msg.msg_to}&nbsp;
+							<h:inputText value="#{msg.msg_level_director}" style="width: 200px; padding: 4px;" disabled="true"/>
+						</h:outputFormat>
+					
+					</h:panelGrid>
+					
+					<br/>
+					<br/>
+					
+					<p:separator></p:separator>
+					
+					<br/>
+					<br/>
+					
+					<h4><h:outputText value="#{msg.espelho_quote_nf}" styleClass="labelBold"/></h4>
+					
+					<br/>
+					
+					<h:panelGrid columns="2" cellspacing="10" rendered="#{!parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_filial_nome}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialNome}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_endereco}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialEndereco}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_cidade}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialCidade}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_estado}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialEstado}" style="width: 50px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_cep}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialCep}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_cnpj}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialCnpj}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_in_est}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialInscEst}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_in_mun}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sFilialInscMun}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>
+						
+						<h:outputText value="#{msg.label_matriz_nome}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizlNome}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_endereco}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizEndereco}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_cidade}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizCidade}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_estado}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizEstado}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_cep}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizCep}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_cnpj}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizCnpj}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_inc_est}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizInscest}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_inc_mun}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:outputText value="#{parametersBBean.quoteParameters.sMatrizInscMun}" style="width: 300px; padding: 4px;"/>
+					
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" cellspacing="10" rendered="#{parametersBBean.enable}">
+						
+						<h:outputText value="#{msg.label_filial_nome}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialNome}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_endereco}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputTextarea value="#{parametersBBean.quoteParameters.sFilialEndereco}" style="width: 400px; height: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_cidade}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialCidade}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_estado}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialEstado}" maxlength="2" style="width: 50px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_cep}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialCep}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_cnpj}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialCnpj}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_in_est}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialInscEst}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_filial_in_mun}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sFilialInscMun}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>
+						
+						<h:outputText value="#{msg.label_matriz_nome}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizlNome}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_endereco}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputTextarea value="#{parametersBBean.quoteParameters.sMatrizEndereco}" style="width: 400px; height: 100px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_cidade}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizCidade}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_estado}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizEstado}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_cep}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizCep}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_cnpj}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizCnpj}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_inc_est}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizInscest}" style="width: 300px; padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_matriz_inc_mun}:" styleClass="labelBold" style="padding: 4px;" />
+						<h:inputText value="#{parametersBBean.quoteParameters.sMatrizInscMun}" style="width: 300px; padding: 4px;"/>
+					
+					</h:panelGrid>
+					
+					</ui:remove>
+					
+					<br/><br/><br/>
+					<p:commandButton ajax="false" action="#{parametersBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check" update=":form:panelQuote" rendered="#{parametersBBean.enable and parametersBBean.quoteParameters.id == 0}" disabled="#{parametersBBean.disabled}"/>
+					<p:commandButton ajax="false" action="#{parametersBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check" update=":form:panelQuote" rendered="#{parametersBBean.enable and parametersBBean.quoteParameters.id > 0}" disabled="#{parametersBBean.disabled}"/>
+					&nbsp;&nbsp;
+					<p:commandButton ajax="false" action="#{parametersBBean.cancel}" value="#{msg.bt_cancel}" icon="ui-icon-check" rendered="#{parametersBBean.enable}" update=":form:panelQuote"/>
+					
+					
+				</p:panel>				
+				
+			</div>
+			
+		</h:form>
+				
+	</ui:define>
+	
+</ui:composition>
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+    version="2.2">
+
+	<application>
+	
+		<resource-bundle>
+			<base-name>br.com.saboia.bundle.messages</base-name>
+			<var>msg</var>
+		</resource-bundle>
+				
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>pt</supported-locale>			
+		</locale-config>
+		
+	</application>
+	
+	<navigation-rule>
+		<display-name>pages/private/importMaterial.xhtml</display-name>
+		<from-view-id>/pages/private/importMaterial.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/importMaterialStep2.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/private/importMaterialStep2.xhtml</display-name>
+		<from-view-id>/pages/private/importMaterialStep2.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/importMaterialStep3.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/private/importMaterialStep3.xhtml</display-name>
+		<from-view-id>/pages/private/importMaterialStep3.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/importMaterialStep4.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/private/quote.xhtml</display-name>
+		<from-view-id>/pages/private/quote.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>details</from-outcome>
+			<to-view-id>/pages/private/quoteDetail.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/public/login.xhtml</display-name>
+		<from-view-id>/pages/public/login.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/dollarRateInitial.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/private/dollarRateInitial.xhtml</display-name>
+		<from-view-id>/pages/private/dollarRateInitial.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/home.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/private/organizationRole.xhtml</display-name>
+		<from-view-id>/pages/private/organizationRole.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/organizationRoleAdm.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>pages/private/organization.xhtml</display-name>
+		<from-view-id>/pages/private/organization.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/private/organizationAdm.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+</faces-config>

@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbGroup" var="group"
+					value="#{groupBBean.listaGroup}" 
+					rowKey="#{group.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_group_content}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('groupDialog').show()" value="#{msg.bt_add}" />
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":groupEditDetail" oncomplete="PF('groupEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{group}" target="#{groupBBean.grupoSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_description}" filterBy="#{group.SDescription}" sortBy="#{group.SDescription}">
+						<h:outputText value="#{group.SDescription}"/>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{group}" target="#{groupBBean.grupoSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_group_content}" widgetVar="groupDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="500" height="130">
+			<h:form id="groupDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{groupBBean.novoGrupo.SDescription}" style="width: 300px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{groupBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbGroup" onclick="PF('groupDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbGroup" onclick="PF('groupDialog').hide()" />
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_group_content}" widgetVar="groupEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="500" height="130">
+			<h:form id="groupEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{groupBBean.grupoSelecionado.SDescription}" style="width: 300px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{groupBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbGroup" onclick="PF('groupEditDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbGroup" onclick="PF('groupEditDialog').hide()" />
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_delete_group_content}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{groupBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbGroup" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbGroup" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>

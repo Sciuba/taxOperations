@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+		
+		<h:form id="form">
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+				
+				<p:dialog modal="true" widgetVar="importDialogMaterial" visible="true" header="#{msg.msg_status_import_step1}" style="font-size: 10px;" draggable="false" closable="false" resizable="false">
+	    			<p:graphicImage library="images" name="ajaxloadingbar.gif" style="margin-left: 12%;"/>
+				</p:dialog>
+							
+				<script type="text/javascript">
+					
+					$ = jQuery;
+				    					
+					$(window).load(function() {
+						console.log("entrou");
+						$("#form").find("button").click();
+				    });
+								
+				</script>
+								
+				<p:commandButton id="btValida" action="#{stepBBean.validaELocalizaNcmImportados}" oncomplete="PF('importDialogMaterial').hide();" style="display:none"/>
+												
+			</div>
+			
+		</h:form>		
+		
+	</ui:define>
+
+</ui:composition>
+</html>

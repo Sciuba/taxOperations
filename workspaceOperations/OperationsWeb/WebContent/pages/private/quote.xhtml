@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+				
+		<h:form id="form" acceptcharset="UTF-8" lang="pt_BR">
+		
+			<ui:include src="../../template/ajaxStatus.xhtml"/>
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="false" showSummary="true" />
+					</h:panelGrid>
+					
+					<!-- <h:panelGrid rendered="#{quoteBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					 -->
+				</div>
+				
+				<h:panelGrid id="filtro" columns="11" width="60%"  rendered="#{!quoteBBean.disabledAll}">
+				
+					<h:outputText value="#{msg.label_quote_status}:" styleClass="labelBold"/>
+					<h:selectOneMenu value="#{quoteBBean.filterStatusSelecionado}">
+						<f:selectItem itemValue="-1" itemLabel=" "/>
+						<f:selectItem itemValue="0" itemLabel="All"/>
+						<f:selectItem itemValue="1" itemLabel="Not Released"/>
+						<f:selectItem itemValue="2" itemLabel="Not Closed"/>
+						<f:selectItem itemValue="3" itemLabel="Released Only"/>
+						<f:selectItem itemValue="4" itemLabel="Released or Closed"/>
+						<f:selectItem itemValue="5" itemLabel="Closed Only"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="   "/>
+					
+					<h:outputText value="#{msg.label_creation_date}:" styleClass="labelBold"/>
+					
+					<p:calendar value="#{quoteBBean.dataIni}" pattern="#{msg.pattern_date}" navigator="true" />
+										
+					<h:outputText value="#{msg.label_quote_to}" styleClass="labelBold"/>
+					
+					<p:calendar value="#{quoteBBean.dataFim}" pattern="#{msg.pattern_date}" navigator="true" />
+					
+					<p:commandButton value="#{msg.bt_search}" ajax="false" update=":form:tbQuotes" action="#{quoteBBean.filterQuote}" icon="ui-icon-zoomin"/>
+					
+					<p:commandButton value="#{msg.bt_reset}" ajax="false" update=":form:tbQuotes :form:filtro" action="#{quoteBBean.reset}" onclick="javascript:zerarFiltrosTable();" icon="ui-icon-arrowrefresh-1-e"/>
+					
+					<h:outputText value="View deleted quotes?"/>
+					
+					<h:selectBooleanCheckbox value="#{quoteBBean.checkListQuotesDeleted}" >
+						<p:ajax event="click" listener="#{quoteBBean.checkListaQuoteDelete}"/>
+					</h:selectBooleanCheckbox>
+					
+				</h:panelGrid>
+				
+				<div style="float: right; margin-top: -29px;">
+					<p:commandButton onclick="PF('quoteImportDialog').show()" value="#{msg.label_import_gdmt}" style="margin-right: 6px;"  rendered="#{!quoteBBean.disabledAll}" disabled="#{quoteBBean.disabled}"/>
+					
+					<p:commandButton onclick="PF('quoteDialog').show()" value="#{msg.bt_new_gdmt}" rendered="#{!quoteBBean.disabledAll}" disabled="#{quoteBBean.disabled}"/>
+				</div>
+	         	
+	         	<p:dataTable id="tbQuotes" var="quote" value="#{quoteBBean.lazyModel}"  rowKey="#{quote.id}" 
+					paginator="true" rows="50" emptyMessage="#{msg.sem_registros}"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 			rowsPerPageTemplate="10,50,100" lazy="true" rendered="#{!quoteBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <h:outputText value="#{msg.header_dialog_quote}" styleClass="labelBold"/>
+		           </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton ajax="false" action="#{quoteBBean.redirectQuoteDetail}" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{quote}" target="#{quoteBBean.quoteSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_sales_rep}" filterBy="#{quote.personName}" sortBy="#{quote.personName}" width="14%"  style="text-align: left;">
+						<h:outputText value="#{quote.personName}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_customer}" filterBy="#{quote.sCustomer}" sortBy="#{quote.sCustomer}" width="20%"  style="text-align: left;">
+						<h:outputText value="#{quote.sCustomer}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_quote_number}" filterBy="#{quote.sQuoteNumber}" sortBy="#{quote.sQuoteNumber}"  style="text-align: left;">
+						<h:outputText value="#{quote.sQuoteNumber}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_version}" width="4%"  style="text-align: center;">
+						<h:outputText value="#{quote.iQuoteVersion}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px; "/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_quote_name}" filterBy="#{quote.sQuoteName}" sortBy="#{quote.sQuoteName}" width="20%"  style="text-align: left;">
+						<h:outputText value="#{quote.sQuoteName}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_creation_date}" sortBy="#{quote.dtFormatCreationDate}"  style="text-align: right;">
+						<h:outputText value="#{quote.dtFormatCreationDate}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					<ui:remove>
+					
+					<p:column headerText="#{msg.label_net}%" sortBy="#{quote.rNetMarginPlus}" width="4%">
+						<h:outputText value="#{quote.rNetMarginPlus}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_gp}%" sortBy="#{quote.rGrossMarginPlus}" width="4%">
+						<h:outputText value="#{quote.rGrossMarginPlus}" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;"/>
+					</p:column>
+					
+					</ui:remove>
+					
+					<p:column headerText="#{msg.label_gross_price}" sortBy="#{quote.mTotalGross}" style="text-align: right;">
+						<h:outputText value="#{quote.mTotalGross}" disabled="true" style="#{quote.styleLine} font-weight: bold; font-size: 10.5px;" >
+							<f:convertNumber currencySymbol="$" type="currency"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{quoteBBean.disabled}">
+							<f:setPropertyActionListener value="#{quote}" target="#{quoteBBean.quoteSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+				
+				<p:panel style="width: 12%; margin-top: 3px;" rendered="#{!quoteBBean.disabledAll}">
+					<h:panelGrid columns="4">
+						
+						<div style="width: 20px; height: 20px; display: block; background-color: #008000;"></div>
+						<h:outputText value="#{msg.label_closed}"/>
+						
+						<div style="width: 20px; height: 20px; display: block; background-color: #FFCC00;"></div>
+						<h:outputText value="#{msg.label_released}"/>
+						
+					</h:panelGrid>
+				</p:panel>					
+				
+			</div>
+			
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_quote_new}" widgetVar="quoteDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="800" height="500">
+			<h:form id="quoteDetail" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				<p:wizard id="wizardManual" flowListener="#{quoteBBean.onFlowProcess}">
+				 	<p:tab id="step1" title="Step 1">
+            			<p:panel>
+                		<p:messages id="errorDetail" showDetail="false" showSummary="true"/>
+                		<h:panelGrid columns="2">
+                			
+                			<h:outputText value="#{msg.label_participant}:" styleClass="labelBold" style="padding: 4px;" rendered="#{loginBBean.user.fManagerGroupSales}"/>
+                			<h:outputText value="#{loginBBean.user.sFullName}" styleClass="labelBold" style="padding: 4px;" rendered="#{loginBBean.user.fManagerGroupSales}"/>
+                			<!--  comentado conforme orientação do William 13/10/2014 -->
+                			<!-- <h:selectOneMenu value="#{quoteBBean.personSelecionado}" required="true" rendered="#{loginBBean.user.tbAdmPerson.tbAdmCategory.sCategory eq 'Sales Rep'}" 
+                				style="padding: 4px;" requiredMessage="#{msg.msg_participant_required}" >
+                				<f:selectItem itemLabel=" " itemValue="-1"/>
+                				<f:selectItems value="#{quoteBBean.listaPerson}" var="rep" itemLabel="#{rep.sName}" itemValue="#{rep.id}"/>
+                			</h:selectOneMenu> -->
+                			
+                			<h:outputText value="Sales Operations:" styleClass="labelBold" style="padding: 4px;"/>
+                			<h:outputText value="#{loginBBean.user.sFullName}" styleClass="labelBold" style="padding: 4px;" rendered="#{!loginBBean.user.fManagerGroupSales}"/>
+                			<h:selectOneMenu value="#{quoteBBean.personSelecionadoSalesRep}" required="true" rendered="#{loginBBean.user.fManagerGroupSales}"
+                				style="padding: 4px;" requiredMessage="#{msg.msg_salesrep_required}">
+                				
+                				<ui:remove><f:selectItem itemLabel=" " itemValue="-1"/></ui:remove>
+                				
+                				<f:selectItems value="#{quoteBBean.listaPerson}" var="rep" itemLabel="#{rep.sFullName}" itemValue="#{rep.id}"/>
+                			</h:selectOneMenu>
+                			
+                			<h:outputText value="#{msg.label_customer_name}:" styleClass="labelBold" style="padding: 4px;" />
+                			<h:inputText value="#{quoteBBean.novoQuote.sCustomer}" style="padding: 4px; width: 460px;" required="true" requiredMessage="#{msg.msg_quote_customer_required}"/>
+                			
+                			<h:outputText value="#{msg.label_quote} #" styleClass="labelBold" style="padding: 4px;"/>
+                			
+                			<h:panelGrid columns="3" id="tabQuoteNumber" style="margin-left: -3px;">
+                				<h:inputText value="#{quoteBBean.novoQuote.sQuoteNumber}" style="padding: 4px;" required="true" requiredMessage="#{msg.msg_quote_number_required}">
+                					<p:ajax event="blur" update="wizardManual"/>
+                				</h:inputText>
+                				
+                				<h:outputText value=" #{msg.msg_replace_quote} " rendered="#{!empty quoteBBean.novoQuote.sQuoteNumber and not empty quoteBBean.listaQuotesAno}"/>
+                				
+                				<h:selectOneMenu value="#{quoteBBean.quoteMenuSelecionado}" style="padding: 4px;" rendered="#{!empty quoteBBean.novoQuote.sQuoteNumber and not empty quoteBBean.listaQuotesAno}">
+                					<f:selectItem itemLabel=" " itemValue="-1"/>
+                					<f:selectItems value="#{quoteBBean.listaQuotesAno}" var="q" itemLabel="#{q.sQuoteNumber}" itemValue="#{q.id}" />
+                					<p:ajax event="change" listener="#{quoteBBean.insereNumeroQuote}" update="tabQuoteNumber"/>
+                				</h:selectOneMenu>
+                			</h:panelGrid>
+                			
+                			<h:outputText value="#{msg.label_quote_name}:" styleClass="labelBold" style="padding: 4px;"/>
+                			<h:inputText value="#{quoteBBean.novoQuote.sQuoteName}" style="padding: 4px; width: 460px;" required="true" requiredMessage="#{msg.msg_quote_name_required}"/>
+                			
+                			<ui:remove>
+	                			<h:outputText value="#{msg.label_bill_to}:" styleClass="labelBold" style="padding: 4px;"/>
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sBillTo}" style="padding: 4px; width: 460px;" />
+	                		
+	                			<h:outputText value="#{msg.label_cnpj}:" styleClass="labelBold" style="padding: 4px; margin-right: 60px;"/>
+								<h:outputFormat value=""> 
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sCnpjBill}" style="padding: 4px;" />
+	                			
+	                			<h:outputText value="#{msg.label_ie}:" styleClass="labelBold" style="padding: 4px;"/>
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sIeBill}" style="padding: 4px;" />
+	                			</h:outputFormat>
+	                			
+	                			<h:outputText value="#{msg.label_address}:" styleClass="labelBold" style="padding: 4px; margin-right: 44px;"/>
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sAddressBill}" style="padding: 4px; width: 460px;" />
+	                			
+	                			<h:outputText value="#{msg.label_city}:" styleClass="labelBold" style="padding: 4px; margin-right: 70px;"/>
+								<h:outputFormat value=""> 
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sCityBill}" style="padding: 4px;" />
+	                			
+	                			<h:outputText value="#{msg.label_state}:" styleClass="labelBold" style="padding: 4px;"/>
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sStateBill}" style="padding: 4px;" />
+	               				</h:outputFormat>
+	               		
+	                			<h:outputText value="#{msg.label_zip_code}:" styleClass="labelBold" style="padding: 4px; margin-right: 41px;"/>
+	                			<h:inputText value="#{quoteBBean.novoQuoteDetail.sZipCodeBill}" style="padding: 4px;" />
+                			</ui:remove>
+                			
+                		</h:panelGrid>
+                		                		
+                		</p:panel>
+               		</p:tab>
+					
+					<p:tab id="step2" title="Step 2">
+						<p:panel>
+						
+						<p:messages id="msgDetail" showDetail="false" showSummary="true"/>
+						
+							<h:panelGrid id="tbDestinationDetail" columns="1">
+									
+									<h:outputText value="#{msg.msg_quote_detail_step2}" styleClass="labelBold" style="padding: 4px;"/>
+									
+									<h:outputText value="#{msg.label_destination}" styleClass="labelBold" style="padding: 4px;"/>
+									
+									<h:outputText value="#{msg.msg_quote_detail_step2_red}" styleClass="labelBold" style="padding: 4px; color: red;"/>
+									
+									<h:selectOneMenu value="#{quoteBBean.destinoSelecionado}" style="padding: 4px;" required="true" requiredMessage="The Field Destination is required." >
+										<f:selectItem itemLabel=" " itemValue=" "/>
+										<f:selectItems value="#{quoteBBean.listaDestinations}" var="d" itemLabel="#{d.sCode} - #{d.sLocale}" itemValue="#{d.id}"/>
+										<p:ajax event="change" update="tbDestinationDetail"/>
+									</h:selectOneMenu>
+									
+									<h:inputHidden value="#{quoteBBean.destinoSelecionado}" required="true" requiredMessage="The Field Destination is required."/>
+								</h:panelGrid>
+								
+								<br/>
+								
+								<h:panelGrid columns="2" id="detailsRadio">
+									
+									<h:outputText value="#{msg.label_other_inf}" styleClass="labelBold" style="padding: 4px;"/>
+									<h:outputText value="" />
+									
+									<h:outputText value="#{msg.msg_that_leasing_operation}" styleClass="labelBold" style="padding: 4px;"/>
+									<h:selectOneRadio value="#{quoteBBean.novoQuote.fLeasing}" layout="lineDirection">
+										<f:selectItem itemLabel="Yes" itemValue="true"/>
+										<f:selectItem itemLabel="No" itemValue="false"/>
+										<p:ajax event="change" update="detailsRadio" listener="#{quoteBBean.leasing}"/>
+									</h:selectOneRadio>
+									
+									<h:outputText value="#{msg.msg_customer_suframa}" styleClass="labelBold" style="padding: 4px;"/>
+									<h:selectOneRadio value="#{quoteBBean.novoQuote.fSuframa}" layout="lineDirection" disabled="#{quoteBBean.novoQuote.fLeasing}">
+										<f:selectItem itemLabel="Yes" itemValue="true"/>
+										<f:selectItem itemLabel="No" itemValue="false"/>
+									</h:selectOneRadio>
+									
+									<h:outputText value="#{msg.msg_customer_taxpayer}" styleClass="labelBold" style="padding: 4px;"/>
+									<h:selectOneRadio value="#{quoteBBean.novoQuote.fContrest}" layout="lineDirection" disabled="#{quoteBBean.novoQuote.fLeasing}">
+										<f:selectItem itemLabel="Yes" itemValue="true"/>
+										<f:selectItem itemLabel="No" itemValue="false"/>
+										<p:ajax event="change" update="detailsRadio" />
+									</h:selectOneRadio>
+									
+									<h:outputText value="#{msg.label_insc_est}:" styleClass="labelBold" style="padding: 4px;"/>
+									<h:inputText id="InscEstadual" value="#{quoteBBean.novoQuoteDetail.sIeBill}" style="padding: 4px;" 
+										disabled="#{!quoteBBean.novoQuote.fContrest}" required="#{quoteBBean.novoQuote.fContrest}" requiredMessage="The Field State Inscription is required."/>
+									
+									<h:outputText value="#{msg.msg_selling_partner_reselling}" styleClass="labelBold" style="padding: 4px;"/>
+									<h:selectOneRadio value="#{quoteBBean.novoQuote.fPartner}" layout="lineDirection" disabled="#{quoteBBean.novoQuote.fLeasing}">
+										<f:selectItem itemLabel="Yes" itemValue="true"/>
+										<f:selectItem itemLabel="No" itemValue="false"/>
+									</h:selectOneRadio>
+									
+									<ui:remove>
+										<h:outputText value="#{msg.content_group}:" styleClass="labelBold" style="padding: 4px;"/>
+										<h:selectOneMenu value="#{quoteBBean.groupSelecionado}" style="padding: 4px;">
+											<f:selectItem itemLabel=" " itemValue="-1"/>
+											<f:selectItems value="#{quoteBBean.listaGroup}" var="g" itemLabel="#{g.SDescription}" itemValue="#{g.id}"/>
+										</h:selectOneMenu>
+									</ui:remove>
+									
+								</h:panelGrid>
+							
+								<f:facet name="footer">
+									<h:outputText value="#{msg.msg_additional_quote_detail}" styleClass="labelBold" style="padding: 4px;"/>
+								</f:facet>
+												
+						</p:panel>
+						
+						<div style="float: right; width: 172px; height: 29px; display: block; margin-top: 3px;" >
+							<p:commandLink  action="#{quoteBBean.save}" icon="ui-icon-check" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetail :form:tbQuotes">							
+								<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+							</p:commandLink>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							
+							<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+								update=":form:tbQuotes" onclick="PF('quoteDialog').hide()" />
+						</div>
+					</p:tab>
+					
+				</p:wizard>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_quote_delete}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{quoteBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbQuote" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbQuote" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_quote_new}" widgetVar="quoteImportDialog" resizable="false" draggable="false" closable="true" closeOnEscape="true"
+			modal="true" showEffect="fade" hideEffect="fade" width="1000" height="530">
+			<h:form id="quoteImportWiz" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<ui:include src="../../template/ajaxStatus.xhtml"/>
+				
+				<h:panelGrid columns="1" width="100%">
+					<h:outputText value="To import the files GDMT the extension is .csv, for WebQuote files the file extensions can be .htm or .html." styleClass="labelBold"/>
+					<p:fileUpload  fileUploadListener="#{quoteBBean.fileUpload}" mode="advanced" dragDropSupport="false"  label="Choose the file"
+	           				update=":quoteImportWiz" sizeLimit="500000" fileLimit="1" allowTypes="/(\.|\/)(html|csv|htm|txt|xml)$/" >
+       				</p:fileUpload>
+	           				
+       				<h:outputText id="importNameOk" value="#{quoteBBean.file.name} OK" rendered="#{quoteBBean.file != null}" styleClass="labelBold"/>
+				</h:panelGrid>
+				
+				<p:messages id="msgQuoteImp" showDetail="false" showSummary="true"/>
+				
+				<h:panelGroup rendered="#{quoteBBean.file != null}" layout="block" style="margin-top: 3px;">
+					<p:tabView activeIndex="#{quoteBBean.tab}" binding="#{quoteBBean.tabView}">
+					
+						<p:ajax event="tabChange" listener="#{quoteBBean.tabIndex}"/>
+						
+						<p:tab title="#{msg.label_step} 1">
+							<p:panel header="Quote">
+								
+								<h:panelGrid columns="2">
+								
+									<h:outputText value="Sales Operations:" styleClass="labelBold" style="padding: 4px;"/>
+		                			<h:outputText value="#{loginBBean.user.sFullName}" styleClass="labelBold" style="padding: 4px;" rendered="#{!loginBBean.user.fManagerGroupSales}"/>
+		                			<h:selectOneMenu value="#{quoteBBean.personSelecionadoSalesRep}" required="true" rendered="#{loginBBean.user.fManagerGroupSales}" 
+		                				style="padding: 4px;" requiredMessage="#{msg.msg_salesrep_required}">
+		                				<ui:remove><f:selectItem itemLabel=" " itemValue="-1"/></ui:remove>
+		                				<f:selectItems value="#{quoteBBean.listaPerson}" var="rep" itemLabel="#{rep.sFullName}" itemValue="#{rep.id}"/>
+		                			</h:selectOneMenu>
+		                			
+		                			<h:outputText value="#{msg.label_customer_name}:" styleClass="labelBold" style="padding: 4px;" />
+		                			<h:inputText value="#{quoteBBean.novoQuote.sCustomer}" style="padding: 4px; width: 460px;" />
+		                			
+		                			<h:outputText value="#{msg.label_quote} #" styleClass="labelBold" style="padding: 4px;"/>
+		                			<h:inputText value="#{quoteBBean.novoQuote.sQuoteNumber}" style="padding: 4px;" required="true" requiredMessage="#{msg.msg_quote_number_required}"/>
+		                				
+		                			<h:outputText value="#{msg.label_quote_name}:" styleClass="labelBold" style="padding: 4px;"/>
+		                			<h:inputText value="#{quoteBBean.novoQuote.sQuoteName}" style="padding: 4px; width: 460px;" required="true" requiredMessage="#{msg.msg_quote_name_required}"/>
+	                			
+	                			</h:panelGrid>
+									
+							</p:panel>
+						</p:tab>
+						
+						<p:tab title="#{msg.label_step} 2">
+							<p:panel header="Detail">
+								<p:scrollPanel mode="native" style="height:260px;">
+									<h:panelGrid columns="1">
+											
+											<h:outputText value="#{msg.msg_quote_detail_step2}" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:outputText value="#{msg.label_destination}" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:outputText value="#{msg.msg_quote_detail_step2_red}" styleClass="labelBold" style="padding: 4px; color: red;"/>
+											
+											<h:selectOneMenu value="#{quoteBBean.destinoSelecionado}" style="padding: 4px;">
+												<f:selectItem itemLabel=" " itemValue="-1"/>
+												<f:selectItems value="#{quoteBBean.listaDestinations}" var="d" itemLabel="#{d.sCode} - #{d.sLocale}" itemValue="#{d.id}"/>
+											</h:selectOneMenu>
+										</h:panelGrid>
+																			
+										<h:panelGrid columns="2" id="detailsImpRadio" style="margin-top:3px;">
+											
+											<h:outputText value="#{msg.label_other_inf}" styleClass="labelBold" style="padding: 4px;"/>
+											<h:outputText value="" />
+											
+											<h:outputText value="#{msg.msg_that_leasing_operation}" styleClass="labelBold" style="padding: 4px;"/>
+											<h:selectOneRadio value="#{quoteBBean.novoQuote.fLeasing}" layout="lineDirection">
+												<f:selectItem itemLabel="Yes" itemValue="true"/>
+												<f:selectItem itemLabel="No" itemValue="false"/>
+												<p:ajax event="change" update="detailsImpRadio" listener="#{quoteBBean.leasing}"/>
+											</h:selectOneRadio>
+											
+											<h:outputText value="#{msg.msg_customer_suframa}" styleClass="labelBold" style="padding: 4px;"/>
+											<h:selectOneRadio value="#{quoteBBean.novoQuote.fSuframa}" layout="lineDirection" disabled="#{quoteBBean.novoQuote.fLeasing}">
+												<f:selectItem itemLabel="Yes" itemValue="true"/>
+												<f:selectItem itemLabel="No" itemValue="false"/>
+											</h:selectOneRadio>
+											
+											<h:outputText value="#{msg.msg_customer_taxpayer}" styleClass="labelBold" style="padding: 4px;"/>
+											<h:selectOneRadio value="#{quoteBBean.novoQuote.fContrest}" layout="lineDirection" disabled="#{quoteBBean.novoQuote.fLeasing}">
+												<f:selectItem itemLabel="Yes" itemValue="true"/>
+												<f:selectItem itemLabel="No" itemValue="false"/>
+												<p:ajax event="change" update="detailsImpRadio" />
+											</h:selectOneRadio>
+											
+											<h:outputText value="#{msg.label_insc_est}:" styleClass="labelBold" style="padding: 4px;"/>
+											<h:inputText value="#{quoteBBean.novoQuoteDetail.sIeBill}" style="padding: 4px;" 
+												disabled="#{!quoteBBean.novoQuote.fContrest}" required="#{quoteBBean.novoQuote.fContrest}" requiredMessage="The Field State Inscription is required."/>
+											
+											<h:outputText value="#{msg.msg_selling_partner_reselling}" styleClass="labelBold" style="padding: 4px;"/>
+											<h:selectOneRadio value="#{quoteBBean.novoQuote.fPartner}" layout="lineDirection" disabled="#{quoteBBean.novoQuote.fLeasing}">
+												<f:selectItem itemLabel="Yes" itemValue="true"/>
+												<f:selectItem itemLabel="No" itemValue="false"/>
+											</h:selectOneRadio>
+											
+											<h:outputText value="#{msg.content_group}:" styleClass="labelBold" style="padding: 4px;"/>
+											<h:selectOneMenu value="#{quoteBBean.groupSelecionado}" style="padding: 4px;">
+												<f:selectItem itemLabel=" " itemValue="-1"/>
+												<f:selectItems value="#{quoteBBean.listaGroup}" var="g" itemLabel="#{g.SDescription}" itemValue="#{g.id}"/>
+											</h:selectOneMenu>
+											
+										</h:panelGrid>
+									
+									</p:scrollPanel>
+										
+									<f:facet name="footer">
+										<h:outputText value="#{msg.msg_additional_quote_detail}" styleClass="labelBold" style="padding: 4px;"/>
+									</f:facet>
+													
+							</p:panel>
+							
+						</p:tab>
+						
+					</p:tabView>
+				</h:panelGroup>
+				
+				<div style="float: right; width: 183px; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandLink action="#{quoteBBean.saveImportCsv}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgQuoteImp" rendered="#{quoteBBean.file != null}">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span>
+						<span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+					<p:commandButton ajax="false" action="#{quoteBBean.cancelImportCsv}" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true" rendered="#{quoteBBean.file != null}"
+						update=":form" onclick="PF('moduleDialog').hide()" />														
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

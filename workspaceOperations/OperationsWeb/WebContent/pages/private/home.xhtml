@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+
+	<ui:define name="content">
+	   
+	   <div id="home">
+	   		
+	   		<br/>
+	   		
+	   		<!-- MOCKUP -->
+	   		<!-- substituir por dados reais e todos os labels pelo arquivo msg properties -->
+	   		
+	   		<h:panelGrid columns="5" cellspacing="5" style="margin-left: 3px;"> <!-- MOCKUP -->
+	   			<h:outputText styleClass="labelDarkFontUp" value="#{msg.label_user}:"/>
+	   			<h:outputText style="font-size: 14px;" value="#{loginBBean.user.sFullName}"/>
+	   			<h:outputText value=" "/>
+	   			<h:outputText styleClass="labelDarkFontUp" value="#{msg.label_last_access}:"/>
+	   			<h:outputText style="font-size: 14px;" value="#{loginBBean.user.dtLastAccess}">
+	   				<f:convertDateTime  pattern="#{msg.pattern_date_time}"/>
+	   			</h:outputText>
+	   		</h:panelGrid>
+	   		
+	   		<br/>
+	   		<br/>
+	   		
+	   		<h:outputText styleClass="labelDarkFontUp" style="float: left; margin-left: 0.6%;" 
+	   			value="#{msg.welcome_to} Oracle :: Operations"/>
+	   		
+	   		<br/>
+	   		<br/>
+	   		<br/>
+	   		
+	   		<p:panel header="Dollar" style="width: 40%; margin-left: 0.5%">
+		   		
+		   		<h:panelGrid columns="4" style="width: 300px;">
+		   		
+	   				<h:outputText styleClass="labelDarkFontUp" style="float: right;" value="#{msg.label_date_dollar}:"/>
+	   				
+	   				<h:outputText style="font-size: 14px;" value="#{homeBBean.dataTaxaDollar}">
+	   					<f:convertDateTime  pattern="MM/yyyy"/>
+	   				</h:outputText>
+	   				
+	   				<h:outputText styleClass="labelDarkFontUp"  style="float: right;" value="Dollar:"/>
+
+	   				<h:outputText style="font-size: 14px;" value="#{homeBBean.admDollarRate.rDollar}"/>
+	   				
+	   				<h:outputText styleClass="labelDarkFontUp" style="float: right;" value="#{msg.label_ptax_dollar}:"/>
+	   				
+	   				<h:outputText style="font-size: 14px;" value="#{homeBBean.dataDailyDollar}">
+	   					<f:convertDateTime  pattern="#{msg.pattern_date}"/>
+	   				</h:outputText>
+	   				
+	   				<h:outputText styleClass="labelDarkFontUp" style="float: right;" value="Dollar:"/>
+
+	   				<h:outputText style="font-size: 14px;" value="#{homeBBean.admDailyDollar.rDollar}"/>
+	   				
+   				</h:panelGrid>	
+	   				   		
+	   		</p:panel>
+	   			   
+	   </div>
+	   
+	</ui:define>
+	
+</ui:composition>
+</html>

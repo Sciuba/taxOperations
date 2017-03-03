@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="false" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{originBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbOrigin" var="origin"
+					value="#{originBBean.listaOrigin}" 
+					rowKey="#{origin.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}"
+					rowIndexVar="colIndex"
+					rendered="#{!originBBean.disabledAll}">
+					
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_dialog_sales_origin}" styleClass="labelBold"/>
+			           		</p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('originDialog').show()" value="#{msg.bt_add}" action="#{originBBean.zeraLista}" update=":originDetail" disabled="#{originBBean.disabled}"/>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":originEditDetail" oncomplete="PF('originEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{origin}" target="#{originBBean.originSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_code}" filterBy="#{origin.sCode}" sortBy="#{origin.sCode}">
+						<h:outputText value="#{origin.sCode}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_location}" filterBy="#{origin.sLocale}" sortBy="#{origin.sLocale}">
+						<h:outputText value="#{origin.sLocale}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_state_protocol}" sortBy="#{origin.stateProtocol}">
+						<h:outputText value="#{origin.stateProtocol}"/>
+					</p:column>
+					
+					<p:column headerText="ICMS Interno %" sortBy="#{origin.rIcmsInterno}">
+						<h:outputText value="#{origin.rIcmsInterno}"/>
+					</p:column>
+					
+					<p:column headerText="ICMS InterEstadual %" sortBy="#{origin.rIcmsInterEstadual}">
+						<h:outputText value="#{origin.rIcmsInterEstadual}"/>
+					</p:column>
+																		
+					<p:column headerText="#{msg.label_soft_iss} %">
+						<h:outputText value="#{origin.rIssSoft}"/>
+					</p:column>
+						
+			       	<p:column headerText="#{msg.label_licenca_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[0].rIss}"/>
+					</p:column>   
+					
+					<p:column headerText="#{msg.label_support_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[1].rIss}"/>
+					</p:column>  
+					
+					<p:column headerText="#{msg.label_consultancy_sw_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[2].rIss}"/>
+					</p:column>  
+					
+					<p:column headerText="#{msg.label_startup_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[3].rIss}"/>
+					</p:column> 
+					
+					<p:column headerText="#{msg.label_education_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[4].rIss}"/>
+					</p:column> 
+					
+					<p:column headerText="#{msg.label_hw_maintenance_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[5].rIss}"/>
+					</p:column> 
+					
+					<p:column headerText="#{msg.label_pd_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[6].rIss}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_consultancy_iss} %">
+						<h:outputText value="#{origin.listaOriginXProductType[7].rIss}"/>
+					</p:column>        
+						
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{originBBean.disabled}">
+							<f:setPropertyActionListener value="#{origin}" target="#{originBBean.originSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_sales_origin}" widgetVar="originDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="960" height="510">
+			<h:form id="originDetail" prependId="false">
+				
+				<p:messages id="msgDetailOrigin" showDetail="false" showSummary="true"/>
+			
+				<h:panelGrid columns="6">
+					
+					<h:outputText value="#{msg.label_code}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.sCode}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_location}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.sLocale}" style="width: 200px; padding: 4px;"/>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_standard_iss_rule}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneRadio layout="lineDirection" value="#{originBBean.novoOrigin.fStandardIssRule}">
+							<f:selectItem itemValue="true" itemLabel="Yes"/>
+							<f:selectItem itemValue="false" itemLabel="No"/>
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>					
+									
+					<h:outputText value="#{msg.label_soft_iss} % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.rIssSoft}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_iss_especial} % :" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{originBBean.novoOrigin.rIssEspecial}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</ui:remove>
+					
+					<h:outputText value="ICMS Interno % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.rIcmsInterno}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="ICMS InterEstadual % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.rIcmsInterEstadual}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					
+					<h:outputText value="#{msg.label_licenca_iss} % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[0].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+										
+					<h:outputText value="#{msg.label_support_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[1].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					  
+					<h:outputText value="#{msg.label_consultancy_sw_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[2].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_startup_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[3].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_education_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[4].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_hw_maintenance_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[5].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_pd_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[6].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_consultancy_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.novoOrigin.listaOriginXProductType[7].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+										
+				</h:panelGrid>
+				
+				<br/>
+								
+				<p:separator></p:separator>
+				
+				<ui:remove>
+					<p:panel header="Substituição Tributária" style="width: 100%">
+						<h:panelGrid columns="10">
+						
+							<h:outputText value="HW :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.novoOrigin.productTypeHW}"/>
+							
+							<h:outputText value="SW :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.novoOrigin.productTypeSW}"/>
+							
+							<h:outputText value="CS :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.novoOrigin.productTypeCS}"/>
+							
+							<h:outputText value="PS :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.novoOrigin.productTypePS}"/>
+							
+							<h:outputText value="MD :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.novoOrigin.productTypeMD}"/>
+							
+						</h:panelGrid>
+					</p:panel>
+				</ui:remove>
+				
+				<p:separator></p:separator>
+				
+				<br/>
+				
+				<p:dataTable id="tbProtocol" var="protocol" value="#{originBBean.listaProtocol}"
+					 rowKey="#{protocol.id}" emptyMessage="#{msg.sem_registros}" scrollable="true" scrollHeight="240">
+			        
+			        <p:column headerText="#{msg.label_state}">
+			            <h:outputText value="#{protocol.sCode} - #{protocol.sLocale}" />
+			        </p:column>
+			        <p:column headerText="#{msg.label_protocol}">
+			            <h:selectBooleanCheckbox value="#{protocol.selecionado}"/>
+			        </p:column>
+			       			        
+			    </p:dataTable>
+				
+				<br/><br/>
+				
+				<div style="float: right;">	
+					<p:commandLink action="#{originBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailOrigin">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" action="#{originBBean.zeraLista}"
+						update=":form:tbOrigin" onclick="PF('originDialog').hide()" />
+				</div>
+								
+			</h:form>			
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_edit_sales_origin}" widgetVar="originEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="960" height="510">
+			<h:form id="originEditDetail" prependId="false" acceptcharset="UTF-8">
+			
+				<p:messages id="msgDetailEditOrigin" showDetail="false" showSummary="true"/>
+			
+				<h:panelGrid columns="6"> 
+									
+					<h:outputText value="#{msg.label_code}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.sCode}" style="width: 200px; padding: 4px;" required="true" requiredMessage="This Field 'Code' is required."/>
+					
+					<h:outputText value="#{msg.label_location}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.sLocale}" style="width: 200px; padding: 4px;" required="true" requiredMessage="This Field 'Locale' is required."/>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_standard_iss_rule}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneRadio layout="lineDirection" value="#{originBBean.originSelecionado.fStandardIssRule}">
+							<f:selectItem itemValue="true" itemLabel="Yes"/>
+							<f:selectItem itemValue="false" itemLabel="No"/>
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:outputText value="#{msg.label_soft_iss} % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.rIssSoft}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_iss_especial} % :" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{originBBean.originSelecionado.rIssEspecial}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+							<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+						</h:inputText>
+					</ui:remove>
+					
+					<h:outputText value="ICMS Interno % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.rIcmsInterno}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="ICMS InterEstadual % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.rIcmsInterEstadual}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_licenca_iss} % :" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[0].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+										
+					<h:outputText value="#{msg.label_support_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[1].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					  
+					<h:outputText value="#{msg.label_consultancy_sw_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[2].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_startup_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[3].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_education_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[4].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_hw_maintenance_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[5].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_pd_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[6].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_consultancy_iss} %" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{originBBean.originSelecionado.listaOriginXProductType[7].rIss}" style="width: 100px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+															
+				</h:panelGrid>
+				
+				<br/>
+								
+				<p:separator></p:separator>
+				
+				<ui:remove>
+					<p:panel header="Substituição Tributária">
+						<h:panelGrid columns="10" style="width: 100%">
+						
+							<h:outputText value="HW :" styleClass="labelBoldTable"/>
+							<h:selectBooleanCheckbox value="#{originBBean.originSelecionado.productTypeHW}" />
+							
+							<h:outputText value="SW :" styleClass="labelBoldTable"/>
+							<h:selectBooleanCheckbox value="#{originBBean.originSelecionado.productTypeSW}"/>
+							
+							<h:outputText value="CS :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.originSelecionado.productTypeCS}"/>
+							
+							<h:outputText value="PS :" styleClass="labelBoldTable" />
+							<h:selectBooleanCheckbox value="#{originBBean.originSelecionado.productTypePS}"/>
+							
+							<h:outputText value="MD :" styleClass="labelBoldTable"/>
+							<h:selectBooleanCheckbox value="#{originBBean.originSelecionado.productTypeMD}"/>
+							
+						</h:panelGrid>
+					</p:panel>
+				</ui:remove>
+				
+				<p:separator></p:separator>
+				
+				<br/>
+								
+				<p:dataTable id="tbProtocolEdit" var="protocol" value="#{originBBean.listaProtocol}"
+					rowKey="#{protocol.id}" emptyMessage="#{msg.sem_registros}" scrollable="true" scrollHeight="240">
+			        
+			        <p:column headerText="#{msg.label_state}">
+			            <h:outputText value="#{protocol.sCode} - #{protocol.sLocale}" />
+			        </p:column>
+			        <p:column headerText="#{msg.label_protocol}">
+			            <h:selectBooleanCheckbox value="#{protocol.selecionado}" />
+			        </p:column>
+			       			       			        
+			    </p:dataTable>
+				
+				<br/><br/>
+				
+				<div style="float: right;">	
+					<p:commandLink action="#{originBBean.alter}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailEditOrigin" disabled="#{originBBean.disabled}">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"  action="#{originBBean.zeraLista}"
+						update=":form:tbOrigin" onclick="PF('originEditDialog').hide()" />
+				</div>
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_delete_sales_origin}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<div style="float: right;">		
+						<h:panelGrid columns="2">
+							<p:commandButton ajax="false" action="#{originBBean.delete}" value="Yes" icon="ui-icon-check"
+								update=":form:tbOrigin" onclick="PF('deleteDialog').hide()" />
+								
+							<p:commandButton ajax="false" value="No" icon="ui-icon-closethick" 
+								update=":form:tbOrigin" onclick="PF('deleteDialog').hide()" />
+						</h:panelGrid>
+					</div>						
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+						
+	</ui:define>
+</ui:composition>
+</html>

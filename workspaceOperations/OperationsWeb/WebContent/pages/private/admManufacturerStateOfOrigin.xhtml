@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+
+	<ui:define name="content">
+		<h:form id="form">
+		<div id="conteudo_padrao">
+			<div id="divMsg" align="center">
+				<h:panelGrid>
+					<p:messages id="msg" showDetail="false" showSummary="true" />
+				</h:panelGrid>
+				
+				<h:panelGrid rendered="#{stateOriginBBean.disabledAll}">		
+					<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+						<div class="ui-messages-fatal ui-corner-all">
+						<span class="ui-messages-fatal-icon"></span>
+							<ul>
+								<li>
+									<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+									<span class="ui-messages-fatal-detail"></span>
+								</li>
+							</ul>
+						</div>
+					</div>			
+				</h:panelGrid>
+				
+			</div>
+			<br />
+			<p:dataTable id="tbManufacturerState" var="ma"
+				value="#{stateOriginBBean.listaManufacture}" 
+				rowKey="#{ma.id}" paginator="true" rows="20"
+				emptyMessage="#{msg.sem_registros}"
+				rendered="#{!stateOriginBBean.disabledAll}">
+				
+				<f:facet name="header">
+		           <div align="left" style="width: 13%; float: left;"><p:outputLabel style="text-align: left">
+		           		<h:outputText value="#{msg.header_table_state_origin}" styleClass="labelBold"/>
+		           </p:outputLabel></div>
+		           <div align="right" style="width: 100%"><p:outputLabel id="commands" style="text-align: right">
+		           		<p:commandButton onclick="PF('manufacturerDialog').show()" value="#{msg.bt_add}" disabled="#{stateOriginBBean.disabled}"/>
+		           </p:outputLabel></div>
+		        </f:facet>
+				
+				<p:column style="width: 20px; text-align: center;">
+					<p:commandButton update=":manufacturerEditDetail" oncomplete="PF('manufacturerEditDialog').show()" icon="ui-icon-search" title="View">
+						<f:setPropertyActionListener value="#{ma}" target="#{stateOriginBBean.manufacturerStateOfOriginSelecionado}" />
+					</p:commandButton>
+				</p:column>
+				
+				<p:column headerText="#{msg.label_code}" filterBy="#{ma.sCode}" sortBy="#{ma.sCode}">
+					<h:outputText value="#{ma.sCode}" />
+				</p:column>
+				
+				<p:column headerText="#{msg.label_description}" filterBy="#{ma.sDescription}" sortBy="#{ma.sDescription}">
+					<h:outputText value="#{ma.sDescription}" />
+				</p:column>
+				
+				<p:column headerText="#{msg.label_icms}" >
+					<h:outputText value="#{ma.ricms}" />
+				</p:column>
+
+				<p:column headerText="#{msg.label_icms_import}" >
+					<h:outputText value="#{ma.ricmsMaterialImportado}" />
+				</p:column>
+
+				<p:column headerText="#{msg.label_ipi}" >
+					<h:outputText value="#{ma.ripi}" />
+				</p:column>
+				
+				<p:column style="width: 20px; text-align: center;">
+					<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="Delete" disabled="#{stateOriginBBean.disabled}">
+						<f:setPropertyActionListener value="#{ma}" target="#{stateOriginBBean.manufacturerStateOfOriginSelecionado}" />
+						<!-- <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" /> -->
+					</p:commandButton>
+				</p:column>
+				
+				<f:facet name="footer">
+					
+				</f:facet>
+			</p:dataTable>
+			
+			<!-- <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+		        <h:commandButton action="#{manufacture.deleteManufacturer}" value="Yes" styleClass="ui-confirmdialog-yes" />
+		        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		    </p:confirmDialog> -->
+			
+			<br />
+			</div>
+		</h:form>
+
+		<p:dialog header="#{msg.header_dialog_new_state_origin}" widgetVar="manufacturerDialog"
+			modal="true" showEffect="fade" hideEffect="fade" width="600" height="550">
+			<h:form id="manufacturerDetail" acceptcharset="UTF-8" lang="pt_BR">
+				<h:panelGrid columns="2" >
+
+					<h:outputText value="#{msg.label_icms}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.novoManufacturerStateOfOriginSelecionado.ricms}" style="width: 300px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+
+					<h:outputText value="#{msg.label_icms_import}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.novoManufacturerStateOfOriginSelecionado.ricmsMaterialImportado}" style="width: 300px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+
+					<h:outputText value="#{msg.label_ipi}:" styleClass="labelBold" style="padding: 4px;" />
+					<h:inputText value="#{stateOriginBBean.novoManufacturerStateOfOriginSelecionado.ripi}" style="width: 300px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+
+					<h:outputText value="#{msg.label_code}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.novoManufacturerStateOfOriginSelecionado.sCode}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{stateOriginBBean.novoManufacturerStateOfOriginSelecionado.sDescription}" style="width: 300px; height: 84px; padding: 4px;"/>
+
+				</h:panelGrid>
+				<br/>
+				<br/>
+				
+				<p:separator></p:separator>
+				
+				<br/>
+				<br/>
+				
+				<p:dataTable id="tbProtocol" var="protocol" value="#{stateOriginBBean.listaOrigin}"
+					rowKey="#{protocol.id}" emptyMessage="#{msg.sem_registros}" rows="6" paginator="true">
+			        
+			        <p:column headerText="#{msg.label_state}">
+			            <h:outputText value="#{protocol.sCode} - #{protocol.sLocale}" />
+			        </p:column>
+			        <p:column headerText="#{msg.label_protocol}">
+			            <h:selectBooleanCheckbox value="#{protocol.selecionado}" />
+			        </p:column>
+			       			       			        
+			    </p:dataTable>
+			    
+			    <br/><br/><br/>
+			    				
+				<p:commandButton ajax="false" action="#{stateOriginBBean.saveAdmManufacture}" value="Save" icon="ui-icon-check"
+					update=":form:tbManufacturerState" onclick="PF('manufacturerDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbManufacturerState" onclick="PF('manufacturerDialog').hide()" />
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="#{msg.header_dialog_edit_state_origin}"
+			widgetVar="manufacturerEditDialog" modal="true" showEffect="fade"
+			hideEffect="fade" resizable="false" width="600" height="550">
+			<h:form id="manufacturerEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+				<h:panelGrid columns="2" >
+
+					<h:outputText value="#{msg.label_icms}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.manufacturerStateOfOriginSelecionado.ricms}" style="width: 300px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+
+					<h:outputText value="#{msg.label_icms_import}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.manufacturerStateOfOriginSelecionado.ricmsMaterialImportado}"  style="width: 300px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+
+					<h:outputText value="#{msg.label_ipi}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.manufacturerStateOfOriginSelecionado.ripi}" style="width: 300px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+
+					<h:outputText value="#{msg.label_code}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{stateOriginBBean.manufacturerStateOfOriginSelecionado.sCode}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{stateOriginBBean.manufacturerStateOfOriginSelecionado.sDescription}" style="width: 300px; height: 84px; padding: 4px;"/>
+
+				</h:panelGrid>
+				
+				<br/>
+				<br/>
+				
+				<p:separator></p:separator>
+				
+				<br/>
+				<br/>
+				
+				<p:dataTable id="tbProtocol" var="protocol" value="#{stateOriginBBean.listaOrigin}"
+					rowKey="#{protocol.id}" emptyMessage="#{msg.sem_registros}" rows="6" paginator="true">
+			        
+			        <p:column headerText="#{msg.label_state}">
+			            <h:outputText value="#{protocol.sCode} - #{protocol.sLocale}" />
+			        </p:column>
+			        <p:column headerText="#{msg.label_protocol}">
+			            <h:selectBooleanCheckbox value="#{protocol.selecionado}" />
+			        </p:column>
+			       			       			        
+			    </p:dataTable>
+			    
+			    <br/><br/><br/>
+			    
+				<p:commandButton ajax="false" action="#{stateOriginBBean.alterAdmManufacture}" value="#{msg.bt_update}" icon="ui-icon-check"
+					update=":form:tbManufacturerState" oncomplete="PF('manufacturerEditDialog').hide()" disabled="#{stateOriginBBean.disabled}"/>
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbManufacturerState" onclick="PF('manufacturerEditDialog').hide()" />
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_delete_state_origin}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false" width="300">
+			<h:form id="manufacturerDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{stateOriginBBean.deleteManufacturer}" value="Yes" icon="ui-icon-check"
+							update=":form:tbManufacturerState" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbManufacturerState" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+
+</ui:composition>
+</html>

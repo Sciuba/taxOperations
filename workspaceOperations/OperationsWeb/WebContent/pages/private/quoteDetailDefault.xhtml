@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"  
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	  xmlns:pe="http://primefaces.org/ui/extensions">
+      
+     	<div style="width: 100%; height:35px; display: block;">
+	     	<h:graphicImage library="images" name="Brazil.png" rendered="#{detailBBean.currencyChange}" style="float: left;"/>
+			<h:graphicImage library="images" name="USA.png" rendered="#{!detailBBean.currencyChange}" style="float: left;"/>
+     	
+	     	<h:panelGrid columns="5" rendered="#{detailBBean.quoteSelecionado.mDollarRate > 0}" style="float: left;">
+				<h:selectBooleanCheckbox value="#{detailBBean.currencyChange}">
+					<p:ajax event="click" listener="#{detailBBean.alterCurrency}" update=":form :goalSeek"/>
+				</h:selectBooleanCheckbox>
+				<h:outputText value="#{msg.label_txt_currency}"/>
+				(<h:outputText value="#{detailBBean.quoteSelecionado.mDollarRate}" style="font-weight: bold;">
+					<f:convertNumber pattern="#0.0000" />
+				</h:outputText>)
+			</h:panelGrid>
+		</div>
+				
+		<h:panelGrid columns="8" width="908px">
+				
+			<p:commandButton value="#{msg.label_quote_detals}" onclick="PF('detailsDialog').show();"/>
+			<p:commandButton value="#{msg.label_quote_review}" onclick="PF('quoteReview').show();"/>
+			<ui:remove>  <p:commandButton value="#{msg.discount_class}"/> </ui:remove>
+			<p:commandButton value="#{msg.label_goal_seek}" onclick="PF('goalSeek').show();" rendered="#{detailBBean.goalSeekPerm and detailBBean.quoteSelecionado.dtRelease == null and detailBBean.quoteSelecionado.dtClose == null}"/>
+			<p:commandButton value="Discount by Product Type" onclick="PF('disocuntProductType').show();" rendered="#{detailBBean.quoteSelecionado.dtRelease == null and detailBBean.quoteSelecionado.dtClose == null and detailBBean.write}"/>
+			<p:commandButton value="#{msg.label_restore_values}" onclick="PF('restoreValues').show();" rendered="#{detailBBean.restoreValue and detailBBean.quoteSelecionado.dtRelease == null and detailBBean.quoteSelecionado.dtClose == null}"/>
+			<p:commandButton value="#{msg.label_release_quote}" onclick="PF('releaseQuote').show();" rendered="#{detailBBean.quoteSelecionado.dtRelease == null and detailBBean.quoteSelecionado.dtClose == null and detailBBean.write}"/>
+			<p:commandButton value="ReOpen Quote" onclick="PF('unreleaseQuote').show();" rendered="#{detailBBean.quoteSelecionado.dtRelease != null and detailBBean.quoteSelecionado.dtClose == null and detailBBean.write}"/>
+			<p:commandButton value="Close Quote" onclick="PF('closeQuote').show();" rendered="#{detailBBean.quoteSelecionado.dtRelease != null and detailBBean.quoteSelecionado.dtClose == null and detailBBean.write}"/>
+			<p:commandButton value="Old Versions" onclick="PF('oldVersions').show();" rendered ="#{detailBBean.oldVersion}"/>
+			
+			<ui:remove>
+				<p:commandButton value="#{msg.label_total_margin}" disabled="true"/>							
+			</ui:remove>
+				
+			<p:commandButton value="#{msg.label_reports}" action="#{detailBBean.prepareReport}" update=":form"/>
+			
+		</h:panelGrid>
+		
+		<p:separator/>
+			
+		<p:panelGrid columns="3" style="border: 1px solid grey; width: 100%;">
+			
+			<h:outputText value="#{msg.label_quote_number} - #{msg.label_version}"/>
+			<h:outputText value="#{msg.label_customer}"/>
+			<h:outputFormat value="">
+				<h:outputText value="#{msg.label_quote_name}"/>
+				<h:outputText value=" "/>
+				<p:commandLink id="changeName" value="#{msg.label_change_quote_name}" onclick="PF('changeNameDialog').show();" title="#{msg.label_change_quote_name}" disabled="#{detailBBean.read}"/>									
+			</h:outputFormat>								
+			
+			
+			<h:outputText value="#{detailBBean.quoteSelecionado.sQuoteNumber} / #{detailBBean.quoteSelecionado.iQuoteVersion}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.sCustomer}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.sQuoteName}" styleClass="labelBold"/>
+			
+		</p:panelGrid>
+		
+		<p:panelGrid columns="7" style="border: 1px solid grey; margin-top:3px; width: 100%;">
+			
+			<h:outputText value="#{msg.label_sales_rep}"/>
+			<h:outputText value="#{msg.label_sale_destination}"/>
+			<h:outputText value="#{msg.label_sale_origin_hw}"/>
+			<h:outputText value="#{msg.label_sale_origin_sw}"/>
+			<h:outputText value="#{msg.label_sale_origin_sv}"/>
+			<h:outputText value="#{msg.label_sale_origin_mt}"/>
+			<h:outputText value="#{msg.label_currency}"/> 
+			
+			
+			<h:outputText value="#{detailBBean.quoteSelecionado.tbSysUser.sFullName}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.tbAdmDestination.sCode} - #{detailBBean.quoteSelecionado.tbAdmDestination.sLocale}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.tbAdmOriginHw.sCode} - #{detailBBean.quoteSelecionado.tbAdmOriginHw.sLocale}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.tbAdmOriginSw.sCode} - #{detailBBean.quoteSelecionado.tbAdmOriginSw.sLocale}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.tbAdmOriginSv.sCode} - #{detailBBean.quoteSelecionado.tbAdmOriginSv.sLocale}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.quoteSelecionado.tbAdmOriginMt.sCode} - #{detailBBean.quoteSelecionado.tbAdmOriginMt.sLocale}" styleClass="labelBold"/>
+			<h:outputText value="#{detailBBean.currency}" styleClass="labelBold"/>
+			
+		</p:panelGrid>	
+	
+		<p:separator/>
+		
+		<table id="tbQuoteDetail" border="1" cellpadding="3" cellspacing="0" style="border: 1px solid #D5D5D5; width: 100%;">
+			<thead>
+				<tr>
+					<th style="background: #BEBCBC;"><h:outputText value="#{detailBBean.quoteSelecionado.id}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="#"/></th>
+					<th style="background: #BEBCBC; font-weight: bold; width: 4%"><h:outputText value="#{msg.label_type}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="#{msg.label_sts}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold; width: 50%;"><h:outputText value="#{msg.label_part_number}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="#{msg.label_ncm}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="#{msg.label_qty}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="List Price"/></th> <!-- Alterado de Revenue para ListPrice value="#{msg.label_revenue}-->
+					<th style="background: #BEBCBC; font-weight: bold;" width="4%"><h:outputText value="#{msg.label_discount} %"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="#{msg.label_net_price}"/></th>
+					<th style="background: #BEBCBC; font-weight: bold;"><h:outputText value="#{msg.label_gross_price}"/></th>
+					<th style="background: #BEBCBC;"><h:outputText value=" "/></th>
+				</tr>
+			</thead>
+			
+			<ui:repeat value="#{detailBBean.quoteModel.listaQuoteItemTO}" var="detail" varStatus="status">
+				
+				<tr >
+					<td style="#{detail.styleTd}"> 
+						<h:selectBooleanCheckbox value="#{detail.checked}" rendered="#{detailBBean.goalSeek and detail.checked and !detailBBean.checkedDiscountPT}" />
+						<h:selectBooleanCheckbox value="#{detail.checked}" rendered="#{detailBBean.checkedDiscountPT and detail.checked and !detailBBean.goalSeek}" />
+					</td>
+					<td style="#{detail.styleTd}">
+						
+						<h:outputText value="#{detail.sOrdem}" style="#{detail.style}" rendered="#{detail.idTaxQuoteItem == detail.id or detail.fAutoGeneratedBySystem == 1}"/>
+						
+						<p:commandLink value="#{detail.sOrdem}" style="#{detail.style}" rendered="#{detail.idTaxQuoteItem != detail.id and detail.fAutoGeneratedBySystem != 1}">
+							<f:param name="idItem" value="#{detail.id}" />
+							<p:ajax event="click" listener="#{detailBBean.popularItemSelecionado}" update=":formFather" oncomplete="PF('fatherDialog').show();"/>
+						</p:commandLink>
+						
+					</td>
+					<td style="text-align: left; #{detail.styleTd}"><h:outputText value="#{detail.sLabelProductType}" style="#{detail.style}"/></td>
+					<td style="#{detail.styleTd}"><h:outputText value="" style="#{detail.style}"/></td>
+					<td style="text-align: left; #{detail.styleTd}">
+						<p:commandLink value="#{detail.sModel}" style="#{detail.style}">
+							<f:param name="partNumber" value="#{detail.idAdmMaterial}" />
+							<p:ajax event="click" listener="#{detailBBean.popularMaterialSelecionado}" update=":materialEditDetail" oncomplete="PF('materialEdit').show();"/>
+						</p:commandLink>
+						
+						<br/>
+						
+						<h:outputText value="#{detail.sImpDescription}" style="#{detail.style}" rendered="#{not empty detail.sImpDescription}"/>
+						<h:outputText value="#{detail.sDescription}" style="#{detail.style}" rendered="#{empty detail.sImpDescription}"/>
+						<h:graphicImage library="images" name="stop.png" style="float:right;"  rendered="#{detail.iCalculationModel == 99}" title="#{msg.msg_title_calc_99}"/>
+						<h:graphicImage library="images" name="warning.png" style="float:right;"  rendered="#{detail.fUseMaxIvaMaterialImportado == 1}" title="#{msg.msg_max_iva}"/>
+					</td>
+					<td style="text-align: left; #{detail.styleTdNcm}">
+						
+						<h:outputText value="#{detail.sNCMMaterialClassPai}" style="#{detail.style}" rendered="#{not empty detail.sNCMMaterialClassPai and detail.idTaxQuoteItem != detail.id and detail.idTaxQuoteItem != 0}"/>
+						<h:outputText value="#{detail.sNCMMaterialClass}" style="#{detail.style}" rendered="#{empty detail.sNCMMaterialClassPai and detail.idTaxQuoteItem != detail.id and detail.idTaxQuoteItem != 0}"/>
+						
+						<p:commandLink value="#{detail.sNCMMaterialClassPai}" style="#{detail.style}" rendered="#{not empty detail.sNCMMaterialClassPai and (detail.idTaxQuoteItem == 0 or detail.idTaxQuoteItem == detail.id) and detail.fAutoGeneratedBySystem != 1}">
+							<f:param name="idItem" value="#{detail.id}" />
+							<p:ajax event="click" listener="#{detailBBean.popularItemSelecionado}" update=":formNcm" oncomplete="PF('ncmDialog').show();"/>
+						</p:commandLink>
+						
+						<p:commandLink value="#{detail.sNCMMaterialClass}" style="#{detail.style}"  rendered="#{empty detail.sNCMMaterialClassPai and (detail.idTaxQuoteItem == 0 or detail.idTaxQuoteItem == detail.id) and detail.fAutoGeneratedBySystem != 1}">
+							<f:param name="idItem" value="#{detail.id}" />
+							<p:ajax event="click" listener="#{detailBBean.popularItemSelecionado}" update=":formNcm" oncomplete="PF('ncmDialog').show();"/>
+						</p:commandLink>
+						
+					</td>
+					<td style="text-align: right; #{detail.styleTd}">
+						<h:outputText value="#{detail.rQty}" style="#{detail.style}" rendered="#{detail.iLineNumber != 0}">
+							<f:convertNumber integerOnly="true"/>
+						</h:outputText>
+						<h:inputText value="#{detail.rQty}" style="#{detail.style} width: 50px; text-align: right;" rendered="#{detail.iLineNumber == 0}">
+							<f:convertNumber integerOnly="true"/>
+						</h:inputText>
+					</td>
+					<td style="text-align: right; #{detail.styleTd}">
+						<h:outputFormat rendered="#{detail.idTaxQuoteItem != detail.id}">
+							<h:outputText value="#{detail.mImportedCost}" style="#{detail.style}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber type="currency" currencySymbol="$"/>
+							</h:outputText>
+							<h:outputText value="#{detail.mImportedCost}" style="#{detail.style}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber type="currency" currencySymbol="R$"/>
+							</h:outputText>
+						</h:outputFormat>
+					</td>
+					<td style="#{detail.styleTd}" width="6%">
+						<h:outputFormat rendered="#{detail.idTaxQuoteItem != detail.id}">
+							<h:inputText value="#{detail.rDiscount}" style="width: 90%; #{detail.style} text-align: right;" rendered="#{detailBBean.discount}">
+								<f:convertNumber pattern="#0.00" minFractionDigits="2" maxFractionDigits="2"/>
+							</h:inputText>
+							<h:outputText value="#{detail.rDiscount}" style="width: 90%; #{detail.style} text-align: right;" rendered="#{!detailBBean.discount}">
+								<f:convertNumber pattern="#0.00" minFractionDigits="2" maxFractionDigits="2"/>
+							</h:outputText>
+						</h:outputFormat>
+					</td>
+					<td style="text-align: right; #{detail.styleTd}">
+						<h:outputFormat rendered="#{detail.idTaxQuoteItem != detail.id}">
+							<h:outputText value="#{detail.mNetPrice}" style="#{detail.style}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.mNetPrice}" style="#{detail.style}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</h:outputFormat>
+					</td>
+					<td style="text-align: right; #{detail.styleTd}">
+						<h:outputFormat rendered="#{detail.idTaxQuoteItem != detail.id}">
+							<h:outputText value="#{detail.mGrossPrice}" style="#{detail.style}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.mGrossPrice}" style="#{detail.style}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</h:outputFormat>
+					</td>
+					<td style="width: 4%; text-align: center;">
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{detailBBean.delete}">
+							<f:setPropertyActionListener value="#{detail.idTaxQuoteItem}" target="#{detailBBean.idQuoteItemDeleted}"/> 
+						</p:commandButton>
+					</td>
+				</tr>
+				
+				<h:outputFormat value=" " rendered="#{detailBBean.quoteModel.listaQuoteItemTO[status.index].iFlagTypeLine == 2 and detailBBean.quoteModel.listaQuoteItemTO[status.index+1].iFlagTypeLine == 3}">
+					<tr>
+						<td colspan="7" style="#{detail.listaTotais[0].style} font-style: italic; text-align: right; padding-right: 10px;"><h:outputText value="#{detail.listaTotais[0].texto}:"/></td>
+						<td style="#{detail.listaTotais[0].style} font-style: italic; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].revenue}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].revenue}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+						<td style="#{detail.listaTotais[0].style} font-style: italic; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].netTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].netTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style} font-style: italic; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].grossTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].grossTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+					</tr>
+																			
+				</h:outputFormat>
+				
+				<h:outputFormat value=" " rendered="#{detailBBean.quoteModel.listaQuoteItemTO[status.index].iFlagTypeLine == 2 and detailBBean.quoteModel.listaQuoteItemTO[status.index+1].iFlagTypeLine == 1}">
+					<tr>
+						<td colspan="7" style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right; padding-right: 10px;"><h:outputText value="#{detail.listaTotais[0].texto}:"/></td>
+						<td style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].revenue}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].revenue}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+						<td style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].netTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].netTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].grossTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].grossTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+					</tr>
+																			
+				</h:outputFormat>
+				
+				<h:outputFormat value=" " rendered="#{detailBBean.quoteModel.listaQuoteItemTO[status.index].iFlagTypeLine == 3 and detailBBean.quoteModel.listaQuoteItemTO[status.index+1].iFlagTypeLine == 1}">
+					<tr>
+						<td colspan="7" style="#{detail.listaTotais[0].style} font-style: italic; text-align: right; padding-right: 10px;"><h:outputText value="#{detail.listaTotais[0].texto}:"/></td>
+						<td style="#{detail.listaTotais[0].style} font-style: italic; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].revenue}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].revenue}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+						<td style="#{detail.listaTotais[0].style} font-style: italic; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].netTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].netTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style} font-style: italic; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[0].grossTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[0].grossTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+					</tr>
+					
+					<tr>
+						<td colspan="7" style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right; padding-right: 10px;"><h:outputText value="#{detail.listaTotais[1].texto}:"/></td>
+						<td style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[1].revenue}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[1].revenue}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+						<td style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[1].netTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[1].netTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style} font-weight: bold; text-align: right;">
+							<h:outputText value="#{detail.listaTotais[1].grossTotal}" rendered="#{!detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="$" type="currency"/>
+							</h:outputText>
+							<h:outputText value="#{detail.listaTotais[1].grossTotal}" rendered="#{detailBBean.currencyChange}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="pt_BR"/>
+							</h:outputText>
+						</td>
+						<td style="#{detail.listaTotais[0].style}"></td>
+					</tr>
+																			
+				</h:outputFormat>
+				
+				
+			</ui:repeat>
+	
+		</table>
+		
+									
+		<p:tabView id="tabsFooter">
+		
+			<p:tab title="#{msg.label_revenue}" titleStyle="font-size: 10px !important;">
+				
+				<p:panelGrid id="tabGoalSeek" columns="6" style="width: 100%;">
+		
+					<h:outputText value=" "/>
+					
+					<h:outputText value="HW" styleClass="labelBold"/>
+													
+					<h:outputText value="SW" styleClass="labelBold"/>
+													
+					<h:outputText value="SV" styleClass="labelBold"/>
+													
+					<h:outputText value="MD" styleClass="labelBold"/>
+													
+					<h:outputText value="Total" styleClass="labelBold"/>
+					
+					<h:outputText value="Net Price" styleClass="labelBold"/>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceHW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceHW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceSW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceSW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceCS}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceCS}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceMD}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceMD}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rNetPrice}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rNetPrice}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+													
+					<h:outputText value="Gross Price" styleClass="labelBold"/>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceHW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceHW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceSW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceSW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceCS}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceCS}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceMD}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceMD}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rGrossPrice}"  rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rGrossPrice}"  rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+		
+				</p:panelGrid>
+				
+			</p:tab>
+			
+			<p:tab title="#{msg.label_summary}" titleStyle="font-size: 10px !important;">
+			
+				<p:panelGrid id="tabSummary" columns="6" style="width: 100%;">
+		
+					<h:outputText value=" "/>
+					
+					<h:outputText value="HW" styleClass="labelBold"/>
+													
+					<h:outputText value="SW" styleClass="labelBold"/>
+													
+					<h:outputText value="SV" styleClass="labelBold"/>
+													
+					<h:outputText value="MD" styleClass="labelBold"/>
+													
+					<h:outputText value="Total" styleClass="labelBold"/>
+					
+					<h:outputText value="Taxes (Admin)" styleClass="labelBold" />
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesHW}"  rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesHW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesSW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesSW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesCS}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesCS}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesMD}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesMD}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.gsTaxesTotal}" styleClass="labelBold"  rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.gsTaxesTotal}" styleClass="labelBold" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					
+					
+					<h:outputText value="Taxes (Sales)" styleClass="labelBold" />
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesHW}"  rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesHW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesSW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesSW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesCS}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesCS}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesMD}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.taxesMD}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.gsTaxesTotal}" styleClass="labelBold"  rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.gsTaxesTotal}" styleClass="labelBold" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					
+					
+					<h:outputText value="Net Price" styleClass="labelBold"/>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceHW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceHW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceSW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceSW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceCS}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceCS}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceMD}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceMD}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rNetPrice}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rNetPrice}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					
+													
+					<h:outputText value="Gross Price" styleClass="labelBold"/>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceHW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceHW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceSW}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceSW}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceCS}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceCS}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceMD}" rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.grossPriceMD}" rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rGrossPrice}"  rendered="#{!detailBBean.currencyChange}">
+						<f:convertNumber type="currency"/>
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.rGrossPrice}"  rendered="#{detailBBean.currencyChange}">
+						<f:convertNumber type="currency" locale="pt_BR"/>
+					</h:outputText>
+					
+				</p:panelGrid>
+			
+			</p:tab>
+			
+			<ui:remove>
+			
+			<p:tab title="#{msg.label_margin}" titleStyle="font-size: 10px !important;">
+			
+				<p:panelGrid id="tabMargin" columns="7" style="width: 100%;">
+		
+					<h:outputText value=" "/>
+					
+					<h:outputText value="HW" styleClass="labelBold"/>
+													
+					<h:outputText value="SW" styleClass="labelBold"/>
+													
+					<h:outputText value="SV" styleClass="labelBold"/>
+													
+					<h:outputText value="MD" styleClass="labelBold"/>
+					
+					<h:outputText value="HW + SW" styleClass="labelBold"/>
+													
+					<h:outputText value="Total" styleClass="labelBold"/>
+					
+					<h:outputText value="Net Margin" styleClass="labelBold"/>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netMarginHW} %" styleClass="labelBold">
+						<f:convertNumber  maxFractionDigits="2" minFractionDigits="2"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netMarginSW} %" styleClass="labelBold">
+						<f:convertNumber  maxFractionDigits="2" minFractionDigits="2"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netMarginCS} %" styleClass="labelBold">
+						<f:convertNumber  maxFractionDigits="2" minFractionDigits="2"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netMarginMD} %" styleClass="labelBold">
+						<f:convertNumber  maxFractionDigits="2" minFractionDigits="2"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.hwPlusSWMargin} %" styleClass="labelBold">
+						<f:convertNumber  maxFractionDigits="2" minFractionDigits="2"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netMarginTotal} %" styleClass="labelBold">
+						<f:convertNumber  maxFractionDigits="2" minFractionDigits="2"/>	
+					</h:outputText>
+					
+					<h:outputText value="(Net Price - Cost)"/>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceLessCostHW}">
+						<f:convertNumber  type="currency"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceLessCostSW}">
+						<f:convertNumber  type="currency"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceLessCostCS}">
+						<f:convertNumber  type="currency"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceLessCostMD}">
+						<f:convertNumber  type="currency"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.HWPlusSWCost}">
+						<f:convertNumber  type="currency"/>	
+					</h:outputText>
+					
+					<h:outputText value="#{detailBBean.quoteModel.netPriceLessCostTotal}">
+						<f:convertNumber  type="currency"/>	
+					</h:outputText>
+					
+				</p:panelGrid>	
+			</p:tab>
+		
+		</ui:remove>
+		
+		</p:tabView>
+      
+</ui:composition>
+

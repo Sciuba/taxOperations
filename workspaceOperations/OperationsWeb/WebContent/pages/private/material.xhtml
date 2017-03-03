@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{materialBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+				
+				<p:panel header="#{msg.header_dialog_material}" rendered="#{!materialBBean.disabledAll}">
+				
+					<h:panelGrid columns="8" style="width: 60%">
+						
+						<h:outputText value="Filters:" styleClass="labelBold"/>
+						
+						<h:selectOneMenu value="#{materialBBean.filtroSelecionado}" style="padding: 4px;">
+							<f:selectItem itemValue="0" itemLabel=" "/>
+							<f:selectItem itemValue="1" itemLabel="In Use"/>
+							<f:selectItem itemValue="2" itemLabel="Not Avaliable"/>
+							<f:selectItem itemValue="3" itemLabel="In Use and Not Avaliable"/>
+						</h:selectOneMenu>
+						
+						<h:inputText value="#{materialBBean.filtroAlias}" pt:placeholder="Manufacturer" style="padding: 4px; font-size: 12px;"/>
+						
+						<h:inputText value="#{materialBBean.filtroPartNumber}" pt:placeholder="Part Number" style="padding: 4px; font-size: 12px;"/>
+						
+						<h:inputText value="#{materialBBean.filtroDescription}" pt:placeholder="Description" style="padding: 4px; font-size: 12px;"/>
+						
+						<h:inputText value="#{materialBBean.filtroNcm}" pt:placeholder="NCM" style="padding: 4px; font-size: 12px;"/>
+						
+						<p:commandButton value="#{msg.bt_search}" action="#{materialBBean.aplicarFiltro}" update=":form"/>
+						
+						<p:commandButton value="Reset" action="#{materialBBean.resetFilter}" onclick="javascript:zerarFiltrosTable();" update=":form"/>
+						
+					</h:panelGrid>
+					
+			        <p:commandButton onclick="PF('materialDialog').show()" value="#{msg.bt_add}" style="float:right; margin-right: 5px;  margin-top: -27px;" disabled="#{materialBBean.disabled}"/>
+							
+					<p:dataTable id="tbMaterial" var="material"	value="#{materialBBean.lazyModel}"  rowKey="#{material.id}" 
+						paginator="true" rows="50" emptyMessage="#{msg.sem_registros}"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+	                 			rowsPerPageTemplate="10,50,100" lazy="true" style="margin-top: 5px;">
+				        
+				        <p:column style="width: 20px; text-align: center;">
+							<p:commandButton update=":materialEditDetail" oncomplete="PF('materialEditDialog').show()" icon="ui-icon-search" title="View">
+								<f:setPropertyActionListener value="#{material}" target="#{materialBBean.materialSelecionado}" />
+							</p:commandButton>
+						</p:column>
+											
+						<p:column headerText="#{msg.label_manufacturer}" sortBy="#{material.tbAdmMaterialManufacturer.sAlias}">
+							<h:outputText value="#{material.tbAdmMaterialManufacturer.sAlias}" style="#{material.style}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_part_number}" sortBy="#{material.sInternalModel}">
+							<h:outputText value="#{material.sInternalModel}" style="#{material.style}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_description}" sortBy="#{material.sDescription}">
+							<h:outputText value="#{material.sDescription}" style="#{material.style}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_ncm}" sortBy="#{material.tbAdmMaterialClass.sNcm}">
+							<h:outputText value="#{material.tbAdmMaterialClass.sNcm} #{material.tbAdmMaterialClass.siglaSt}" style="#{material.style}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_category}" sortBy="#{material.tbAdmMaterialCategory.sHashCode}">
+							<h:outputText value="#{material.tbAdmMaterialCategory.sHashCode}" style="#{material.style}"/>
+						</p:column>
+						
+						<p:column style="width: 20px; text-align: center;" >
+							<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" rendered="#{!material.disabled}" disabled="#{materialBBean.disabled}">
+								<f:setPropertyActionListener value="#{material}" target="#{materialBBean.materialSelecionado}" />
+							</p:commandButton>
+						</p:column>
+						
+					</p:dataTable>
+			</p:panel>
+			
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_material}" widgetVar="materialDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="800" height="550">
+			<h:form id="materialDetail" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:messages id="msgDetailMaterial" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="4" id="tab1New">
+					
+					<h:outputText value="#{msg.label_manufacturer}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.manufacturerSelecionado}" style="padding: 4px; font-size: 12px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaManufacturers}" var="m" 
+							itemLabel="#{m.sAlias} - #{m.stateDescription}" itemValue="#{m.id}"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneRadio value="#{materialBBean.novoMaterial.fAvailable}" >
+							<f:selectItem itemLabel="No" itemValue="false"/>
+							<f:selectItem itemLabel="Yes" itemValue="true"/>						
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_serial_req}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneRadio value="#{materialBBean.novoMaterial.fExigeSerialNumberParaSW}">
+						<f:selectItem itemLabel="No" itemValue="false"/>
+						<f:selectItem itemLabel="Yes" itemValue="true"/>
+					</h:selectOneRadio>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="4" id="tab2New">
+					
+					<h:outputText value="#{msg.label_ncm}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_part_number}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:selectOneMenu value="#{materialBBean.classSelecionado}" style="padding: 4px; font-size: 12px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaMaterialClass}" var="c" 
+							itemLabel="#{c.sNcm} (#{c.tbAdmProductType.sLabel}) #{c.subsTributariaST}" itemValue="#{c.id}"/>
+					</h:selectOneMenu>
+					
+					<h:inputText value="#{materialBBean.novoMaterial.sInternalModel}" style="padding: 4px; width: 200px;"/>
+	
+					<h:outputText value="Variação de Part Number:" styleClass="labelBold" style="padding: 4px;" />
+					<h:selectBooleanCheckbox value="#{materialBBean.novoMaterial.fVariacaoPartNumber}" />	
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:outputText value="Material Category:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.novoMaterial.category}" >
+						<f:selectItem itemLabel="Select" itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaCategory}" var="cat" itemLabel="#{cat.sHashCode}" itemValue="#{cat.id}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="Material Support:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.novoMaterial.support}" >
+						<f:selectItem itemLabel="Select" itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaSupport}" var="sup" itemLabel="#{sup.sName}" itemValue="#{sup.id}"/>
+					</h:selectOneMenu>
+						
+					<ui:remove>
+						<h:outputText value="#{msg.label_dc}:" styleClass="labelBold" style="padding: 4px; font-size: 12px;"/>
+						<h:selectOneMenu value="#{materialBBean.discountSelecionado}" style="padding: 4px;">
+							<f:selectItem itemLabel=" " itemValue="-1"/>
+							<f:selectItems value="#{materialBBean.listaDiscount}" var="d" 
+								itemLabel="#{d.SCode}" itemValue="#{d.id}"/>
+						</h:selectOneMenu>
+					</ui:remove>
+					
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sDescription}" style="padding: 4px; width: 622px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="4">
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_manufacturer_model}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{materialBBean.novoMaterial.sManufacturerModel}" style="padding: 4px; width: 200px;"/>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_primary_unit_measure}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sPrimaryUnitMeasure}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_life_cycle}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sLifeCyclePhase}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_item_type}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sItemType}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_item_status}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sItemStatus}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_trans_condit_class}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sTransactionConditionClass}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_line_business}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sLineBusiness}" style="padding: 4px; width: 200px;"/>					
+					
+					<h:outputText value="#{msg.label_list_price}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.mListPrice}" style="padding: 4px;" title="$" converterMessage="Please in 'List Price' only numbers">
+						<f:convertNumber type="currency"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_rep_floor_price}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.mRepFloorPrice}" style="padding: 4px;" title="$" converterMessage="Please in 'Rep Floor Price' only numbers">
+						<f:convertNumber type="currency"/>
+					</h:inputText>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<ui:remove>
+					<h:panelGrid columns="4">
+				
+					
+						<h:outputText value="#{msg.label_cost}:" styleClass="labelBold" style="padding: 4px;"/>
+						<pe:inputNumber value="#{materialBBean.novoMaterial.mCost}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;" title="$"/>
+					
+						<h:outputText value="#{msg.label_standard_cost}:" styleClass="labelBold" style="padding: 4px;"/>
+						<pe:inputNumber value="#{materialBBean.novoMaterial.mStandardCost}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;" title="$"/>
+					
+					</h:panelGrid>
+				</ui:remove>
+				
+				<br/>
+				
+				<h:panelGrid columns="6">
+				
+					<h:outputText value="#{msg.label_costumer_order_flag}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sCostumerOrderFlag}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_internal_order_flag}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sInternalOrderFlag}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_item_fiscal_type}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.sItemFiscalType}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_federal_tribute_oper}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.iFederalTributarysituation}" size="4" maxlength="4" style="padding: 4px; width: 30px;"/>
+					
+					<h:outputText value="#{msg.label_state_tribute_oper}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.novoMaterial.iStateTributarySituation}" size="4" maxlength="4" style="padding: 4px; width: 30px;"/>
+					
+									
+				</h:panelGrid>
+				
+				<ui:remove>
+					<br/>
+					
+					<h:panelGrid columns="4">
+						
+						<h:outputText value="#{msg.label_item_creation_date}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{materialBBean.novoMaterial.dtItemCreationDate}" style="padding: 4px;">
+							<f:convertDateTime  locale="pt" pattern="#{msg.pattern_date}"/>
+						</h:outputText>
+						
+						<h:outputText value="#{msg.label_last_update}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:outputText value="#{materialBBean.novoMaterial.dtLastUpdate}"  style="padding: 4px;">
+							<f:convertDateTime  locale="pt" pattern="#{msg.pattern_date}"/>
+						</h:outputText>
+					
+					</h:panelGrid>
+				</ui:remove>
+				
+				<br/>
+				
+				<h:panelGrid columns="2" id="tab3New">
+				
+					<h:outputText value="#{msg.label_material_origin}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.novoMaterial.fOrigemDaMercadoria}" style="padding: 4px; width: 400px; font-size: 12px;">
+						<f:selectItem itemLabel="0 - Nacional" itemValue="0"/>
+						<f:selectItem itemLabel="1 - Estrangeira - Importação direta" itemValue="1"/>
+						<f:selectItem itemLabel="2 - Estrangeira - Adquirida no mercado interno" itemValue="2"/>
+						<f:selectItem itemLabel="3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% (quarenta por cento)" itemValue="3"/>
+						<f:selectItem itemLabel="4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos " itemValue="4"/>
+						<f:selectItem itemLabel="5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40% (quarenta por cento)" itemValue="5"/>
+						<f:selectItem itemLabel="6 - Estrangeira - Importação direta, sem similar nacional, constante em lista de Resolução CAMEX" itemValue="6"/>
+						<f:selectItem itemLabel="7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista de Resolução CAMEX" itemValue="7"/>
+					</h:selectOneMenu>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div style="float: right;">
+					<p:commandLink action="#{materialBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailMaterial">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbMaterial" onclick="PF('materialDialog').hide()" />
+				</div>
+						
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_edit_material}" widgetVar="materialEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="800" height="550">
+			<h:form id="materialEditDetail" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:messages id="msgDetailEditMaterial" showDetail="false" showSummary="true"/>
+
+				<h:panelGrid columns="6" id="tab1Edit">
+					
+					<h:outputText value="#{msg.label_manufacturer}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.manufacturerSelecionado}" style="padding: 4px; font-size: 12px;" id="selectEditManufacturer">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaManufacturers}" var="m" 
+							itemLabel="#{m.sAlias} - #{m.stateDescription}" itemValue="#{m.id}"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneRadio value="#{materialBBean.materialSelecionado.fAvailable}">
+							<f:selectItem itemLabel="No" itemValue="false"/>
+							<f:selectItem itemLabel="Yes" itemValue="true"/>
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_serial_req}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneRadio value="#{materialBBean.materialSelecionado.fExigeSerialNumberParaSW}">
+						<f:selectItem itemLabel="No" itemValue="false"/>
+						<f:selectItem itemLabel="Yes" itemValue="true"/>
+					</h:selectOneRadio>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="4" id="tab2Edit">
+					
+					<h:outputText value="#{msg.label_ncm}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_part_number}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:selectOneMenu value="#{materialBBean.classSelecionado}" style="padding: 4px; font-size: 12px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaMaterialClass}" var="c"
+							itemLabel="#{c.sNcm} (#{c.tbAdmProductType.sLabel}) #{c.subsTributariaST}" itemValue="#{c.id}"/>
+						<p:ajax event="change" listener="#{materialBBean.verificarVariacao}" update="variacao"/>
+					</h:selectOneMenu>
+					
+					<h:inputText value="#{materialBBean.materialSelecionado.sInternalModel}" style="padding: 4px; width: 200px;" disabled="#{materialBBean.materialSelecionado.disabled}"/>
+	
+					<h:outputText value="Variação de Part Number" styleClass="labelBold" style="padding: 4px;" disabled="#{materialBBean.hw or !materialBBean.materialSelecionado.fVariacaoPartNumberDisabled}" />
+					<h:selectBooleanCheckbox id="variacao" value="#{materialBBean.materialSelecionado.fVariacaoPartNumber}" disabled="#{materialBBean.hw or !materialBBean.materialSelecionado.fVariacaoPartNumberDisabled}"/>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:outputText value="Material Category:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.materialSelecionado.category}" >
+						<f:selectItem itemLabel="Select" itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaCategory}" var="cat" itemLabel="#{cat.sHashCode}" itemValue="#{cat.id}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="Material Support:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.materialSelecionado.support}" >
+						<f:selectItem itemLabel="Select" itemValue="-1"/>
+						<f:selectItems value="#{materialBBean.listaSupport}" var="sup" itemLabel="#{sup.sName}" itemValue="#{sup.id}"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_dc}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneMenu value="#{materialBBean.discountSelecionado}" style="padding: 4px; font-size: 12px;">
+							<f:selectItem itemLabel=" " itemValue="-1"/>
+							<f:selectItems value="#{materialBBean.listaDiscount}" var="d" 
+								itemLabel="#{d.SCode}" itemValue="#{d.id}"/>
+						</h:selectOneMenu>
+					</ui:remove>
+									
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sDescription}" style="padding: 4px; width: 622px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="4">
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_manufacturer_model}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:inputText value="#{materialBBean.materialSelecionado.sManufacturerModel}" style="padding: 4px; width: 200px;"/>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_primary_unit_measure}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sPrimaryUnitMeasure}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_life_cycle}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sLifeCyclePhase}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_item_type}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sItemType}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_item_status}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sItemStatus}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_trans_condit_class}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sTransactionConditionClass}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_line_business}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sLineBusiness}" style="padding: 4px; width: 200px;"/>					
+					
+					<h:outputText value="#{msg.label_list_price}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.mListPrice}" style="padding: 4px;" title="$" converterMessage="Please in 'List Price' only numbers">
+						<f:convertNumber type="currency"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_rep_floor_price}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.mRepFloorPrice}"  style="padding: 4px;" title="$" onverterMessage="Please in 'Rep Floor Price' only numbers">
+						<f:convertNumber type="currency"/>
+					</h:inputText>
+					
+				</h:panelGrid>
+				
+				<ui:remove>
+					<br/>
+					
+					<h:panelGrid columns="4">
+					
+						
+							<h:outputText value="#{msg.label_cost}:" styleClass="labelBold" style="padding: 4px;"/>
+							<pe:inputNumber  value="#{materialBBean.materialSelecionado.mCost}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;" title="$"/>
+						
+						
+						
+						<ui:remove>
+							<h:outputText value="#{msg.label_standard_cost}:" styleClass="labelBold" style="padding: 4px;"/>
+							<pe:inputNumber value="#{materialBBean.materialSelecionado.mStandardCost}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;" title="$"/>
+						</ui:remove>
+						
+					</h:panelGrid>
+				</ui:remove>
+				
+				<br/>
+				
+				<h:panelGrid columns="6">
+				
+					<h:outputText value="#{msg.label_costumer_order_flag}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sCostumerOrderFlag}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_internal_order_flag}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sInternalOrderFlag}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_item_fiscal_type}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.sItemFiscalType}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_federal_tribute_oper}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.iFederalTributarysituation}" size="4" maxlength="4" style="padding: 4px; width: 30px;"/>
+					
+					<h:outputText value="#{msg.label_state_tribute_oper}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{materialBBean.materialSelecionado.iStateTributarySituation}" size="4" maxlength="4" style="padding: 4px; width: 30px;"/>
+														
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="#{msg.label_item_creation_date}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:outputText value="#{materialBBean.materialSelecionado.dtItemCreationDate}" style="padding: 4px;">
+						<f:convertDateTime  locale="pt" pattern="#{msg.pattern_date}"/>
+					</h:outputText>
+					
+					<h:outputText value="#{msg.label_last_update}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:outputText value="#{materialBBean.materialSelecionado.dtLastUpdate}" style="padding: 4px;">
+						<f:convertDateTime  locale="pt" pattern="#{msg.pattern_date_time}"/>
+					</h:outputText>
+					
+					<h:outputText value=" "/>
+					<h:outputText value=" "/>
+					
+					<h:outputText value="#{msg.label_user}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:outputText value="#{materialBBean.materialSelecionado.tbSysUser.sFullName}"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="2" id="tab3Edit">
+				
+					<h:outputText value="#{msg.label_material_origin}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{materialBBean.materialSelecionado.fOrigemDaMercadoria}" style="padding: 4px; width: 400px;">
+						<f:selectItem itemLabel="0 - Nacional" itemValue="0"/>
+						<f:selectItem itemLabel="1 - Estrangeira - Importação direta" itemValue="1"/>
+						<f:selectItem itemLabel="2 - Estrangeira - Adquirida no mercado interno" itemValue="2"/>
+						<f:selectItem itemLabel="3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% (quarenta por cento)" itemValue="3"/>
+						<f:selectItem itemLabel="4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos " itemValue="4"/>
+						<f:selectItem itemLabel="5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40% (quarenta por cento)" itemValue="5"/>
+						<f:selectItem itemLabel="6 - Estrangeira - Importação direta, sem similar nacional, constante em lista de Resolução CAMEX" itemValue="6"/>
+						<f:selectItem itemLabel="7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista de Resolução CAMEX" itemValue="7"/>
+					</h:selectOneMenu>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div style="float: right;">
+					<p:commandLink action="#{materialBBean.alter}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailEditMaterial" disabled="#{materialBBean.disabled}">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbMaterial" onclick="PF('materialEditDialog').hide()" />
+				</div>
+					
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_delete_material}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{materialBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbMaterial" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbMaterial" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

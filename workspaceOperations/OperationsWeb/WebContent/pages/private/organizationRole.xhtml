@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{roleBBean.disabledAll}">		 
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+				
+				<p:dataTable id="tbRoles" var="role" value="#{roleBBean.listaRole}"  rowKey="#{role.id}" 
+						paginator="true" rows="50" emptyMessage="#{msg.sem_registros}" rendered="#{!roleBBean.disabledAll}">
+					
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_organization_role}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('roleDialog').show()" value="#{msg.bt_add}" />
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+					
+					<p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":editFormRole" oncomplete="PF('roleEditDialog').show()" icon="ui-icon-search" title="View" disabled="#{roleBBean.disabled}">
+							<f:setPropertyActionListener value="#{role}" target="#{roleBBean.roleSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="Key" filterBy="#{role.sKey}" sortBy="#{role.sKey}">
+						<h:outputText value="#{role.sKey}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_display_name}" filterBy="#{role.sKey}" sortBy="#{role.sKey}">
+						<h:outputText value="#{role.sDisplayName}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_description}" >
+						<h:outputText value="#{role.sDescription}"/>
+					</p:column>
+					
+					<p:column style="text-align: center;" width="10%">
+						<p:commandButton value="#{msg.bt_administration}" ajax="false" action="#{roleBBean.redirect}" disabled="#{roleBBean.disabled}"> 
+							<f:setPropertyActionListener value="#{role}" target="#{roleBBean.roleSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>			
+				
+			</div>
+		</h:form>
+		
+		<p:dialog id="newRole" header="#{msg.header_organization_role_new}" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="roleDialog" width="500" height="390">
+			<h:form id="newFormRole">
+				
+				<p:messages id="msgRole" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="Key:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleBBean.novoRole.sKey}" required="true" requiredMessage="This Field 'Key' is required."/>
+					
+					<h:outputText value="#{msg.label_display_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleBBean.novoRole.sDisplayName}" required="true" requiredMessage="This Field 'Display Name' is required."/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{roleBBean.novoRole.sDescription}" style="width: 300px; height: 150px;"/>
+				
+				</h:panelGrid>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{roleBBean.salvar}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgRole :form:tbRoles">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('moduleDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="editRole" header="#{msg.header_organization_role_edit}" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="roleEditDialog" width="500" height="390">
+			<h:form id="editFormRole">
+				
+				<p:messages id="msgEditRole" showDetail="false" showSummary="true"/>
+				 
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="Key:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleBBean.roleSelecionado.sKey}" required="true" requiredMessage="This Field 'Key' is required."/>
+					
+					<h:outputText value="#{msg.label_display_name}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleBBean.roleSelecionado.sDisplayName}" required="true" requiredMessage="This Field 'Display Name' is required."/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{roleBBean.roleSelecionado.sDescription}" style="width: 300px; height: 150px;"/>
+					
+				</h:panelGrid>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{roleBBean.update}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+						update="msgEditRole" >
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>						
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('roleEditDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+
+	<ui:define name="content">
+	   
+	   <h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbAssociates" var="as"
+					value="#{personBBean.listaPerson}" 
+					rowKey="#{as.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+					
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;"><p:outputLabel style="text-align: left">
+			           		<h:outputText value="#{msg.header_table_associates}" styleClass="labelBold"/>
+			           </p:outputLabel></div>
+			           <div align="right" style="width: 100%"><p:outputLabel id="commands" style="text-align: right">
+			           		<p:commandButton onclick="PF('associateDialog').show()" value="#{msg.bt_add}" />
+			           </p:outputLabel></div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":associateEditDetail" oncomplete="PF('associateEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{as}" target="#{personBBean.admPersonSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_name}" filterBy="#{as.sName}" sortBy="#{as.sName}">
+						<h:outputText value="#{as.sName}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_email}" filterBy="#{as.sEmail}" sortBy="#{as.sEmail}">
+						<h:outputText value="#{as.sEmail}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_category}" filterBy="#{as.tbAdmCategory.sCategory}" sortBy="#{as.tbAdmCategory.sCategory}">
+						<h:outputText value="#{as.tbAdmCategory.sCategory}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_active}" filterBy="#{as.active}" sortBy="#{as.active}">
+						<h:outputText value="#{as.active}"/>
+					</p:column>
+					
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{as}" target="#{personBBean.admPersonSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>				
+				
+	   		</div>
+   		</h:form>
+   		
+   		<p:dialog header="#{msg.header_dialog_new_associate}" widgetVar="associateDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="450" height="220">
+			<h:form id="associateDetail">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{personBBean.novoAdmPerson.sName}" style="width: 300px; padding: 4px;"/>
+	
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_email}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{personBBean.novoAdmPerson.sEmail}" style="width: 300px; padding: 4px;"/>
+
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_category}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{personBBean.categorySelecionado}" style="padding: 4px;">
+           			 	<f:selectItems value="#{personBBean.listaCategory}" var="c" itemValue="#{c.id}" itemLabel="#{c.sCategory}"/>           	
+		            </h:selectOneMenu>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_active}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneRadio value="#{personBBean.novoAdmPerson.fActive}" style="padding: 4px;">
+		            	<f:selectItem itemValue="true" itemLabel="Yes"/>
+		            	<f:selectItem itemValue="false" itemLabel="No"/>		            	
+		            </h:selectOneRadio>
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{personBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbAssociates" onclick="PF('associateDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbAssociates" onclick="PF('associateDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_associate}" widgetVar="associateEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="450" height="250">
+			<h:form id="associateEditDetail">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{personBBean.admPersonSelecionado.sName}" style="width: 300px; padding: 4px;"/>
+	
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_email}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{personBBean.admPersonSelecionado.sEmail}" style="width: 300px; padding: 4px;"/>
+
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_category}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{personBBean.categorySelecionado}" style="padding: 4px;">
+           			 	<f:selectItems value="#{personBBean.listaCategory}" var="c" itemValue="#{c.id}" itemLabel="#{c.sCategory}"/>           	
+		            </h:selectOneMenu>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_active}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneRadio value="#{personBBean.admPersonSelecionado.fActive}" style="padding: 4px;">
+		            	<f:selectItem itemValue="true" itemLabel="Yes"/>
+		            	<f:selectItem itemValue="false" itemLabel="No"/>		            	
+		            </h:selectOneRadio>
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{personBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbAssociates" onclick="PF('associateEditDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbAssociates" onclick="PF('associateEditDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_delete_associate}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="CategoryDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{personBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbAssociates" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbAssociates" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+	   
+	</ui:define>
+	
+</ui:composition>
+</html>

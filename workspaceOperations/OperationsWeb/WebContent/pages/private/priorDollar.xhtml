@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8" lang="pt_BR">
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{priorDollarBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />
+				
+				<p:dataTable id="tbDollarRate" var="dollar"
+					value="#{priorDollarBBean.listaDollar}" 
+					rowKey="#{dollar.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}"
+					rendered="#{!priorDollarBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_prior_dollar_rate}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('dollarDialog').show()" value="#{msg.bt_add}" disabled="#{priorDollarBBean.disabled}"/>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":dollarEditDetail" oncomplete="PF('dollarEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{dollar}" target="#{priorDollarBBean.dollarRateSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_year}" sortBy="#{dollar.iYear}" filterBy="#{dollar.iYear}">
+						<h:outputText value="#{dollar.iYear}" />
+					</p:column>
+					
+					<p:column headerText="#{msg.label_month}" sortBy="#{dollar.mes}" filterBy="#{dollar.mes}">
+						<h:outputText value="#{dollar.mes}" />
+					</p:column>
+					
+					<p:column headerText="#{msg.label_dollar_rate}" sortBy="#{dollar.rDollar}" >
+						<h:outputText value="#{dollar.rDollar}" />
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{priorDollarBBean.disabled}">
+							<f:setPropertyActionListener value="#{dollar}" target="#{priorDollarBBean.dollarRateSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>		
+				
+			</div>			
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_dollar_rate}" widgetVar="dollarDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="520" height="230">
+			<h:form id="dollarDetail">
+			
+				<p:messages id="msgDollar" showDetail="false" showSummary="true"/>
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_month}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{priorDollarBBean.novoDollarRate.iMonth}" style=" padding: 4px;">
+						<f:selectItems value="#{priorDollarBBean.listaMeses}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="#{msg.label_year}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{priorDollarBBean.novoDollarRate.iYear}"  style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_dollar_rate}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{priorDollarBBean.novoDollarRate.rDollar}"  style="width: 200px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{priorDollarBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDollar">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+				
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbDollarRate" onclick="PF('dollarDialog').hide()" />
+						
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_dollar_rate}" widgetVar="dollarEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="520" height="230">
+			<h:form id="dollarEditDetail">
+				
+				<p:messages id="msgDetailDollar" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_month}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{priorDollarBBean.dollarRateSelecionado.iMonth}" style=" padding: 4px;" disabled="#{priorDollarBBean.disabledBean}">
+						<f:selectItems value="#{priorDollarBBean.listaMeses}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="#{msg.label_year}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{priorDollarBBean.dollarRateSelecionado.iYear}"  style="width: 200px; padding: 4px;" disabled="#{priorDollarBBean.disabledBean}"/>
+					
+					<h:outputText value="#{msg.label_dollar_rate}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{priorDollarBBean.dollarRateSelecionado.rDollar}"  style="width: 200px; padding: 4px;" disabled="#{priorDollarBBean.disabledBean}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{priorDollarBBean.alter}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailDollar" disabled="#{priorDollarBBean.disabledBean or priorDollarBBean.disabled}">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+				
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbDollarRate" onclick="PF('dollarEditDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_delete_dollar_rate}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{priorDollarBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbDollarRate" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbDollarRate" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

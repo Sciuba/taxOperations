@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view locale="#{loginBBean.locale}" contentType="text/html; charset=UTF-8">
+<h:head>
+  <title><ui:insert name="title">Operations</ui:insert></title>
+  <h:outputStylesheet library="css" name="style.css"/>
+  <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+  <h:outputScript library="js" name="script.js"/>
+</h:head>
+
+<h:body>
+<div id="main_container">
+
+	<div id="header">
+		<h1><h:outputText value="Operation"/></h1>
+    	<div id="logo"><h:graphicImage library="images" name="logo.png" style="margin-right: 50px; margin-top: 8px;"/></div>
+	</div>
+	    	
+    <div id="menu">
+	     <h:form>
+	         <p:menubar>
+	         	<p:menuitem value="#{msg.home}" url="../private/home.xhtml" icon="ui-icon-home"/>
+	         	
+				<p:menuitem value="#{msg.quote}" url="../private/quote.xhtml" icon="ui-icon-calculator"/>
+	         		
+	         	<p:submenu label="#{msg.administration}" icon="ui-icon-suitcase">
+         			
+         			<p:submenu label="#{msg.quotes_btax}" icon="ui-icon-calculator">
+         				
+         				<ui:remove>
+         					<p:menuitem value="#{msg.discount_class}" icon="ui-icon-arrowreturnthick-1-s" url="../private/discountClass.xhtml" />
+         				</ui:remove>
+         				
+         				<p:menuitem value="#{msg.sales_origin}" icon="ui-icon-arrowthick-1-sw" url="../private/salesOrigin.xhtml" />
+         				
+         				<p:menuitem value="#{msg.sales_destination}" icon="ui-icon-arrowthick-1-ne" url="../private/salesDestination.xhtml" />
+         				
+         				<p:menuitem value="#{msg.prior_dollar}" icon="ui-icon-carat-2-n-s" url="../private/priorDollar.xhtml"/>
+         				
+         				<p:menuitem value="#{msg.daily_dollar}" icon="ui-icon-calendarjh" url="../private/dailyDollar.xhtml"/>
+
+	         			<p:menuitem value="#{msg.quote_settings}" icon="ui-icon-wrench" url="../private/quoteSettings.xhtml" />
+         				
+         				<ui:remove><p:menuitem value="#{msg.taxes_rates}" icon="ui-icon-script" url="../private/rate.xhtml" /></ui:remove>
+         				
+         				<ui:remove><p:menuitem value="#{msg.client}" icon="ui-icon-star" url="../private/client.xhtml" /></ui:remove>
+         				
+         				<ui:remove><p:menuitem value="#{msg.market_segment}" icon="ui-icon-cart" url="../private/marketSegment.xhtml" /></ui:remove>
+         				
+         				<ui:remove><p:menuitem value="#{msg.content_group}" icon="ui-icon-arrow-4" url="../private/groupContent.xhtml" /></ui:remove>
+         				
+         			</p:submenu>
+         			
+         			<ui:remove>
+	         			<p:submenu label="#{msg.border}" icon="ui-icon-clipboard">
+	         				
+	         				<p:menuitem value="#{msg.associates}" icon="ui-icon-refresh" url="../private/associates.xhtml" />
+	         				
+	         				<p:menuitem value="#{msg.category}" icon="ui-icon-newwin" url="../private/category.xhtml" />
+	         				
+	         			</p:submenu>
+         			</ui:remove>
+         			
+         			<p:submenu label="#{msg.material}" icon="ui-icon-gear">
+         			
+         				<p:menuitem value="#{msg.material}" icon="ui-icon-gear" url="../private/material.xhtml" />
+         				         				
+         				<p:menuitem value="#{msg.import}" icon="ui-icon-note" url="../private/importMaterial.xhtml" />
+
+         				<p:menuitem value="#{msg.material_class}" icon="ui-icon-flag" url="../private/materialClass.xhtml" />
+         				
+         				<p:menuitem value="#{msg.state_origin}" icon="ui-icon-tag" url="../private/admManufacturerStateOfOrigin.xhtml" />         				
+
+         				<p:menuitem value="Material Category" icon="ui-icon-grip-diagonal-se" url="../private/materialCategory.xhtml" />
+         				
+         				<p:menuitem value="Material Support" icon="ui-icon-plusthick" url="../private/materialCategorySupport.xhtml"/>
+         				
+         				<p:menuitem value="#{msg.manufacturer}" icon="ui-icon-bookmark" url="../private/admManufacturer.xhtml" />
+         				
+         				<p:menuitem value="#{msg.production_type}" icon="ui-icon-pencil" url="../private/productType.xhtml" />
+         				
+         			</p:submenu>
+         			
+         			<p:submenu label="Security" icon="ui-icon-locked">
+         				
+         				<p:menuitem value="Organization" icon="ui-icon-link" url="../private/organization.xhtml" />
+       				
+       					<p:menuitem value="Organization Role" icon="ui-icon-refresh" url="../private/organizationRole.xhtml" />
+         			
+         			</p:submenu>
+         			
+	         	</p:submenu>
+	         	
+       			<!-- <p:submenu label="Manage" icon="ui-icon-folder-collapsed">
+       				
+       				<ui:remove> <p:menuitem value="My Organization" icon="ui-icon-link" url="../private/myOrganization.xhtml" /> </ui:remove>
+       				
+       				
+       				
+       				<ui:remove>
+        				<p:menuitem value="#{msg.category}" icon="ui-icon-newwin" url="../private/category.xhtml" />
+        				
+        				<p:menuitem value="#{msg.users}" icon="ui-icon-person" url="../private/users.xhtml" />
+        				
+        				<p:menuitem value="#{msg.groups}" icon="ui-icon-arrowrefresh-1-e" url="" />
+        				
+        				<p:menuitem value="#{msg.user_profile}" icon="ui-icon-contact" url="../private/userProfile.xhtml" /> 
+       				</ui:remove>
+       			
+       			</p:submenu> -->
+	         	
+         	 	<f:facet name="options">
+	           		<p:commandButton action="#{loginBBean.logout}" value="LogOut" icon="ui-icon-extlink" immediate="true"/>
+		        </f:facet>
+	         	
+	         </p:menubar>
+	     </h:form>     
+    </div>
+	
+	
+	<div id="content">
+	  <ui:insert name="content">
+	    		    		    	
+	  </ui:insert>	  
+	</div>
+	
+	<div id="footer"></div>
+
+</div>
+</h:body>
+</f:view>
+</html>
+
+
+
+
+
+      
+

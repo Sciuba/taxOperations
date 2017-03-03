@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf14095976386890" configfile="/OperationsWeb/WebContent/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="pages/public/login.xhtml" x="48" y="24" id="pf14111513076600" referenceLink="//@navigationRule.4/@fromViewId|" outlinks="pf14158140614250" path="/pages/public/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/home.xhtml" x="600" y="24" id="pf14111530507404" referenceLink="//@navigationRule.5/@navigationCase.0/@toViewId|" inlinks="pf14158162873941" path="/pages/private/home.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/importMaterial.xhtml" x="72" y="204" id="pf14123412368570" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf14123415018111" path="/pages/private/importMaterial.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/importMaterialStep2.xhtml" x="300" y="204" id="pf14123415018112" referenceLink="//@navigationRule.1/@fromViewId|" outlinks="pf14123588302343" inlinks="pf14123415018111" path="/pages/private/importMaterialStep2.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/importMaterialStep3.xhtml" x="566" y="204" id="pf14123588302344" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf14123817413207" inlinks="pf14123588302343" path="/pages/private/importMaterialStep3.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/importMaterialStep4.xhtml" x="852" y="204" id="pf14123817413208" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" inlinks="pf14123817413207" path="/pages/private/importMaterialStep4.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/quote.xhtml" x="48" y="312" id="pf14132333945380" referenceLink="//@navigationRule.3/@fromViewId|" outlinks="pf14132333945381" path="/pages/private/quote.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/quoteDetail.xhtml" x="300" y="312" id="pf14132333945382" referenceLink="//@navigationRule.3/@navigationCase.0/@toViewId|" inlinks="pf14132333945381" path="/pages/private/quoteDetail.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/dollarRateInitial.xhtml" x="276" y="24" id="pf14158162873942" referenceLink="//@navigationRule.5/@fromViewId|" outlinks="pf14158162873941" inlinks="pf14158140614250" path="/pages/private/dollarRateInitial.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/organizationRole.xhtml" x="612" y="300" id="pf14211628429220" referenceLink="//@navigationRule.6/@fromViewId|" outlinks="pf14211628429221" path="/pages/private/organizationRole.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/organizationRoleAdm.xhtml" x="948" y="300" id="pf14211628429222" referenceLink="//@navigationRule.6/@navigationCase.0/@toViewId|" inlinks="pf14211628429221" path="/pages/private/organizationRoleAdm.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/organization.xhtml" x="624" y="420" id="pf14216709243470" outlinks="pf14216709243471" path="/pages/private/organization.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/private/organizationAdm.xhtml" x="960" y="420" id="pf14216709243472" inlinks="pf14216709243471" path="/pages/private/organizationAdm.xhtml"/>
+  <links id="pf14123415018111" target="pf14123415018112" source="pf14123412368570" outcome="success"/>
+  <links id="pf14123588302343" target="pf14123588302344" source="pf14123415018112" outcome="success"/>
+  <links id="pf14123817413207" target="pf14123817413208" source="pf14123588302344" outcome="success"/>
+  <links id="pf14132333945381" target="pf14132333945382" source="pf14132333945380" outcome="details"/>
+  <links id="pf14158140614250" target="pf14158162873942" source="pf14111513076600" outcome="success"/>
+  <links id="pf14158162873941" target="pf14111530507404" source="pf14158162873942" outcome="success"/>
+  <links id="pf14211628429221" target="pf14211628429222" source="pf14211628429220" outcome="success"/>
+  <links id="pf14216709243471" target="pf14216709243472" source="pf14216709243470" outcome="success"/>
+</pageflow:Pageflow>

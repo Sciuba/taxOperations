@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			
+			<!-- <f:metadata>
+			    <f:event type="preRenderView" listener="#{initialBBean.redirectPage}" />
+			</f:metadata> -->
+			
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />
+				
+				<p:panel header="#{msg.label_dollar_rate}" >
+				
+					<p:commandButton ajax="false" action="#{initialBBean.cancel}" value="#{msg.bt_cancel}" icon="ui-icon-close" style="float:right;"/>
+					
+					<p:commandButton ajax="false" action="#{initialBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check" style="float:right; margin-right: 4px;"/>
+				
+					<div align="center">
+						
+						<h:outputText value="#{msg.msg_dollar_rate_initial}"  styleClass="labelBold" rendered="#{initialBBean.dollarMonthInitial.id eq 0}"/>
+						
+						<br/>
+						<br/>
+						
+						<h:panelGrid columns="2" style="margin-left: -7.2%; border: 1px solid grey;" width="250" rendered="#{initialBBean.dollarMonthInitial.id eq 0}">
+						
+							<h:outputText value="#{msg.label_current_period}" styleClass="labelBold"/>
+							<h:outputText value="#{msg.label_dollar_rate}" styleClass="labelBold"/>
+							
+							<h:outputText value="#{initialBBean.dollarMonthInitial.mes}"/>
+							<pe:inputNumber value="#{initialBBean.dollarMonthInitial.rDollar}" decimalSeparator="." thousandSeparator="," decimalPlaces="5" />							
+						
+						</h:panelGrid>
+						
+						<br/>
+						<br/>
+						
+						
+						<h:outputText value="#{msg.msg_daily_dolar_rate_initial}"  styleClass="labelBold" style="margin-left: -8%;" rendered="#{initialBBean.exibeLista}"/>							
+						
+						<br/>
+						<br/>
+						
+						<h:panelGrid columns="2" rendered="#{initialBBean.exibeLista}" cellspacing="10" style="margin-left: -7.2%; border: 1px solid grey;" width="250">
+						
+							<h:outputText value="#{msg.label_dollar_rate_date}" styleClass="labelBold"/>
+							<h:outputText value="#{msg.label_dollar_rate}" styleClass="labelBold" style="float: right;"/>
+						
+						</h:panelGrid>
+						
+						<br/>
+					
+					
+						<ui:repeat var="dollar" value="#{initialBBean.listaDailyDollar}">
+							
+							<h:panelGrid columns="2" rendered="#{initialBBean.exibeLista}" cellspacing="4" style="margin-left: -7.2%; border: 1px solid grey;"
+								width="250">		
+								<h:outputText value="#{dollar.dtDollar}"  styleClass="labelBold" style="padding: 4px;">
+									<f:convertDateTime pattern="#{msg.pattern_date}"/>								
+								</h:outputText>
+							
+								<h:inputText value="#{dollar.rDollar}" style="float: right;" converterMessage="#{msg.field_integer_only}">
+									<f:convertNumber pattern="#0.0000"/>
+								</h:inputText>
+							</h:panelGrid>
+																							
+						</ui:repeat>
+							
+									
+                    </div>                         
+				</p:panel>
+				
+			</div>
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

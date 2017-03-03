@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	   <h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbCategory" var="ca"
+					value="#{categoryBBean.listaCategory}" 
+					rowKey="#{ca.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+					
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;"><p:outputLabel style="text-align: left">
+			           		<h:outputText value="#{msg.header_table_category}" styleClass="labelBold"/>
+			           </p:outputLabel></div>
+			           <div align="right" style="width: 100%"><p:outputLabel id="commands" style="text-align: right">
+			           		<p:commandButton onclick="PF('categoryDialog').show()" value="#{msg.bt_add}" />
+			           </p:outputLabel></div>
+			        </f:facet>
+					
+					<p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":categoryEditDetail" oncomplete="PF('categoryEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{ca}" target="#{categoryBBean.categorySelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_acronym}" filterBy="#{ca.sAcronym}" sortBy="#{ca.sAcronym}">
+						<h:outputText value="#{ca.sAcronym}" />				
+					</p:column>
+					
+					<p:column headerText="#{msg.label_category}" filterBy="#{ca.sCategory}" sortBy="#{ca.sCategory}">
+						<h:outputText value="#{ca.sCategory}" />				
+					</p:column>
+					
+					<p:column headerText="#{msg.label_module}" filterBy="#{ca.module}" sortBy="#{ca.module}">
+						<h:outputText value="#{ca.module}" />				
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{ca}" target="#{categoryBBean.categorySelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<f:facet name="footer">
+						
+					</f:facet>
+					
+				</p:dataTable>
+			</div>		
+		</h:form>
+	   
+	   <p:dialog header="#{msg.header_dialog_new_category}" widgetVar="categoryDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="410" height="185">
+			<h:form id="categoryDetail">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_acronym}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{categoryBBean.novoCategory.sAcronym}" style="width: 50px; padding: 4px;" size="3" maxlength="3"/>
+	
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_category}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{categoryBBean.novoCategory.sCategory}" style="width: 300px; padding: 4px;"/>
+
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_module}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{categoryBBean.novoCategory.imodule}" style="width: 200px; padding: 4px;">
+		            	<f:selectItem itemValue="0" itemLabel="All"/>
+		            	<f:selectItem itemValue="1" itemLabel="Quote"/>
+		            	<f:selectItem itemValue="2" itemLabel="Order"/>
+		            </h:selectOneMenu>
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{categoryBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbCategory" onclick="PF('categoryDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbCategory" onclick="PF('categoryDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_category}" widgetVar="categoryEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="410" height="185">
+			<h:form id="categoryEditDetail">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_acronym}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{categoryBBean.categorySelecionado.sAcronym}" style="width: 50px; padding: 4px;" size="3" maxlength="3"/>
+	
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_category}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{categoryBBean.categorySelecionado.sCategory}" style="width: 300px; padding: 4px;"/>
+
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_module}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{categoryBBean.categorySelecionado.imodule}" style="width: 200px; padding: 4px;">
+		            	<f:selectItem itemValue="0" itemLabel="All"/>
+		            	<f:selectItem itemValue="1" itemLabel="Quote"/>
+		            	<f:selectItem itemValue="2" itemLabel="Order"/>
+		            </h:selectOneMenu>
+				
+				</h:panelGrid>	
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{categoryBBean.alter}" value="#{msg.bt_update}" icon="ui-icon-check"
+					update=":form:tbCategory" onclick="PF('categoryEditDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbCategory" onclick="PF('categoryEditDialog').hide()" />
+							
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_delete_category}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="CategoryDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{categoryBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbCategory" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbCategory" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+	   
+	</ui:define>
+	
+</ui:composition>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbUsers" var="user"
+					value="#{userBBean.listaUsuario}" 
+					rowKey="#{user.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_table_user_profile}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('userDialog').show()" value="#{msg.bt_add}" />
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":userEditDetail" oncomplete="PF('userEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{user}" target="#{userBBean.usuarioSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_logon}" filterBy="#{user.sLogon}" sortBy="#{user.sLogon}">
+						<h:outputText value="#{user.sLogon}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_name_associates}" filterBy="#{user.sFullName} / #{user.tbAdmPerson.sName}" sortBy="#{user.sFullName} / #{user.tbAdmPerson.sName}">
+						<h:outputText value="#{user.sFullName} / #{user.tbAdmPerson.sName}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_email}" filterBy="#{user.sEmail}" sortBy="#{user.sEmail}">
+						<h:outputText value="#{user.sEmail}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_phone}" filterBy="#{user.sPhoneNumber}" sortBy="#{user.sPhone}">
+						<h:outputText value="#{user.sPhoneNumber}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_departament}" filterBy="#{user.sDepartment}" sortBy="#{user.sDepartment}">
+						<h:outputText value="#{user.sDepartment}"/>
+					</p:column>										
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{user}" target="#{userBBean.usuarioSelecionado}" />
+						</p:commandButton>
+					</p:column>
+			        
+		        </p:dataTable>
+		        
+	        </div>
+	        
+        </h:form>
+		
+		
+		<p:dialog header="#{msg.header_dialog_new_user}" widgetVar="userDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="500" height="500">
+			<h:form id="userDetail" acceptcharset="UTF-8" lang="pt_BR">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<ui:remove>
+					
+					<h:outputText value="#{msg.label_profile_user}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{userBBean.profileSelecionado}" style="padding: 4px;">
+						<f:selectItems value="#{userBBean.listaUserProfile}" var="p" itemValue="#{p.id}" itemLabel="#{p.sProfileName}"/>
+					</h:selectOneMenu>
+					
+					</ui:remove>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.header_table_associates}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{userBBean.associateSelecionado}" style="padding: 4px;">
+						<f:selectItems value="#{userBBean.listaAssociates}" var="a" itemValue="#{a.id}" itemLabel="#{a.sName}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText id="nvLogon" value="#{msg.label_logon}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.novoUsuario.sLogon}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText id="nvPass" value="#{msg.label_password}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputSecret value="#{userBBean.novoUsuario.sPassword}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_full_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.novoUsuario.sFullName}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<ui:remove>
+					
+					<h:outputText value="#{msg.label_discount_lvl}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{userBBean.novoUsuario.iDiscountLevel}" style="padding: 4px;">
+						<f:selectItem itemValue="-1" itemLabel="Do not apply"/>
+						<f:selectItem itemValue="1" itemLabel="Sales"/>
+						<f:selectItem itemValue="2" itemLabel="Commercial managers"/>
+						<f:selectItem itemValue="3" itemLabel="Comercial directors"/>
+						<f:selectItem itemValue="4" itemLabel="Directors"/>
+						<f:selectItem itemValue="99" itemLabel="System Admin"/>
+					</h:selectOneMenu>
+					
+					</ui:remove>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_email}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.novoUsuario.sEmail}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_phone}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.novoUsuario.sPhoneNumber}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+										
+					<h:outputText value="#{msg.label_departament}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{userBBean.novoUsuario.sDepartment}" style="padding: 4px;">
+           			 	<f:selectItems value="#{userBBean.listaCategory}" var="c" itemValue="#{c.sCategory}" itemLabel="#{c.sCategory}"/>           	
+		            </h:selectOneMenu>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_blocked}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{userBBean.novoUsuario.fBlocked}"/>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_connection_remaing}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userBBean.novoUsuario.iConections}" style="width: 100px; padding: 4px;" >
+		            			            	
+		            </h:inputText>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_never_expires}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{userBBean.novoUsuario.fNeverExpires}"/>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_expiration_date}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <p:calendar value="#{userBBean.novoUsuario.dtExpiration}" navigator="true" locale="pt_BR" pattern="#{msg.pattern_date}"/>
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{userBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbUsers" onclick="PF('userDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbUsers" onclick="PF('userDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_user}" widgetVar="userEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="500" height="500">
+			<h:form id="userEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<ui:remove>
+					
+					<h:outputText value="#{msg.label_profile_user}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{userBBean.profileSelecionado}" style="padding: 4px;">
+						<f:selectItems value="#{userBBean.listaUserProfile}" var="p" itemValue="#{p.id}" itemLabel="#{p.sProfileName}"/>
+					</h:selectOneMenu>
+					
+					</ui:remove>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.header_table_associates}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{userBBean.associateSelecionado}" style="padding: 4px;">
+						<f:selectItems value="#{userBBean.listaAssociates}" var="a" itemValue="#{a.id}" itemLabel="#{a.sName}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_logon}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.usuarioSelecionado.sLogon}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_password}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputSecret value="#{userBBean.novoPassword}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_full_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.usuarioSelecionado.sFullName}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<ui:remove>
+					
+					<h:outputText value="#{msg.label_discount_lvl}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{userBBean.usuarioSelecionado.iDiscountLevel}" style="padding: 4px;">
+						<f:selectItem itemValue="-1" itemLabel="Do not apply"/>
+						<f:selectItem itemValue="1" itemLabel="Sales"/>
+						<f:selectItem itemValue="2" itemLabel="Commercial managers"/>
+						<f:selectItem itemValue="3" itemLabel="Comercial directors"/>
+						<f:selectItem itemValue="4" itemLabel="Directors"/>
+						<f:selectItem itemValue="99" itemLabel="System Admin"/>
+					</h:selectOneMenu>
+					
+					</ui:remove>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_email}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.usuarioSelecionado.sEmail}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_phone}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userBBean.usuarioSelecionado.sPhoneNumber}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+										
+					<h:outputText value="#{msg.label_departament}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{userBBean.usuarioSelecionado.sDepartment}" style="padding: 4px;">
+           			 	<f:selectItems value="#{userBBean.listaCategory}" var="c" itemValue="#{c.sCategory}" itemLabel="#{c.sCategory}"/>           	
+		            </h:selectOneMenu>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_blocked}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{userBBean.usuarioSelecionado.fBlocked}"/>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_connection_remaing}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userBBean.usuarioSelecionado.iConections}" style="width: 100px; padding: 4px;" >
+		            			            	
+		            </h:inputText>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_never_expires}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{userBBean.usuarioSelecionado.fNeverExpires}"/>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_expiration_date}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <p:calendar value="#{userBBean.usuarioSelecionado.dtExpiration}" navigator="true" locale="pt_BR" pattern="#{msg.pattern_date}"/>
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{userBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbUsers" onclick="PF('userEditDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbUsers" onclick="PF('userEditDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_delete_user}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{userBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbUsers" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbUsers" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+	    
+	</ui:define>
+	
+</ui:composition>
+</html>

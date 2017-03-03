@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view locale="#{loginBBean.locale}">
+	<h:head>
+		
+		<title>Operations</title>
+		<h:outputStylesheet library="css" name="style.css"></h:outputStylesheet>
+	</h:head>
+	
+	<h:body>
+	<h:form id="form">
+		<div id="main_container">
+		
+			<div id="header">
+				<div id="logoSaboia"><h:graphicImage library="images" name="saboia.png" style="width: auto; left: 50px; top: 14px; position: absolute;"/></div>
+		    	<div id="logo"><h:graphicImage library="images" name="logo.png" style="margin-right: 50px; margin-top: 8px;"/></div>
+			</div>
+	
+			<div id="divLogin" align="center" style="margin-top: 10%;">
+		
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="false" showSummary="true" />
+					</h:panelGrid>
+				</div>
+			
+				<h:panelGrid>
+						<p:panel closable="false"
+							header="#{msg.header_login}"
+							style="width: 350px; height: 170px;" rendered="#{!loginBBean.alterPassDefault}"> 
+							<br/>
+							<h:panelGrid columns="2">
+							
+								<h:outputText value="#{msg.label_user}:" styleClass="labelBold" style="text-align: right"/>
+								<h:inputText id="txtUsuario"
+									value="#{loginBBean.user.sLogon}" style="width: 200px; padding: 3px;"
+									required="true"
+									requiredMessage="#{msg.user_field_required}"/>
+								
+								<h:outputText value=" "/>
+								<h:outputText value=" "/>
+									
+								<h:outputText value=" "/>
+								<h:outputText value=" "/>
+									
+								<h:outputText value="#{msg.label_password}:" styleClass="labelBold" style="text-align: right"/>
+								<h:inputSecret style="width: 200px; padding: 3px;"
+									value='#{loginBBean.user.sPassword}' id="txtSenha"
+									required="true"
+									requiredMessage="#{msg.pass_field_required}"/>
+									
+								<h:outputText value=" "/>
+								<h:outputText value=" "/>
+								
+								<h:commandButton style="height: 33px; width: 62px; " id="btnOk"
+									value="OK" action="#{loginBBean.login}" />
+							</h:panelGrid>
+							
+							<f:facet name="footer">
+								<p:commandLink value="#{msg.rememberPass}" onclick="PF('passRemember').show();"/>
+							</f:facet>
+							
+						</p:panel>
+						
+						
+						<p:panel closable="false"
+							header="Change your access data"
+							style="width: 420px; height: 170px;" rendered="#{loginBBean.alterPassDefault}">
+							<br/>
+							<h:panelGrid columns="2">
+							
+								<h:outputText value="#{msg.label_user}:" styleClass="labelBold" style="text-align: right"/>
+								<h:outputText value="#{loginBBean.user.sLogon}" style="width: 200px; padding: 3px;"/>
+								
+								<h:outputText value=" "/>
+								<h:outputText value=" "/>
+									
+								<h:outputText value=" "/>
+								<h:outputText value=" "/>
+									
+								<h:outputText value="New password:" styleClass="labelBold" style="text-align: right"/>
+								<h:inputSecret style="width: 200px; padding: 3px;"
+									value="#{loginBBean.newPassword}" required="true"
+									requiredMessage="#{msg.pass_field_required}"/>
+								
+								<h:outputText value="Retype new password:" styleClass="labelBold" style="text-align: right"/>
+								<h:inputSecret style="width: 200px; padding: 3px;"
+									value="#{loginBBean.retypeNewPassword}" required="true"
+									requiredMessage="#{msg.pass_field_required}"/>
+									
+								<h:outputText value=" "/>
+								<h:outputText value=" "/>
+								
+								<h:outputText value=" "/>
+								
+								<p:commandButton value="OK" action="#{loginBBean.alterPasswordDefault}" style="float:right;" ajax="false" update=":form"/> 
+							</h:panelGrid>
+												
+						</p:panel>
+						
+				</h:panelGrid>	
+			
+			</div>
+		</div>
+	</h:form>
+	
+	<p:dialog widgetVar="passRemember" header="Forgot Password" resizable="false" draggable="false"
+		modal="true" showEffect="fade" hideEffect="fade" width="500" height="200">
+		
+		<p:messages id="msgUser" showDetail="false" showSummary="true"/>
+		
+		<h:form prependId="false" acceptcharset="UTF-8" lang="pt_BR">
+			
+			<h:outputText value="#{msg.rememberPassMsg}" styleClass="labelDarkFontUp"/>
+			
+			<br/>
+			<br/>
+			
+			<h:panelGrid columns="2">
+				
+				<h:outputText value="#{msg.label_user}:" styleClass="labelBold" style="padding: 4px;"/>
+				
+				<h:inputText value="#{loginBBean.loginRemember}" style="width: 350px; padding: 4px;"/> 
+				
+			</h:panelGrid>
+			
+			<br/><br/>
+			
+			<div style="float: right; height: 31px;">
+				<p:commandButton value="OK" icon="ui-icon-check" action="#{loginBBean.sendPassword}" update=":msgUser, :form:msg" style="margin-right: 6px;"/>
+				<p:commandButton value="Cancel" icon="ui-icon-close" onclick="PF('passRemember').hide();"/>
+			</div>
+			
+		</h:form>
+	
+	</p:dialog>
+			
+	</h:body>
+	
+</f:view>
+</html>

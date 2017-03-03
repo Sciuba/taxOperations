@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view locale="#{loginBBean.locale}">
+	<h:head>
+		
+		<f:metadata>
+	        <f:viewParam name="idUser" value="#{loginBBean.idUser}" />
+	        <f:event listener="#{loginBBean.loadUserGet}" type="preRenderView"/>        
+    	</f:metadata>
+		
+		<title>Operations</title>
+		<h:outputStylesheet library="css" name="style.css"></h:outputStylesheet>
+	</h:head>
+	
+	<h:body>
+	<h:form id="form">
+		<div id="main_container">
+		
+			<div id="header">
+				<div id="logoSaboia"><h:graphicImage library="images" name="saboia.png" style="width: auto; left: 50px; top: 14px; position: absolute;"/></div>
+		    	<div id="logo"><h:graphicImage library="images" name="logo.png" style="margin-right: 50px; margin-top: 8px;"/></div>
+			</div>
+	
+			<div id="divLogin" align="center" style="margin-top: 10%;">
+		
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="false" showSummary="true" />
+					</h:panelGrid>
+				</div>
+				
+				<h:panelGroup layout="block" rendered="#{loginBBean.alterPassOk}">
+					<h:commandLink action="login" value="Redirect to Login page."/>				
+				</h:panelGroup>
+				
+				<p:panel closable="false"
+					header="Change your access data"
+					style="width: 420px; height: 170px;" rendered="#{!loginBBean.alterPassOk}">
+					<br/>
+					<h:panelGrid columns="2">
+					
+						<h:outputText value="#{msg.label_user}:" styleClass="labelBold" style="text-align: right"/>
+						<h:outputText value="#{loginBBean.userGet.sFullName}" style="width: 200px; padding: 3px;"/>
+						
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>
+							
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>
+							
+						<h:outputText value="New password:" styleClass="labelBold" style="text-align: right"/>
+						<h:inputSecret style="width: 200px; padding: 3px;"
+							value="#{loginBBean.newPassword}" required="true"
+							requiredMessage="#{msg.pass_field_required}"/>
+						
+						<h:outputText value="Retype new password:" styleClass="labelBold" style="text-align: right"/>
+						<h:inputSecret style="width: 200px; padding: 3px;"
+							value="#{loginBBean.retypeNewPassword}" required="true"
+							requiredMessage="#{msg.pass_field_required}"/>
+							
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>
+						
+						<h:outputText value=" "/>
+						
+						<p:commandButton id="btnOk"
+							value="OK" action="#{loginBBean.alterPassword}" style="float:right;" disabled="#{loginBBean.userGet eq null}" update=":form"/> 
+					</h:panelGrid>
+										
+				</p:panel>
+				
+			</div>
+			
+		</div>
+		
+	</h:form>
+</h:body>
+</f:view>
+</html>

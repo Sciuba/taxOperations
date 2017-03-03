@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8" lang="pt_BR">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="false" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{destinationBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbDestination" var="destination"
+					value="#{destinationBBean.listaDestination}" 
+					rowKey="#{destination.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}"
+					rendered="#{!destinationBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_dialog_sales_destination}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('destinationDialog').show()" value="#{msg.bt_add}" />
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":destinationEditDetail" oncomplete="PF('destinationEditDialog').show()" icon="ui-icon-search" title="View" disabled="#{destinationBBean.disabled}">
+							<f:setPropertyActionListener value="#{destination}" target="#{destinationBBean.destinationSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_location}" filterBy="#{destination.sLocale}" sortBy="#{destination.sLocale}">
+						<h:outputText value="#{destination.sLocale}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_code}" filterBy="#{destination.sCode}" sortBy="#{destination.sCode}">
+						<h:outputText value="#{destination.sCode}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_protocol}"  sortBy="#{destination.protocol}">
+						<h:outputText value="#{destination.protocol}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_origin_hw}"  sortBy="#{destination.completeOriginHW}">
+						<h:outputText value="#{destination.completeOriginHW}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_origin_sw}"  sortBy="#{destination.completeOriginSW}">
+						<h:outputText value="#{destination.completeOriginSW}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_origin_sv}"  sortBy="#{destination.completeOriginSV}">
+						<h:outputText value="#{destination.completeOriginSV}"/>
+					</p:column>
+					
+					<ui:remove>
+						<p:column headerText="#{msg.label_origin_mt}"  sortBy="#{destination.completeOriginMT}">
+							<h:outputText value="#{destination.completeOriginMT}"/>
+						</p:column>
+					</ui:remove>
+					
+					<p:column headerText="ICMS Interno" sortBy="#{destination.rIcms}">
+						<h:outputText value="#{destination.rIcms}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_icms_interestadual}" sortBy="#{destination.rIcmsInterEstadual}">
+						<h:outputText value="#{destination.rIcmsInterEstadual}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_avaliable}" sortBy="#{destination.avaliable}">
+						<h:outputText value="#{destination.avaliable}"/>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{destinationBBean.disabled}">
+							<f:setPropertyActionListener value="#{destination}" target="#{destinationBBean.destinationSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+				
+			</div>
+			
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_sales_destination}" widgetVar="destinationDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="720" height="320">
+			<h:form id="destinationDetail" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<p:messages id="msgDetailDest" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="#{msg.label_code}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.novoDestination.sCode}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_location}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.novoDestination.sLocale}" style="width: 200px; padding: 4px;"/>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="3" width="100%">
+					
+					<h:outputText value="#{msg.label_origin_hw}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_origin_sw}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_origin_sv}:" styleClass="labelBold" style="padding: 4px;"/>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_origin_mt}:" styleClass="labelBold" style="padding: 4px;"/>
+					</ui:remove>
+					
+					<h:selectOneMenu value="#{destinationBBean.novoDestination.originHW}" style="padding: 4px;">
+						<f:selectItems value="#{destinationBBean.listaOriginHW}" var="hw" itemValue="#{hw.id}" itemLabel="#{hw.sCode} - #{hw.sLocale}"/>
+					</h:selectOneMenu>
+					
+					<h:selectOneMenu value="#{destinationBBean.novoDestination.originSW}" style="padding: 4px;">
+						<f:selectItems value="#{destinationBBean.listaOriginSW}" var="sw" itemValue="#{sw.id}" itemLabel="#{sw.sCode} - #{sw.sLocale}"/>
+					</h:selectOneMenu>
+					
+					<h:selectOneMenu value="#{destinationBBean.novoDestination.originSV}" style="padding: 4px;">
+						<f:selectItems value="#{destinationBBean.listaOriginSV}" var="sv" itemValue="#{sv.id}" itemLabel="#{sv.sCode} - #{sv.sLocale}"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>					
+						<h:selectOneMenu value="#{destinationBBean.novoDestination.originMT}" style="padding: 4px;">
+							<f:selectItems value="#{destinationBBean.listaOriginMT}" var="mt" itemValue="#{mt.id}" itemLabel="#{mt.sCode} - #{mt.sLocale}"/>
+						</h:selectOneMenu>
+					</ui:remove>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="6">
+				
+					<h:outputText value="ICMS Interno (%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.novoDestination.rIcms}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_icms_interestadual} (%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.novoDestination.rIcmsInterEstadual}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_icms_interestadual_mat_import} (%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.novoDestination.rIcmsInterEstadualMatImport}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{destinationBBean.novoDestination.fAvaliable}" style="padding: 4px;">
+						<f:selectItem itemLabel="Yes" itemValue="true"/>
+						<f:selectItem itemLabel="No" itemValue="false"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_calc_type}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneMenu value="#{destinationBBean.novoDestination.fTipocalculo}" style="padding: 4px;">
+							<f:selectItem itemLabel="Nenhuma" itemValue="0"/>
+							<f:selectItem itemLabel="Itens locais e importados" itemValue="1"/>						
+						</h:selectOneMenu>
+					</ui:remove>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div style="float:right;">
+					<p:commandLink action="#{destinationBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailDest">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+										
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbDestination" onclick="PF('destinationDialog').hide()" />
+				</div>
+				
+			</h:form>			
+		</p:dialog>	
+		
+		<p:dialog header="#{msg.header_dialog_edit_sales_destination}" widgetVar="destinationEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="720" height="320">
+			<h:form id="destinationEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<p:messages id="msgDetailEditDest" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="#{msg.label_code}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.destinationSelecionado.sCode}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_location}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.destinationSelecionado.sLocale}" style="width: 200px; padding: 4px;"/>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="3" width="100%">
+					
+					<h:outputText value="#{msg.label_origin_hw}:" styleClass="labelBold" style="padding: 4px;"/>
+
+					<h:outputText value="#{msg.label_origin_sw}:" styleClass="labelBold" style="padding: 4px;"/>
+
+					<h:outputText value="#{msg.label_origin_sv}:" styleClass="labelBold" style="padding: 4px;"/>
+
+					<ui:remove>
+						<h:outputText value="#{msg.label_origin_mt}:" styleClass="labelBold" style="padding: 4px;"/>
+					</ui:remove>
+
+					<h:selectOneMenu value="#{destinationBBean.destinationSelecionado.originHW}" style="padding: 4px;">
+						<f:selectItems value="#{destinationBBean.listaOriginHW}" var="hw" itemValue="#{hw.id}" itemLabel="#{hw.sCode} - #{hw.sLocale}"/>
+					</h:selectOneMenu>
+					
+					<h:selectOneMenu value="#{destinationBBean.destinationSelecionado.originSW}" style="padding: 4px;">
+						<f:selectItems value="#{destinationBBean.listaOriginSW}" var="sw" itemValue="#{sw.id}" itemLabel="#{sw.sCode} - #{sw.sLocale}"/>
+					</h:selectOneMenu>
+					
+					<h:selectOneMenu value="#{destinationBBean.destinationSelecionado.originSV}" style="padding: 4px;">
+						<f:selectItems value="#{destinationBBean.listaOriginSV}" var="sv" itemValue="#{sv.id}" itemLabel="#{sv.sCode} - #{sv.sLocale}"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>					
+						<h:selectOneMenu value="#{destinationBBean.destinationSelecionado.originMT}" style="padding: 4px;">
+							<f:selectItems value="#{destinationBBean.listaOriginMT}" var="mt" itemValue="#{mt.id}" itemLabel="#{mt.sCode} - #{mt.sLocale}"/>
+						</h:selectOneMenu>
+					</ui:remove>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="6">
+					
+					<h:outputText value="ICMS Interno(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.destinationSelecionado.rIcms}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_icms_interestadual}(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.destinationSelecionado.rIcmsInterEstadual}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+					<h:outputText value="#{msg.label_icms_interestadual_mat_import}(%):" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{destinationBBean.destinationSelecionado.rIcmsInterEstadualMatImport}" style="width: 50px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+				
+					<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{destinationBBean.destinationSelecionado.fAvaliable}" style="padding: 4px;">
+						<f:selectItem itemLabel="Yes" itemValue="true"/>
+						<f:selectItem itemLabel="No" itemValue="false"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_calc_type}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneMenu value="#{destinationBBean.destinationSelecionado.fTipocalculo}" style="padding: 4px;">
+							<f:selectItem itemLabel="Nenhuma" itemValue="0"/>
+							<f:selectItem itemLabel="Itens locais e importados" itemValue="1"/>						
+						</h:selectOneMenu>
+					</ui:remove>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div style="float:right;">
+					<p:commandLink action="#{destinationBBean.alter}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDetailEditDest" disabled="#{destinationBBean.disabled}">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbDestination" onclick="PF('destinationEditDialog').hide()" />
+				</div>
+				
+			</h:form>			
+		</p:dialog>	
+		
+		<p:dialog header="#{msg.header_dialog_delete_sales_destination}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{destinationBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbDestination" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbDestination" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

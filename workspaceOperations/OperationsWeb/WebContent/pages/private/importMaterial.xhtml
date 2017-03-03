@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{importBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />
+				<p:panel header="#{msg.header_dialog_import_material}" rendered="#{!importBBean.disabledAll}">
+				
+					<h:panelGroup layout="block" style="display: block;">
+						<h4><h:outputText value="#{msg.msg_import_descr}*"/></h4>
+						<br/>
+						<h:outputText value="*#{msg.msg_import_descr_pt}" />
+					</h:panelGroup>
+					
+					<br/> <br/> <br/>
+					
+				    <p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s" disabled="#{importBBean.enable}" title="Download #{importBBean.file.name}">
+				        <p:fileDownload value="#{importBBean.fileDownload}" />
+				    </p:commandButton>
+				    
+				    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				    
+			    	<p:commandButton value="#{msg.import}" ajax="false" 
+				     	onclick="PF('importDialog').show();" action="#{importBBean.importXLS}" oncomplete="PF('importDialog').hide();" icon="ui-icon-note" 
+				     	disabled="#{importBBean.enable or importBBean.disabled}" title="Import #{importBBean.file.name}"/>
+				    			     					     	
+			    </p:panel>			
+				
+			</div>
+			
+		</h:form>
+	
+		<p:dialog modal="true" widgetVar="statusDialog" header="Download" draggable="false" closable="false" resizable="false">
+	    	<p:graphicImage library="images" name="ajaxloadingbar.gif" />
+		</p:dialog>
+		
+		<p:dialog modal="true" widgetVar="importDialog" header="#{msg.msg_status_import}" style="font-size: 10px;" draggable="false" closable="false" resizable="false">
+	    	<p:graphicImage library="images" name="ajaxloadingbar.gif" style="margin-left: 12%;"/>
+		</p:dialog>
+		
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

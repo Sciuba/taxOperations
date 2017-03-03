@@ -1,0 +1,1594 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8" lang="pt_BR">
+			
+			<ui:include src="../../template/ajaxStatus.xhtml"/>
+			
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="false" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{detailBBean.disabledAll}">	 	
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+				
+				<!-- <p:dialog modal="true" widgetVar="loadingProcess" header="Please Wait..." style="font-size: 10px;" draggable="false" closable="false" resizable="false" width="400">
+    				<p:graphicImage library="images" name="ajaxloadingbar.gif" style="margin-left: 12%;"/>
+				</p:dialog>	 -->			
+								
+				<p:panel closable="false" id="painelPadrao" style="height: 100%" rendered="#{!detailBBean.disabledAll}">					
+					
+					<f:facet name="header">
+					
+						<div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.label_quote_item}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 50%%; float: right;">
+				           
+				           <p:outputLabel id="commands" style="text-align: right;">
+				           		<p:commandButton onclick="PF('impWizard').show()" value="#{msg.bt_add_item}" style="margin-right: 10px;" disabled="#{detailBBean.read}"/>
+				           		<p:commandButton value="Save Quote" action="#{detailBBean.salvarQuote}" style="margin-right: 10px;" update="form" ajax="false" disabled="#{detailBBean.read}"/>
+				           		<p:commandButton value="Clone Quote" onclick="PF('cloneForm').show();" style="margin-right: 10px;" disabled="#{detailBBean.read}"/>
+				           		<p:commandButton value="Trigger" action="#{detailBBean.executeGoalSeek}" rendered="#{detailBBean.goalSeek and detailBBean.goalSeekPerm}" onclick="PF('loadingProcess').show()"
+				           			oncomplete="PF('loadingProcess').hide()" update=":form" style="margin-right: 10px;"/>
+			           			<p:commandButton value="Save Discount" action="#{detailBBean.saveDiscountProductType}" rendered="#{detailBBean.checkedDiscountPT}" onclick="PF('loadingProcess').show()"
+				           			oncomplete="PF('loadingProcess').hide()" update=":form" style="margin-right: 10px;"/>
+			           			<p:commandButton value="Cancel" update=":form" ajax="false" rendered="#{detailBBean.goalSeek and detailBBean.goalSeekPerm}" action="#{detailBBean.cancelGoalSeek}"/>
+				           </p:outputLabel>
+				          
+			           </div>
+					
+					</f:facet>
+					
+					<h:outputFormat rendered="#{!detailBBean.reports}">
+						<ui:include src="quoteDetailDefault.xhtml"/>
+					</h:outputFormat>
+					
+					<h:outputFormat rendered="#{detailBBean.reports}">
+						<ui:include src="quoteDetailReport.xhtml"/>
+					</h:outputFormat>					
+					
+				</p:panel>					
+			</div>
+		</h:form>
+		
+		<p:dialog id="dialogFather" header="Change Group Condition" widgetVar="fatherDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="350" height="180">
+			
+			<p:messages id="fatherMsg" showDetail="false" showSummary="true"/>
+			
+			<h:form id="formFather" prependId="false">
+			
+				<h:panelGrid columns="2" style="margin-left: -3px;">
+					
+					<h:outputText value="Reset Group Condition:" styleClass="labelBold" rendered="#{!empty detailBBean.itemSelecionado.tbTaxQuoteItemOriginal}" style="padding:4px; width: 200px;"/>
+					<h:selectBooleanCheckbox value="#{detailBBean.flagQuoteItemOriginal}" rendered="#{!empty detailBBean.itemSelecionado.tbTaxQuoteItemOriginal}" style="padding:4px;"/>
+					
+				</h:panelGrid>
+				
+			
+				<h:panelGrid columns="2" width="100%">
+					
+					<h:outputText value="Grouper:" styleClass="labelBold"/>
+					
+					<h:selectOneMenu value="#{detailBBean.paiSelecionado}" style="padding: 4px; width: 200px;">
+						<f:selectItem itemLabel="Independent (PTO)" itemValue="-1"/>
+						<f:selectItems value="#{detailBBean.listaQuoteItemPais}" var="pai" itemLabel="#{pai.sOrdem} - Part Number(#{pai.sModel})" itemValue="#{pai.id}"/>
+					</h:selectOneMenu>			
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div style="float: right;">
+					
+					<p:commandButton action="#{detailBBean.changeFather}" update=":form" icon="ui-icon-check" value="#{msg.bt_save}" onclick="PF('fatherDialog').hide()"/>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('fatherDialog').hide()" immediate="true"/>
+					
+				</div>
+				
+			</h:form>
+			
+		</p:dialog>
+		
+		<p:dialog id="dialogNcm" header="Change NCM" widgetVar="ncmDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="350" height="180">
+			
+			<p:messages id="ncmMsg" showDetail="false" showSummary="true"/>
+			
+			<h:form id="formNcm" prependId="false">
+			
+				<h:panelGrid columns="2" style="margin-left: -3px;">
+					
+					<h:outputText value="Reset NCM Origin:" styleClass="labelBold" rendered="#{!empty detailBBean.itemSelecionado.tbAdmMaterialClassOriginal}" style="padding:4px; width: 200px;"/>
+					<h:selectBooleanCheckbox value="#{detailBBean.flagQuoteNcmOriginal}" rendered="#{!empty detailBBean.itemSelecionado.tbAdmMaterialClassOriginal}" style="padding:4px;"/>
+					 
+				</h:panelGrid>
+				 
+			
+				<h:panelGrid columns="2" width="100%">
+					
+					<h:outputText value="NCM:" styleClass="labelBold"/>
+					
+					<h:selectOneMenu value="#{detailBBean.ncmSelecionado}" style="padding: 4px; width: 200px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{detailBBean.listaMaterialClass}" var="c" 
+							itemLabel="#{c.sNcm} (#{c.tbAdmProductType.sLabel}) #{c.subsTributariaST}" itemValue="#{c.id}"/>
+					</h:selectOneMenu>			
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<div style="float: right;">
+					
+					<p:commandButton action="#{detailBBean.changeNcm}" update=":form" icon="ui-icon-check" value="#{msg.bt_save}" onclick="PF('ncmDialog').hide()"/>
+					 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('ncmDialog').hide()" immediate="true"/>
+					
+				</div>
+				
+			</h:form>
+			
+		</p:dialog>
+		
+		<p:dialog header="Discount by Product Type" widgetVar="disocuntProductType" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="350" height="180">
+			
+			<p:messages id="discMsg" showDetail="false" showSummary="true"/>
+			
+			<h:form prependId="false">
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="Product Type" styleClass="labelBold" style="padding:4px;"/>
+					<h:selectOneMenu value="#{detailBBean.taxModelSelecionado}" style="padding: 4px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{detailBBean.listaProductTypes}" var="type" itemLabel="#{type.sLabelAcronym}" itemValue="#{type.iTaxModel}" />
+					</h:selectOneMenu>
+					
+					<h:outputText value="Discount" styleClass="labelBold" style="padding:4px;"/>
+					<pe:inputNumber value="#{detailBBean.discountTaxModel}" thousandSeparator="," decimalSeparator="." decimalPlaces="4"/>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div style="float: right;">
+					
+					<p:commandLink action="#{detailBBean.discountProductType}" update=":discMsg" icon="ui-icon-check" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left">							
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('disocuntProductType').hide()" immediate="true"/>
+					
+				</div>
+				
+			</h:form>
+			
+		</p:dialog>
+		
+		
+		<p:dialog header="Old Versions" id="versions" widgetVar="oldVersions" modal="true" resizable="false" draggable="false"
+			showEffect="fade" hideEffect="fade" width="800" height="500">
+			
+			<h:form id="formVersions" prependId="false" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<p:dataTable id="tabOldVersion" value="#{detailBBean.listaQuoteVersions}" var="old" rowKey="#{old.id}"
+					scrollable="true" scrollHeight="450">
+				
+					<p:column headerText="#{msg.label_quote_number}" style="text-align: left;">
+						<h:outputText value="#{old.sQuoteNumber}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_quote_name}" style="text-align: left;">
+						<h:outputText value="#{old.sQuoteName}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_version}" style="text-align: right;">
+						<h:outputText value="#{old.iQuoteVersion}"/>
+					</p:column>					
+					
+					<p:column>
+						<p:commandButton value="XLS" title="Export to XLS" action="#{detailBBean.exportToXLSOldVersion}" ajax="false">
+							<f:setPropertyActionListener value="#{old}" target="#{detailBBean.quoteVersion}"/>
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+				
+			</h:form>			
+			
+		</p:dialog>
+		
+		
+		<p:dialog header="Clone Quote" id="cloneForm" widgetVar="cloneForm" modal="true" resizable="false" draggable="false"
+			showEffect="fade" hideEffect="fade" width="800" height="500">
+			
+			<h:form id="formCloneQuote" prependId="false" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<p:messages id="cloneMsg" showDetail="false" showSummary="true"/>
+						
+				<p:tabView activeIndex="#{detailBBean.tab}" binding="#{detailBBean.tabView}">
+				
+					<p:ajax event="tabChange" listener="#{detailBBean.tabIndex}"/> 
+					
+					<p:tab title="#{msg.label_step} 1">
+						<p:panel header="Quote">
+							
+							<h:outputText value="If the clone the quote she had the same name as the current quote it will have a new version and replace the current quote"
+								style="font-size: 12px; font-weight: bold; color: black;"/>
+							
+							<br style="font"/>
+							
+							<h:panelGrid columns="2">
+							
+								<h:outputText value="Sales Operations:" styleClass="labelBold" style="padding: 4px;"/>
+	                			<h:outputText value="#{loginBBean.user.sFullName}" styleClass="labelBold" style="padding: 4px;" rendered="#{!loginBBean.user.fManagerGroupSales}"/>
+	                			<h:selectOneMenu value="#{detailBBean.personSelecionadoSalesRep}" required="true" rendered="#{loginBBean.user.fManagerGroupSales}" 
+	                				style="padding: 4px;" requiredMessage="#{msg.msg_salesrep_required}">
+	                				<ui:remove><f:selectItem itemLabel=" " itemValue="-1"/></ui:remove>
+	                				<f:selectItems value="#{detailBBean.listaPerson}" var="rep" itemLabel="#{rep.sFullName}" itemValue="#{rep.id}"/>
+	                			</h:selectOneMenu>
+	                			
+	                			<h:outputText value="#{msg.label_customer_name}:" styleClass="labelBold" style="padding: 4px;" />
+	                			<h:inputText value="#{detailBBean.sCustomerClone}" style="padding: 4px; width: 460px;" />
+	                			
+	                			<h:outputText value="#{msg.label_quote} #" styleClass="labelBold" style="padding: 4px;"/>
+	                			<h:inputText value="#{detailBBean.sQuoteNumberClone}" style="padding: 4px;" required="true" requiredMessage="#{msg.msg_quote_number_required}"/>
+	                				
+	                			<h:outputText value="#{msg.label_quote_name}:" styleClass="labelBold" style="padding: 4px;"/>
+	                			<h:inputText value="#{detailBBean.sQuoteNameClone}" style="padding: 4px; width: 460px;" required="true" requiredMessage="#{msg.msg_quote_name_required}"/>
+	               			
+	               			</h:panelGrid>
+								
+						</p:panel>
+					</p:tab>
+					
+					<p:tab title="#{msg.label_step} 2">
+						<p:panel header="Detail">
+							<p:scrollPanel mode="native" style="height:280px;">
+								<h:panelGrid columns="1">
+										
+										<h:outputText value="#{msg.msg_quote_detail_step2}" styleClass="labelBold" style="padding: 4px;"/>
+										
+										<h:outputText value="#{msg.label_destination}" styleClass="labelBold" style="padding: 4px;"/>
+										
+										<h:outputText value="#{msg.msg_quote_detail_step2_red}" styleClass="labelBold" style="padding: 4px; color: red;"/>
+										 
+										<h:selectOneMenu value="#{detailBBean.destinoSelecionado}" style="padding: 4px;">
+											<f:selectItem itemLabel=" " itemValue="-1"/>
+											<f:selectItems value="#{detailBBean.listaDestinations}" var="d" itemLabel="#{d.sCode} - #{d.sLocale}" itemValue="#{d.id}"/>
+										</h:selectOneMenu>
+									</h:panelGrid>
+																		
+									<h:panelGrid columns="2" id="detailsImpRadio" style="margin-top:3px;">
+										
+										<h:outputText value="#{msg.label_other_inf}" styleClass="labelBold" style="padding: 4px;"/>
+										<h:outputText value="" />
+										
+										<h:outputText value="#{msg.msg_that_leasing_operation}" styleClass="labelBold" style="padding: 4px;"/>
+										<h:selectOneRadio value="#{detailBBean.fLeasingClone}" layout="lineDirection">
+											<f:selectItem itemLabel="Yes" itemValue="true"/>
+											<f:selectItem itemLabel="No" itemValue="false"/>
+											<p:ajax event="change" update="detailsImpRadio" listener="#{detailBBean.leasingClone}"/>
+										</h:selectOneRadio>
+										
+										<h:outputText value="#{msg.msg_customer_suframa}" styleClass="labelBold" style="padding: 4px;"/>
+										<h:selectOneRadio value="#{detailBBean.fSuframaClone}" layout="lineDirection" disabled="#{detailBBean.fLeasingClone}">
+											<f:selectItem itemLabel="Yes" itemValue="true"/>
+											<f:selectItem itemLabel="No" itemValue="false"/>
+										</h:selectOneRadio>
+										
+										<h:outputText value="#{msg.msg_customer_taxpayer}" styleClass="labelBold" style="padding: 4px;"/>
+										<h:selectOneRadio value="#{detailBBean.fContrestClone}" layout="lineDirection" disabled="#{detailBBean.fLeasingClone}">
+											<f:selectItem itemLabel="Yes" itemValue="true"/>
+											<f:selectItem itemLabel="No" itemValue="false"/>
+											<p:ajax event="change" update="detailsImpRadio" />
+										</h:selectOneRadio>
+										
+										<h:outputText value="#{msg.label_insc_est}:" styleClass="labelBold" style="padding: 4px;"/>
+										<h:inputText value="#{detailBBean.sIeBillClone}" style="padding: 4px;" 
+											disabled="#{!detailBBean.fContrestClone}" required="#{detailBBean.fContrestClone}"  requiredMessage="The Field State Inscription is required."/>
+										
+										<h:outputText value="#{msg.msg_selling_partner_reselling}" styleClass="labelBold" style="padding: 4px;"/>
+										<h:selectOneRadio value="#{detailBBean.fPartnerClone}" layout="lineDirection" disabled="#{detailBBean.fLeasingClone}">
+											<f:selectItem itemLabel="Yes" itemValue="true"/>
+											<f:selectItem itemLabel="No" itemValue="false"/>
+										</h:selectOneRadio>
+										
+										<!-- <h:outputText value="#{msg.content_group}:" styleClass="labelBold" style="padding: 4px;"/>
+										<h:selectOneMenu value="#{detailBBean.groupSelecionado}" style="padding: 4px;">
+											<f:selectItem itemLabel=" " itemValue="-1"/>
+											<f:selectItems value="#{quoteBBean.listaGroup}" var="g" itemLabel="#{g.SDescription}" itemValue="#{g.id}"/>
+										</h:selectOneMenu> -->
+										
+									</h:panelGrid>
+								
+								</p:scrollPanel>
+									
+								<f:facet name="footer">
+									<h:outputText value="#{msg.msg_additional_quote_detail}" styleClass="labelBold" style="padding: 4px;"/>
+								</f:facet>
+												
+						</p:panel>
+						
+					</p:tab>
+					
+				</p:tabView>			
+				
+				<div style="float: right;">
+					
+					<p:commandLink action="#{detailBBean.cloneQuote}" update="cloneMsg" icon="ui-icon-check" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left">							
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('cloneForm').hide()" immediate="true"/>
+					
+				</div>
+				
+			</h:form>
+			
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_edit_material}" widgetVar="materialEdit" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="800" height="300">
+			<h:form id="materialEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+				<br/>
+				<h:panelGrid columns="6" id="tab1">
+					
+					<ui:remove>		
+						<h:outputText value="#{msg.label_avaliable}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneRadio value="#{detailBBean.materialSelecionado.fAvailable}">
+							<f:selectItem itemLabel="No" itemValue="false"/>
+							<f:selectItem itemLabel="Yes" itemValue="true"/>
+							<p:ajax event="click" update=":materialEditDetail:tab1" listener="#{materialBBean.avaliableMaterial}"/>
+						</h:selectOneRadio>
+					</ui:remove>
+					
+					<h:outputText value="#{msg.label_serial_req}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneRadio value="#{detailBBean.materialSelecionado.fExigeSerialNumberParaSW}">
+						<f:selectItem itemLabel="No" itemValue="false"/>
+						<f:selectItem itemLabel="Yes" itemValue="true"/>
+					</h:selectOneRadio>
+				
+				</h:panelGrid>
+				
+				<br/>
+				 
+				<h:panelGrid columns="4"> 
+				
+					<h:outputText value="#{msg.label_ncm}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{detailBBean.classSelecionado}" style="padding: 4px; font-size: 12px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{detailBBean.listaMaterialClass}" var="c" 
+							itemLabel="#{c.sNcm} (#{c.tbAdmProductType.sLabel}) #{c.subsTributariaST}" itemValue="#{c.id}"/>
+					</h:selectOneMenu>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_dc}:" styleClass="labelBold" style="padding: 4px;"/>
+						<h:selectOneMenu value="#{detailBBean.discountSelecionado}" style="padding: 4px; font-size: 12px;">
+							<f:selectItem itemLabel=" " itemValue="-1"/>
+							<f:selectItems value="#{detailBBean.listaDiscount}" var="d" 
+								itemLabel="#{d.SCode}" itemValue="#{d.id}"/>
+						</h:selectOneMenu>
+					</ui:remove>
+									
+					<h:outputText value="#{msg.label_part_number}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sInternalModel}" style="padding: 4px; width: 200px;"/>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sDescription}" style="padding: 4px; width: 617px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<ui:remove>
+				<h:panelGrid columns="4">
+					
+					
+					<h:outputText value="#{msg.label_manufacturer_model}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sManufacturerModel}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_primary_unit_measure}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sPrimaryUnitMeasure}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_life_cycle}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sLifeCyclePhase}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_item_type}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sItemType}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_item_status}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sItemStatus}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_trans_condit_class}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sTransactionConditionClass}" style="padding: 4px; width: 200px;"/>
+					
+					<h:outputText value="#{msg.label_line_business}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sLineBusiness}" style="padding: 4px; width: 200px;"/>					
+					
+				</h:panelGrid> 
+				</ui:remove>
+				
+				<ui:remove>
+				<h:panelGrid columns="4">
+					
+					<h:outputText value="#{msg.label_cost}:" styleClass="labelBold" style="padding: 4px;"/>
+					<pe:inputNumber  value="#{detailBBean.materialSelecionado.mCost}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_list_price}:" styleClass="labelBold" style="padding: 4px;"/>
+					<pe:inputNumber value="#{detailBBean.materialSelecionado.mListPrice}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_rep_floor_price}:" styleClass="labelBold" style="padding: 4px;"/>
+					<pe:inputNumber value="#{detailBBean.materialSelecionado.mRepFloorPrice}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;"/>
+					
+					<ui:remove>
+						<h:outputText value="#{msg.label_standard_cost}:" styleClass="labelBold" style="padding: 4px;"/>
+						<pe:inputNumber value="#{detailBBean.materialSelecionado.mStandardCost}" decimalSeparator="," thousandSeparator="." symbol="US$ " style="padding: 4px;"/>
+					</ui:remove>
+					
+				</h:panelGrid>
+				</ui:remove>
+				
+				<ui:remove>
+				<h:panelGrid columns="6">
+				
+					<h:outputText value="#{msg.label_costumer_order_flag}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sCostumerOrderFlag}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_internal_order_flag}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sInternalOrderFlag}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_item_fiscal_type}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.sItemFiscalType}" size="1" maxlength="1" style="padding: 4px; width: 20px;"/>
+					
+					<h:outputText value="#{msg.label_federal_tribute_oper}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.iFederalTributarysituation}" size="4" maxlength="4" style="padding: 4px; width: 30px;"/>
+					
+					<h:outputText value="#{msg.label_state_tribute_oper}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.materialSelecionado.iStateTributarySituation}" size="4" maxlength="4" style="padding: 4px; width: 30px;"/>
+														
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="4">
+				
+					<h:outputText value="#{msg.label_item_creation_date}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:outputText value="#{detailBBean.materialSelecionado.dtItemCreationDate}" style="padding: 4px;">
+						<f:convertDateTime  locale="pt" pattern="#{msg.pattern_date}"/>
+					</h:outputText>
+					
+					<h:outputText value="#{msg.label_last_update}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:outputText value="#{detailBBean.materialSelecionado.dtLastUpdate}" style="padding: 4px;">
+						<f:convertDateTime  locale="pt" pattern="#{msg.pattern_date}"/>
+					</h:outputText>
+					
+				</h:panelGrid>
+				
+				<br/>
+				</ui:remove>
+				
+				<h:panelGrid columns="2">
+				
+					<h:outputText value="#{msg.label_material_origin}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{detailBBean.materialSelecionado.fOrigemDaMercadoria}" style="padding: 4px; width: 400px;">
+						<f:selectItem itemLabel="0 - Nacional" itemValue="0"/>
+						<f:selectItem itemLabel="1 - Estrangeira - Importação direta" itemValue="1"/>
+						<f:selectItem itemLabel="2 - Estrangeira - Adquirida no mercado interno" itemValue="2"/>
+						<f:selectItem itemLabel="3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% (quarenta por cento)" itemValue="3"/>
+						<f:selectItem itemLabel="4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos " itemValue="4"/>
+						<f:selectItem itemLabel="5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40% (quarenta por cento)" itemValue="5"/>
+						<f:selectItem itemLabel="6 - Estrangeira - Importação direta, sem similar nacional, constante em lista de Resolução CAMEX" itemValue="6"/>
+						<f:selectItem itemLabel="7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista de Resolução CAMEX" itemValue="7"/>
+					</h:selectOneMenu>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div id="btEditMaterial" style="float:right;">
+					<p:commandButton ajax="false" action="#{detailBBean.alterMaterial}" value="#{msg.bt_save}" icon="ui-icon-check"
+						update=":form" onclick="PF('materialEdit').hide()" disabled="#{detailBBean.read}"/> 
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form" onclick="PF('materialEdit').hide()" />
+				</div>
+					
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Delete Quote Item" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;">
+						<p:commandButton ajax="false" action="#{detailBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="Restore Values" widgetVar="restoreValues"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="400">
+			<h:form id="restore">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="Want to restore the initial values?" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;">
+						<p:commandButton ajax="false" action="#{detailBBean.restoreValues}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('restoreValues').hide()" /> 
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('restoreValues').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="Closed Quote" widgetVar="closeQuote"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="400">
+			<h:form id="close">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="Want to close this Quote?" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;">
+						<p:commandButton ajax="false" action="#{detailBBean.closeQuote}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('closeQuote').hide()" /> 
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('closeQuote').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="ReOpen Quote" widgetVar="unreleaseQuote"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="400">
+			<h:form id="reopen">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="Want to ReOpen this Quote?" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;">
+						<p:commandButton ajax="false" action="#{detailBBean.unreleaseQuote}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('unreleaseQuote').hide()" /> 
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('unreleaseQuote').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Release Quote" widgetVar="releaseQuote"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="400">
+			<h:form id="release">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="Want to release this quote?" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;">
+						<p:commandButton ajax="false" action="#{detailBBean.releaseQuote}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('releaseQuote').hide()" /> 
+							 
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('releaseQuote').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_change_name}" widgetVar="changeNameDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="changeName">
+				<h:panelGrid columns="2">
+					<h:outputText value="#{msg.label_quote_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{detailBBean.quoteSelecionado.sQuoteName}" style="padding: 4px; width: 200px;"/>					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandButton ajax="false" action="#{detailBBean.saveQuoteName}" value="#{msg.bt_save}" icon="ui-icon-check" 
+						update=":form" onclick="PF('changeNameDialog').hide()" />							
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('changeNameDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_quote_detail}" widgetVar="detailsDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="1320" height="500">
+			<h:form id="quoteDetail" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<h:outputText value="#{msg.msg_quote_detail_calculation}" style="font-size: 12px;"/> <br/>
+				<h:panelGrid columns="2" style="margin-top: 5px;">
+					<h:outputText value="#{msg.label_work_group}:" style="font-size: 12px"/>
+					<h:selectOneMenu value="#{detailBBean.grupo}" style="padding: 4px;">
+						<f:selectItem itemValue="-1" itemLabel=" "/>
+						<f:selectItems value="#{detailBBean.listaGrupo}" var="g" itemLabel="#{g.SDescription}" itemValue="#{g.id}"/>
+					</h:selectOneMenu>
+				</h:panelGrid>
+				
+				<div>
+					<h:panelGrid columns="2" style="float:left; display: block; height: 50px;">
+						<h:outputText value="Sales Operations:" styleClass="labelBold"/>
+						<h:outputText value="#{detailBBean.quoteSelecionado.tbSysUser.sFullName}"/>
+					
+						<h:outputText value="#{msg.label_participant}:" styleClass="labelBold"/>
+						<h:outputText value="#{detailBBean.participantesSelecionados}"/>
+					</h:panelGrid>
+					
+					<p:commandButton value="#{msg.label_add_participant}" onclick="PF('addParticipant').show();" style="float:right;"/>
+				</div>
+				
+				<br/>
+				
+				<p:scrollPanel mode="native" style="margin-top: 5px; height: 365px; width: 100%;">
+					<p:panel header="#{msg.header_panel_sale_origin_destination}" >
+						
+						<h:panelGrid columns="1">
+							<h:outputText value="#{msg.label_sale_destination}" styleClass="labelBold"/>
+							<h:outputText value="#{msg.msg_quote_detail_red}" style="font-weight: bold; color: red; font-size: 12px;"/>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+							<h:outputText value="#{msg.label_quote_destination_location}:" style="font-size: 12px;"/>
+							<h:selectOneMenu value="#{detailBBean.destination}" style="padding: 4px;">
+								<f:selectItems value="#{detailBBean.listaDestination}" var="d" itemLabel="#{d.sCode} - #{d.sLocale}" itemValue="#{d.id}"/>
+								<p:ajax event="change" update="tabDestination" listener="#{detailBBean.ajustaOrigemQuote}"/> 
+							</h:selectOneMenu>							
+						</h:panelGrid>
+						
+						<h:panelGrid columns="1">					
+							<h:outputText value="#{msg.label_origin_sale}" styleClass="labelBold"/>
+						</h:panelGrid>					
+											
+						<h:panelGrid columns="8" width="80%" id="tabDestination">
+							
+							<h:outputText value="#{msg.label_quote_locaton_hw}:" style="font-size: 12px; width: 123px;"/>
+							<h:selectOneMenu value="#{detailBBean.originHW}" style="padding: 4px;" disabled="true">
+								<f:selectItem itemValue="-1" itemLabel=" "/>
+								<f:selectItems value="#{detailBBean.listaOrigin}" var="o" itemLabel="#{o.sCode} - #{o.sLocale}" itemValue="#{o.id}"/>
+							</h:selectOneMenu>
+							
+							<h:outputText value="#{msg.label_quote_locaton_sw}:" style="font-size: 12px; float: right;"/>
+							<h:selectOneMenu value="#{detailBBean.originSW}" style="padding: 4px;">
+								<f:selectItem itemValue="-1" itemLabel=" "/>
+								<f:selectItems value="#{detailBBean.listaOrigin}" var="o" itemLabel="#{o.sCode} - #{o.sLocale}" itemValue="#{o.id}"/>
+							</h:selectOneMenu>
+							
+							<h:outputText value="#{msg.label_quote_locaton_sv}:" style="font-size: 12px; float: right;"/>
+							<h:selectOneMenu value="#{detailBBean.originSV}" style="padding: 4px;">
+								<f:selectItem itemValue="-1" itemLabel=" "/>
+								<f:selectItems value="#{detailBBean.listaOrigin}" var="o" itemLabel="#{o.sCode} - #{o.sLocale}" itemValue="#{o.id}"/>
+							</h:selectOneMenu>
+							
+							<ui:remove>
+								<h:outputText value="#{msg.label_quote_locaton_mt}:" style="font-size: 12px; float: right;"/>
+								<h:selectOneMenu value="#{detailBBean.originMT}" style="padding: 4px;">
+									<f:selectItem itemValue="-1" itemLabel=" "/>
+									<f:selectItems value="#{detailBBean.listaOrigin}" var="o" itemLabel="#{o.sCode} - #{o.sLocale}" itemValue="#{o.id}"/>
+								</h:selectOneMenu>
+							</ui:remove>
+							
+						</h:panelGrid>					
+					</p:panel>
+					
+					<p:panel header="#{msg.header_panel_other_information}" style="margin-top: 8px;" id="panelTax">
+						
+						<h:panelGrid columns="6" width="80%" id="otherInfo">
+							<h:outputText value="#{msg.label_leasing_operation}?" style="font-size: 12px; float: right;"/>
+							<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fLeasing}">
+								<f:selectItem itemLabel="Yes" itemValue="true"/>
+								<f:selectItem itemLabel="No" itemValue="false"/>
+								<p:ajax event="click" update="otherInfo" listener="#{detailBBean.leasing}"/>
+							</h:selectOneRadio>
+							
+							<h:outputText value="#{msg.label_suframa_area}?" style="font-size: 12px; float: right;"/>
+							<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fSuframa}"  disabled="#{detailBBean.quoteSelecionado.fLeasing}">
+								<f:selectItem itemLabel="Yes" itemValue="true"/>
+								<f:selectItem itemLabel="No" itemValue="false"/>
+							</h:selectOneRadio>
+							
+							<h:outputText value=" "/>
+							<p:commandButton value="Tax Free" onclick="PF('taxfree').show();" rendered="#{detailBBean.taxFree}"/>
+							<h:outputText value=" " rendered="#{!detailBBean.taxFree}"/>
+							
+							<h:outputText value="#{msg.label_regular_taxpayer}?" style="font-size: 12px; float: right;"/>
+							<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fContrest}"  disabled="#{detailBBean.quoteSelecionado.fLeasing}">
+								<f:selectItem itemLabel="Yes" itemValue="true"/>
+								<f:selectItem itemLabel="No" itemValue="false"/>
+								<p:ajax event="change" update="otherInfo" />
+							</h:selectOneRadio>
+							
+							<h:outputText value="#{msg.label_partner_reselling}?" style="font-size: 12px; float: right;"/>
+							<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fPartner}"  disabled="#{detailBBean.quoteSelecionado.fLeasing}">
+								<f:selectItem itemLabel="Yes" itemValue="true"/>
+								<f:selectItem itemLabel="No" itemValue="false"/>
+							</h:selectOneRadio>
+							
+							<h:outputText value=" "/>
+							<h:outputText value=" "/>
+							
+							<h:outputText value="#{msg.label_insc_est}:" styleClass="labelBold" style="padding: 4px; float: right;" rendered="#{detailBBean.quoteSelecionado.fContrest}"/>
+							<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sIeBill}" style="padding: 4px;" 
+								rendered="#{detailBBean.quoteSelecionado.fContrest}" required="#{detailBBean.quoteSelecionado.fContrest}"/>
+							
+						</h:panelGrid>
+						
+						<p:selectOneRadio id="customRadio" value="#{detailBBean.taxSelecionado}" layout="custom">
+				            <f:selectItem itemValue="1" />
+				            <f:selectItem itemValue="2" />
+				            <p:ajax event="click" update="panelTax"/>				            
+				        </p:selectOneRadio>
+										
+						<h:panelGrid columns="9" style="margin-left: 80px;" id="optDollar">
+							<p:radioButton id="opt1" for="customRadio" itemIndex="0"/>
+							<h:outputLabel for="opt1" value="#{msg.label_dollar_rate_quote}:" styleClass="labelBold"/>
+							<pe:inputNumber value="#{detailBBean.quoteSelecionado.mDollarRate}" decimalPlaces="4" thousandSeparator="," disabled="#{detailBBean.taxSelecionado != '1'}"/>
+							
+							<h:outputText value=" "/>
+							<h:outputText value=" "/>
+							<h:outputText value=" "/>
+							
+							<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
+            				<h:outputLabel for="opt2" value="#{msg.label_dollar_quote_ptax}:" styleClass="labelBold"/>
+            				<h:outputText value="#{detailBBean.dollarRate}"/>
+						</h:panelGrid> 
+
+						<br/>
+						
+						<h:panelGrid columns="3" style="margin-left: 80px;">
+						
+						<h:outputText style="font-size: 12px;" value="Dollar rate used in the calculation rule for the NCM 847150X:"/>
+						<h:outputText style="font-size: 12px; font-weight: bold" value="R$"/>
+						<h:outputText style="font-size: 12px; font-weight: bold" value="#{detailBBean.quoteSelecionado.mDailyDollar}">
+							<f:convertNumber pattern="#0.0000"/>
+						</h:outputText>
+						
+						</h:panelGrid>
+						
+					</p:panel>
+					
+					<p:panel header="#{msg.header_panel_add_cost}" style="margin-top: 8px;">
+						<h:outputText value="#{msg.msg_add_cost_separedor}" style="font-size: 12px;"/>
+						
+						<h:panelGrid columns="6" width="70%" style="float:left; margin-top: 6px;">
+							<h:outputText value="#{msg.label_freight} (R$):" styleClass="labelBold"/>
+							<pe:inputNumber value="#{detailBBean.quoteSelecionado.mAdditionalCostFreight}" thousandSeparator="," decimalSeparator="."/>
+							
+							<h:outputText value="#{msg.label_project_cost} (R$):" styleClass="labelBold"/>
+							<pe:inputNumber value="#{detailBBean.quoteSelecionado.mAdditionalCostProjectCost}" thousandSeparator="," decimalSeparator="."/>
+							
+							<h:outputText value="#{msg.label_training} (R$):" styleClass="labelBold"/>
+							<pe:inputNumber value="#{detailBBean.quoteSelecionado.mAdditionalCostTraining}" thousandSeparator="," decimalSeparator="."/>
+														
+						</h:panelGrid>
+						
+						<p:commandButton value="#{msg.bt_add_cost_update}" onclick="PF('logCostUpdate').show();" style="float: right;" disabled="#{detailBBean.read}"/>
+						
+						<br/>
+						<br/>
+						
+						<h:panelGrid columns="4" width="60%" style="margin-top: 10px;">
+							
+							<h:outputText value="#{msg.label_other_cost} (R$):" styleClass="labelBold"/>
+							<pe:inputNumber value="#{detailBBean.quoteSelecionado.mAdditionalCostOtherCosts}" thousandSeparator="," decimalSeparator="."/>
+							
+							<h:outputText value="#{msg.label_comments_other_costs}:" styleClass="labelBold"/>
+							<h:inputTextarea value="#{detailBBean.quoteSelecionado.sCommentsOtherCost}" style="width: 300px; height: 50px;"/>
+							
+						</h:panelGrid>
+						
+					</p:panel>
+					
+				</p:scrollPanel>
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandButton ajax="false" action="#{detailBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check" 
+						update=":form" onclick="PF('detailsDialog').hide()" disabled="#{(detailBBean.quoteSelecionado.dtRelease != null or detailBBean.quoteSelecionado.dtClose != null) or detailBBean.read}"/>							
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('detailsDialog').hide()" immediate="true"/>
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Tax Free" widgetVar="taxfree" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="600" height="380">
+			<h:form id="taxfree" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:messages id="logmsg" showDetail="false" showSummary="true"/>
+				
+				<h:outputText value="Select the tax that wishes to exempt:" styleClass="labelBold" style="font-size: 12px;"/> 
+				<br/>
+				<h:panelGrid columns="2" width="80%">
+					
+					<h:outputText value="Substituição Tributária exemption?" styleClass="labelBold" style="padding: 4px;"/>	
+					<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fSt}" style="padding: 4px;" disabled="#{!detailBBean.quoteSelecionado.fPartner}">
+						<f:selectItem itemValue="true" itemLabel="Yes" />
+						<f:selectItem itemValue="false" itemLabel="No" />
+					</h:selectOneRadio>
+					
+					<h:outputText value="IPI tax exemption?" styleClass="labelBold" style="padding: 4px;"/>	
+					<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fIPI}" style="padding: 4px;">
+						<f:selectItem itemValue="true" itemLabel="Yes" />
+						<f:selectItem itemValue="false" itemLabel="No" />
+					</h:selectOneRadio>
+					
+					<h:outputText value="COFINS tax exemption?" styleClass="labelBold" style="padding: 4px;"/>	
+					<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fCOFINS}" style="padding: 4px;">
+						<f:selectItem itemValue="true" itemLabel="Yes" />
+						<f:selectItem itemValue="false" itemLabel="No" />
+					</h:selectOneRadio>
+					
+					<h:outputText value="PIS tax exemption?" styleClass="labelBold" style="padding: 4px;"/>	
+					<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fPIS}" style="padding: 4px;">
+						<f:selectItem itemValue="true" itemLabel="Yes" />
+						<f:selectItem itemValue="false" itemLabel="No" />
+					</h:selectOneRadio>
+					
+					<h:outputText value="ICMS tax exemption?" styleClass="labelBold" style="padding: 4px;"/>	
+					<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fICMS}" style="padding: 4px;">
+						<f:selectItem itemValue="true" itemLabel="Yes" />
+						<f:selectItem itemValue="false" itemLabel="No" />
+					</h:selectOneRadio>
+					
+					<h:outputText value="ISS tax exemption?" styleClass="labelBold" style="padding: 4px;"/>	
+					<h:selectOneRadio value="#{detailBBean.quoteSelecionado.fISS}" style="padding: 4px;">
+						<f:selectItem itemValue="true" itemLabel="Yes" />
+						<f:selectItem itemValue="false" itemLabel="No" />
+					</h:selectOneRadio>										
+					
+					<h:outputText value="Comments:*" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{detailBBean.sComments}" style="padding: 4px; height: 35px; width: 200px;"/>
+				</h:panelGrid>
+				
+				<br/>
+				
+				<p:commandButton value="Show Log" onclick="PF('logQuoteShow').show();"/>				
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandLink onclick="PF('logQuoteShow').hide();" action="#{detailBBean.registerLogTaxFree}" update="logmsg" icon="ui-icon-check" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+						disabled="#{(detailBBean.quoteSelecionado.dtRelease != null or detailBBean.quoteSelecionado.dtClose != null) or detailBBean.read}">							
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('taxfree').hide()" immediate="true"/>
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="logShow" header="Show Log" widgetVar="logQuoteShow" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="700" height="500" >
+					
+			<h:form>
+			
+				<p:dataTable value="#{detailBBean.listaLogQuote}" var="log" rowKey="#{log.id}" emptyMessage="Não há Registros."
+					rows="10" paginator="true">
+					
+					<p:column headerText="Date">
+						<h:outputText value="#{log.dtCreated}">
+							<f:convertDateTime pattern="#{msg.pattern_date_time}"/>
+						</h:outputText>					
+					</p:column>
+					
+					<p:column headerText="User">
+						<h:outputText value="#{log.sLoginUser}"/>
+					</p:column>
+					
+					<p:column headerText="Description">
+						<h:outputText value="#{log.sDescription}"/>
+					</p:column>
+					
+					<p:column headerText="Comments">
+						<h:outputText value="#{log.sComments}"/>
+					</p:column>
+					
+				</p:dataTable>
+				
+				<br/>
+				
+				<p:commandButton value="Close" onclick="PF('logQuoteShow').hide();"/>
+				
+			</h:form>
+			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.label_add_participant}" widgetVar="addParticipant" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="600" height="380">
+			<h:form id="participant" acceptcharset="UTF-8" lang="pt_BR">
+				<div style="margin-left: 10%;">
+				
+					<h:outputText value="#{msg.label_quote_all_participant}" styleClass="labelBold" style="margin-left: 11%"/>
+					<h:outputText value="#{msg.label_quote_participant_exist}" styleClass="labelBold" style="margin-left: 26%;"/>
+					
+					<p:pickList id="pickList" value="#{detailBBean.participants}" converter="br.com.saboia.converter.PersonConverter" var="part" itemLabel="(#{part.listaGrupoSigla}) #{part.sFullName}" itemValue="#{part.id}"/>
+				</div>
+				
+				<br/>
+				
+				<h:outputText value="#{msg.label_legend}:" styleClass="labelBold"/>
+								
+				<br/>
+				
+				<table>
+					<ui:repeat var="group" value="#{detailBBean.listaWorkGroup}">
+						<tr>
+							<td>
+								<h:outputText value="#{group.sAcronym} -"/>
+							</td>
+							<td>
+								<h:outputText value="#{group.sName}"/>
+							</td>
+						</tr>
+					</ui:repeat>
+				</table>
+				
+				<div style="display: block;  margin-top: 14px;">
+					<h:outputText value="#{msg.label_owner}:" styleClass="labelBold"/>
+					<h:outputText value="#{detailBBean.quoteSelecionado.tbSysUser.sFullName}"/>
+				</div>
+				
+				<br/>
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandButton action="#{detailBBean.addParticipant}" value="#{msg.bt_save}" icon="ui-icon-check" 
+						update=":quoteDetail" onclick="PF('addParticipant').hide();" disabled="#{(detailBBean.quoteSelecionado.dtRelease != null or detailBBean.quoteSelecionado.dtClose != null) or detailBBean.read}"/>							
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form" onclick="PF('addParticipant').hide()" />
+				</div>				
+								
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_additional_cost_log}" widgetVar="logCostUpdate" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="800" height="380">
+			<h:form id="costLog" acceptcharset="UTF-8" lang="pt_BR">
+				<div style="display: block; height: 340px;">
+					<p:dataTable value="#{detailBBean.lisAdditionalCosts}" paginator="true" rows="10" var="log" emptyMessage="#{msg.sem_registros}" rowKey="#{log.id}">
+						
+						<f:facet name="header">
+							<h:outputText value="#{msg.header_dialog_additional_cost_log}"/>
+						</f:facet>
+						
+						<p:column headerText="#">
+							<h:outputText value="#{log.id}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_user}">
+							<h:outputText value="#{log.tbSysUser.sFullName}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_dt}">
+							<h:outputText value="#{log.dtUpdate}">
+								<f:convertDateTime  pattern="#{msg.pattern_date} - HH:mm:ss"  />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_field}">
+							<h:outputText value="#{log.sCostName}"/>
+						</p:column>
+						
+						<p:column headerText="#{msg.label_value}">
+							<h:outputText value="#{log.mValue}" >
+								<f:convertNumber pattern="#0,000.00"/>
+							</h:outputText>
+						</p:column>
+						
+					</p:dataTable>
+				</div>
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" 
+						update=":form" onclick="PF('logCostUpdate').hide()" />
+				</div>	
+				
+			</h:form>
+		</p:dialog>	
+		
+		
+		<p:dialog header="#{msg.header_dialog_quote_review}" widgetVar="quoteReview" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="900" height="530">
+			<h:form id="quoteReview" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<h:panelGrid columns="6" width="100%" cellpadding="4">
+					
+					<h:outputText value="#{msg.label_customer_name}:" styleClass="labelBold" style="float:right"/>
+					<h:outputText value="#{detailBBean.quoteSelecionado.sCustomer}"/>
+					
+					<h:outputText value="#{msg.label_quote}#:" styleClass="labelBold" style="float:right"/>
+					<h:outputText value="#{detailBBean.quoteSelecionado.sQuoteNumber}"/>
+					
+					<h:outputText value="#{msg.label_quote_name}:" styleClass="labelBold" style="float:right"/>
+					<h:inputText value="#{detailBBean.quoteSelecionado.sQuoteName}" style="padding: 4px;"/>
+				
+				</h:panelGrid>
+				
+				<p:panel header="#{msg.label_bill_to}" style="margin-top: 5px;">
+					<h:panelGrid columns="6" width="100%" cellpadding="4">
+						
+						<h:outputText value="#{msg.label_cnpj}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sCnpjBill}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_ie}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sIeBill}" style="padding: 4px;"/>
+						
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>	
+					
+						<h:outputText value="#{msg.label_contact}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sContactBill}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_phone}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sPhoneBill}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sEmailBill}" style="padding: 4px;"/>
+					
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel header="#{msg.label_ship_to}" style="margin-top: 5px;">
+					
+					<p:commandButton value="#{msg.label_same_bill_to}" action="#{detailBBean.billToShip}" update=":quoteReview"/>
+					
+					<h:panelGrid columns="6" width="100%" cellpadding="4">
+					
+						<h:outputText value="#{msg.label_cnpj}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sCnpjShip}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_ie}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sIeShip}" style="padding: 4px;"/>
+						
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>	
+					
+						<h:outputText value="#{msg.label_contact}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sContactShip}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_phone}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sPhoneShip}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sEmailShip}" style="padding: 4px;"/>
+						
+					</h:panelGrid>				
+				</p:panel>
+				
+				<p:panel header="#{msg.label_invoicing_to}" style="margin-top: 5px;">
+				
+					<p:commandButton value="#{msg.label_same_bill_to}" action="#{detailBBean.billToInvoice}" update=":quoteReview"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<p:commandButton value="#{msg.label_same_ship_to}" action="#{detailBBean.shipToInvoice}" update=":quoteReview"/>
+				
+					<h:panelGrid columns="6" width="100%" cellpadding="4">
+					
+						<h:outputText value="#{msg.label_cnpj}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sCnpj}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_ie}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sIe}" style="padding: 4px;"/>
+						
+						<h:outputText value=" "/>
+						<h:outputText value=" "/>	
+					
+						<h:outputText value="#{msg.label_contact}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sContactPerson}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_phone}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sPhone}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_email}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sEmail}" style="padding: 4px;"/>
+						
+						<h:outputText value="#{msg.label_payment_mode}:" styleClass="labelBold"/>
+						<h:inputText value="#{detailBBean.quoteSelecionado.tbTaxQuoteDetail.sPayment}" style="padding: 4px;"/>
+						
+					</h:panelGrid>				
+				</p:panel>
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 3px;" >
+					<p:commandButton action="#{detailBBean.saveDetails}" value="#{msg.bt_save}" icon="ui-icon-check" 
+						update=":form" onclick="PF('quoteReview').hide();" disabled="#{(detailBBean.quoteSelecionado.dtRelease != null or detailBBean.quoteSelecionado.dtClose != null) or detailBBean.read}"/>							
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" action="#{detailBBean.resetReview}"
+						update=":quoteReview" onclick="PF('quoteReview').hide()" />
+				</div>	
+				
+			</h:form>
+		</p:dialog>		
+		
+		<p:dialog header="#{msg.header_dialog_import_wizard}" widgetVar="impWizard" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="800" height="530">
+			<h:form id="impWizard" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<p:wizard id="wizard" widgetVar="wiz" flowListener="#{detailBBean.onFlowProcess}" 
+					onback="document.getElementById('impWizard:goBack').click();"  onnext="document.getElementById('impWizard:goNext').click();"
+					showStepStatus="true">
+					
+					<p:tab id="step1" title="#{msg.label_step} 1">
+						<p:messages showDetail="false" showSummary="true"/>
+						<p:panel header="Part Number">
+							<h:outputText value="#{msg.msg_select_the} "/>
+							<h:outputText value="PART NUMBER " style="color: red;"/>
+							<h:outputText value="#{msg.msg_material_code_desc}"/>
+							
+							<br/>
+							
+							<h:inputTextarea value="#{detailBBean.materialCode}" style="width: 100%; height: 300px;" required="true" requiredMessage="#{msg.msg_erro_material_code}"/>
+							
+						</p:panel>					
+					</p:tab>
+					
+					<p:tab id="step2" title="#{msg.label_step} 2">
+						<p:panel header="Quote Number">
+							<p:scrollPanel mode="native" style="width: 100%; height: 150px;">
+								<p:dataTable value="#{detailBBean.listaWizard}" var="import" rowKey="#{import.id}" emptyMessage="#{msg.sem_registros}">
+									
+									<p:column headerText="#{msg.label_line}">
+										<h:outputText value="#{import.line}" style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.material}">
+										<h:outputText value="#{import.material}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_ncm}">
+										<h:outputText value="#{import.ncm}"  style="#{import.style}"/>
+									</p:column> 
+									
+									<p:column headerText="Quote Number">
+										<h:outputText value="#{import.group}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_qty}">
+										<h:outputText value="#{import.qty}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_cost_value}">
+										<h:outputText value="#{import.costValue}" style="#{import.style}"/>
+									</p:column>
+									
+								</p:dataTable>
+							</p:scrollPanel>
+							
+							<br/>
+							
+							<h:outputText value="#{msg.msg_select_the} "/>
+							<h:outputText value="QUOTE NUMBER " style="color: red;"/>
+							<h:outputText value="#{msg.msg_group_column_desc}"/>
+							
+							<h:inputTextarea value="#{detailBBean.groupColumn}" style="width: 100%; height: 180px;"/>
+							
+						</p:panel>					
+					</p:tab>
+					
+					<p:tab id="step3" title="#{msg.label_step} 3">
+						<p:panel header="#{msg.label_quantity_column}">
+							<p:messages showDetail="false" showSummary="true"/>
+							<p:scrollPanel mode="native" style="width: 100%; height: 150px;">
+								<p:dataTable value="#{detailBBean.listaWizard}" var="import" rowKey="#{import.id}" emptyMessage="#{msg.sem_registros}">
+									
+									<p:column headerText="#{msg.label_line}">
+										<h:outputText value="#{import.line}" style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.material}">
+										<h:outputText value="#{import.material}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_ncm}">
+										<h:outputText value="#{import.ncm}"  style="#{import.style}"/>
+									</p:column> 
+									
+									<p:column headerText="Quote Number">
+										<h:outputText value="#{import.group}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_qty}">
+										<h:outputText value="#{import.qty}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_cost_value}">
+										<h:outputText value="#{import.costValue}" style="#{import.style}"/>
+									</p:column>
+									
+								</p:dataTable>
+							</p:scrollPanel>
+							
+							<br/>
+							
+							<h:outputText value="#{msg.msg_select_the} "/>
+							<h:outputText value="#{msg.msg_quantity_column} " style="color: red;"/>
+							<h:outputText value="#{msg.msg_group_column_desc}"/>
+							
+							<h:inputTextarea value="#{detailBBean.quantityColumn}" style="width: 100%; height: 180px;" required="true" requiredMessage="#{msg.msg_erro_quantity_code}"/>
+							
+						</p:panel>					
+					</p:tab>
+					
+					<p:tab id="step4" title="#{msg.label_step} 4">
+						<p:panel header="#{msg.label_total_cost_value}">
+							<p:scrollPanel mode="native" style="width: 100%; height: 150px;">
+								<p:dataTable value="#{detailBBean.listaWizard}" var="import" rowKey="#{import.id}" emptyMessage="#{msg.sem_registros}">
+									
+									<p:column headerText="#{msg.label_line}">
+										<h:outputText value="#{import.line}" style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.material}">
+										<h:outputText value="#{import.material}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_ncm}">
+										<h:outputText value="#{import.ncm}"  style="#{import.style}"/>
+									</p:column> 
+									
+									<p:column headerText="Quote Number">
+										<h:outputText value="#{import.group}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_qty}">
+										<h:outputText value="#{import.qty}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_cost_value}">
+										<h:outputText value="#{import.costValue}" style="#{import.style}"/>
+									</p:column>
+									
+								</p:dataTable>
+							</p:scrollPanel>
+							
+							<br/>
+							
+							<h:outputText value="#{msg.msg_select_the} "/>
+							<h:outputText value="#{msg.msg_total_cost_column} " style="color: red;"/>
+							<h:outputText value="#{msg.msg_group_column_desc}"/>
+							
+							<h:inputTextarea value="#{detailBBean.totalCostvalue}" style="width: 100%; height: 180px;"/>
+							
+						</p:panel>						
+											
+					</p:tab>
+					
+					<p:tab id="step5" title="#{msg.label_step} 5">
+						<p:panel header="#{msg.label_finish_wizard}">
+							
+							<br/>
+							
+							<h:outputText value="#{msg.msg_finish_wizard_quote_item}"/>
+							
+							<br/><br/>
+							
+							<h:outputText value="#{msg.msg_finish_quizard_quote_item_attention}" styleClass="labelBold"/>
+							
+							<br/>
+							
+							<p:scrollPanel mode="native" style="width: 100%; height: 280px;">
+								<p:dataTable value="#{detailBBean.listaWizard}" var="import" rowKey="#{import.id}" emptyMessage="#{msg.sem_registros}">
+									
+									<p:column headerText="#{msg.label_line}">
+										<h:outputText value="#{import.line}" style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.material}">
+										<h:outputText value="#{import.material}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_ncm}">
+										<h:outputText value="#{import.ncm}"  style="#{import.style}"/>
+									</p:column> 
+									
+									<p:column headerText="Quote Number">
+										<h:outputText value="#{import.group}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_qty}">
+										<h:outputText value="#{import.qty}"  style="#{import.style}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_cost_value}">
+										<h:outputText value="#{import.costValue}" style="#{import.style}">
+											<f:convertNumber type="currency" currencyCode="USD"/>
+										</h:outputText>
+									</p:column>
+									
+								</p:dataTable>
+							</p:scrollPanel>
+							
+						</p:panel>
+					</p:tab>
+					
+				</p:wizard>			
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 8px;" >
+					<p:commandButton id="saveWizard" action="#{detailBBean.saveWizard}" value="#{msg.bt_save}" icon="ui-icon-check" 
+						update=":form" onclick="PF('impWizard').hide();" disabled="#{!detailBBean.disabled}" oncomplete="PF('wiz').loadStep('step1',false)"/>							
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" action="#{detailBBean.resetImportWizard}"
+						update=":impWizard" onclick="PF('impWizard').hide()" oncomplete="PF('wiz').loadStep('step1',false)"/>
+				</div>	
+				
+				<p:commandButton id="goBack" name="goBack" widgetVar="btnGoBack" style="display: none;" action="#{detailBBean.onBack}" >
+					<p:ajax event="click" update=":impWizard:wizard" partialSubmit="true" listener="#{detailBBean.buttonImportSave}"/>
+				</p:commandButton>
+				
+				<p:commandButton id="goNext" name="goNext" widgetVar="btnGoNext" style="display: none;">
+					<p:ajax event="click" update=":impWizard:saveWizard" partialSubmit="true" listener="#{detailBBean.buttonImportSave}"/>
+				</p:commandButton>
+				
+			</h:form>		
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_dialog_goal_seek}" widgetVar="goalSeek" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="1100" height="210">
+			<h:form id="goalSeek" acceptcharset="UTF-8" lang="pt_BR">
+				
+				<p:panelGrid id="tabGoalSeek" columns="6">
+					
+					<h:outputText value=" "/>
+					
+					<h:outputFormat id="ofhw">
+						<h:selectBooleanCheckbox value="#{detailBBean.gsHW}">
+							<p:ajax event="click" update=":goalSeek:tabGoalSeek" listener="#{detailBBean.controlarCheckBoxGS}"/>
+						</h:selectBooleanCheckbox>
+						<h:outputText value="HW" styleClass="labelBold"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:selectBooleanCheckbox value="#{detailBBean.gsSW}">
+							<p:ajax event="click" update=":goalSeek:tabGoalSeek" listener="#{detailBBean.controlarCheckBoxGS}"/>
+						</h:selectBooleanCheckbox>
+						<h:outputText value="SW" styleClass="labelBold"/> 
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:selectBooleanCheckbox value="#{detailBBean.gsSV}">
+							<p:ajax event="click" update=":goalSeek:tabGoalSeek" listener="#{detailBBean.controlarCheckBoxGS}"/>
+						</h:selectBooleanCheckbox>
+						<h:outputText value="SV" styleClass="labelBold"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:selectBooleanCheckbox value="#{detailBBean.gsMD}">
+							<p:ajax event="click" update=":goalSeek:tabGoalSeek" listener="#{detailBBean.controlarCheckBoxGS}"/>
+						</h:selectBooleanCheckbox>
+						<h:outputText value="MD" styleClass="labelBold"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:selectBooleanCheckbox value="#{detailBBean.gsTotal}">
+							<p:ajax event="click" update=":goalSeek:tabGoalSeek" listener="#{detailBBean.somenteTotalGS}"/>
+						</h:selectBooleanCheckbox>
+						<h:outputText value="Total" styleClass="labelBold"/>
+					</h:outputFormat>
+					
+					<h:selectOneRadio id="optNet" value="#{detailBBean.gsRadioNet}" >
+						<f:selectItem itemLabel="Net Price" itemValue="true"/>
+						<p:ajax event="click" listener="#{detailBBean.changeToNet}" update=":goalSeek:tabGoalSeek"/>					
+					</h:selectOneRadio>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceHW}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceHW}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency" locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsNetPriceHW}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsHW or !detailBBean.gsRadioNet}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceSW}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceSW}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsNetPriceSW}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsSW or !detailBBean.gsRadioNet}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceCS}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceCS}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsNetPriceCS}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsSV or !detailBBean.gsRadioNet}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceMD}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.netPriceMD}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsNetPriceMD}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsMD or !detailBBean.gsRadioNet}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.rNetPrice}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.rNetPrice}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsTotalNet}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsTotal or !detailBBean.gsRadioNet}"/>
+					</h:outputFormat>
+				
+					<h:selectOneRadio id="optGross" value="#{detailBBean.gsRadioGross}" >
+						<f:selectItem itemLabel="Gross Price" itemValue="true"/>
+						<p:ajax event="click" listener="#{detailBBean.changeToGross}" update=":goalSeek:tabGoalSeek" />					
+					</h:selectOneRadio>												
+											
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceHW}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceHW}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsGrossPriceHW}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsHW or !detailBBean.gsRadioGross}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceSW}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceSW}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsGrossPriceSW}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsSW or !detailBBean.gsRadioGross}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceCS}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceCS}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsGrossPriceCS}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsSV or !detailBBean.gsRadioGross}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceMD}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.grossPriceMD}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsGrossPriceMD}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsMD or !detailBBean.gsRadioGross}"/>
+					</h:outputFormat>
+					
+					<h:outputFormat>
+						<h:outputText value="#{detailBBean.quoteModel.rGrossPrice}" rendered="#{!detailBBean.currencyChange}">
+							<f:convertNumber type="currency"/>
+						</h:outputText>
+						<h:outputText value="#{detailBBean.quoteModel.rGrossPrice}" rendered="#{detailBBean.currencyChange}">
+							<f:convertNumber type="currency"  locale="pt_BR"/>
+						</h:outputText><br/>
+						<pe:inputNumber value="#{detailBBean.quoteModel.gsTotalGross}" decimalSeparator="." thousandSeparator="," 
+							disabled="#{!detailBBean.gsTotal or !detailBBean.gsRadioGross}"/>
+					</h:outputFormat>
+					
+				</p:panelGrid>			
+				
+				<div style="float: right; width: auto; height: 29px; display: block; margin-top: 8px; margin-right: 24px;" >
+					<p:commandButton  action="#{detailBBean.goalSeek()}" value="OK" icon="ui-icon-check" 
+						update=":form" onclick="PF('goalSeek').hide();" >
+						<p:ajax event="click" onstart="PF('loadingProcess').show()"	oncomplete="PF('loadingProcess').hide()"/>	
+					</p:commandButton>							
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close" onclick="PF('goalSeek').hide()" />
+				</div>	
+				
+			</h:form>
+		</p:dialog>		
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

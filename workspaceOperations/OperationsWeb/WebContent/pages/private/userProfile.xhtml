@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	   
+	   <h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+
+				<br />			
+						
+				<p:dataTable id="tbProfiles" var="pro"
+					value="#{userProfileBBean.listaUserProfile}" 
+					rowKey="#{pro.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;"><p:outputLabel style="text-align: left">
+			           		<h:outputText value="#{msg.header_table_user_profile}" styleClass="labelBold"/>
+			           </p:outputLabel></div>
+			           <div align="right" style="width: 100%"><p:outputLabel id="commands" style="text-align: right">
+			           		<p:commandButton onclick="PF('profileDialog').show()" value="#{msg.bt_add}" />
+			           </p:outputLabel></div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":profileEditDetail" oncomplete="PF('profileEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{pro}" target="#{userProfileBBean.userProfileSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_profile}" filterBy="#{pro.sProfileName}" sortBy="#{pro.sProfileName}">
+						<h:outputText value="#{pro.sProfileName}"/>
+					</p:column>					
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{pro}" target="#{userProfileBBean.userProfileSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+				
+			</div>
+			
+		</h:form>
+	   
+	   <p:dialog header="#{msg.header_dialog_new_profile}" widgetVar="profileDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="486" height="225">
+			<h:form id="profileDetail">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_profile}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userProfileBBean.novoUserProfile.sProfileName}" style="width: 300px; padding: 4px;"/>
+	
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_max_attempts}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userProfileBBean.novoUserProfile.sMaxAttempsts}" style="width: 80px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+		            	<f:convertNumber integerOnly="true" minIntegerDigits="1" />
+	            	</h:inputText>
+
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_pass_expiration}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userProfileBBean.novoUserProfile.ivalidity}" style="width: 80px; padding: 4px;" converterMessage="#{msg.field_integer_only}" title="#{msg.label_pass_days}">
+		            	<f:convertNumber integerOnly="true" minIntegerDigits="1"  />
+	            	</h:inputText>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_ip}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userProfileBBean.novoUserProfile.sIpAddress}"  style="width: 100px; padding: 4px;"/>		            
+		            
+	             	<h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_netmask}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userProfileBBean.novoUserProfile.sNetmask}"  style="width: 100px; padding: 4px;"/>	
+		           	
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{userProfileBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbProfiles" onclick="PF('profileDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbProfiles" onclick="PF('profileDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_profile}" widgetVar="profileEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="486" height="225">
+			<h:form id="profileEditDetail">
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_profile}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userProfileBBean.userProfileSelecionado.sProfileName}" style="width: 300px; padding: 4px;"/>
+	
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+	
+					<h:outputText value="#{msg.label_max_attempts}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{userProfileBBean.userProfileSelecionado.sMaxAttempsts}" style="width: 80px; padding: 4px;"/>
+
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_pass_expiration}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userProfileBBean.userProfileSelecionado.ivalidity}" style="width: 80px; padding: 4px;" converterMessage="#{msg.field_integer_only}" title="#{msg.label_pass_days}">
+		            	<f:convertNumber integerOnly="true" minIntegerDigits="1"  />
+	            	</h:inputText>
+		            
+		            <h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_ip}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userProfileBBean.userProfileSelecionado.sIpAddress}"  style="width: 100px; padding: 4px;"/>		            
+		            
+	             	<h:outputText value=""/>
+					<h:outputText value=""/>
+		            
+		            <h:outputText value="#{msg.label_netmask}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:inputText value="#{userProfileBBean.userProfileSelecionado.sNetmask}"  style="width: 100px; padding: 4px;"/>	
+		           	
+				
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{userProfileBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbProfiles" onclick="PF('profileEditDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbProfiles" onclick="PF('profileEditDialog').hide()" />
+								
+			</h:form>			
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_delete_profile}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="profileDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{userProfileBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbProfiles" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbProfiles" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+	   
+	</ui:define>
+	
+</ui:composition>
+</html>

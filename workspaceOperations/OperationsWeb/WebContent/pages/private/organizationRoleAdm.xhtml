@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8" prependId="false">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{roleAdmBBean.disabledAll}">		 
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+				
+				<h:outputFormat value="" rendered="#{!roleAdmBBean.disabledAll}">
+				<div class="ui-panel ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all"><span class="ui-panel-title" style="font-size: 14px !important;">#{msg.header_role} - #{roleAdmBBean.roleSelecionado.sDisplayName} (#{roleAdmBBean.roleSelecionado.sKey})</span></div>
+					<div class="ui-panel-content ui-widget-content">
+					
+						<div style="display: block; height: 31px;">
+							<p:commandButton value="#{msg.bt_add}" onclick="PF('profileDialog').show();" style="float: right; margin-right: 5px;" disabled="#{roleAdmBBean.disabled}"/>
+						</div>
+						
+						<br/>
+						
+						
+						<h:panelGrid id="tabDef" columns="3">
+							
+							<h:outputText value="Default Access Profile:" styleClass="labelBold" style="padding:4px;"/>
+							
+							<h:outputText value="#{roleAdmBBean.profileDefault.sDisplayName}" styleClass="labelBold"/>
+														
+							<p:commandButton value="Edit" icon="ui-icon-pencil" onclick="PF('profileDefault').show();"  disabled="#{roleAdmBBean.disabled}"/>
+							
+						</h:panelGrid>
+						
+						<br/>
+						
+						<h2><h:outputText value="#{msg.header_access_profile}"/></h2>
+						
+						<p:accordionPanel id="profiles" value="#{roleAdmBBean.listaProfile}" var="profile" activeIndex="#{roleAdmBBean.count}">
+							
+							<p:ajax event="tabChange" listener="#{roleAdmBBean.loadPermission(profile.id)}" update=":form:profiles"/>
+							
+								<p:tab title="#{profile.sDisplayName}">
+										
+										<div style="display: block; height: 31px;">
+											<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" style="float: right;"  disabled="#{roleAdmBBean.disabled}">
+												<f:setPropertyActionListener value="#{profile}" target="#{roleAdmBBean.profileSelecionado}" />
+											</p:commandButton>
+											
+											<p:commandButton onclick="PF('cloneDetail').show();" style="float: right; margin-right: 6px;" value="#{msg.label_clone}"  disabled="#{roleAdmBBean.disabled}">
+												<f:setPropertyActionListener value="#{profile}" target="#{roleAdmBBean.profileSelecionado}" />
+											</p:commandButton>
+										</div>
+										
+										<h:panelGrid columns="2" cellspacing="5">
+											
+											<h:outputText value="#{msg.label_display_name}" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:outputText value="#{msg.label_description}" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:inputText value="#{profile.sDisplayName}" style="padding: 4px;" required="true" requiredMessage="This Field 'Display Name' is required."/>
+											
+											<h:inputText value="#{profile.sDescription}" style="padding: 4px; width:350px;" required="true" requiredMessage="This Field 'Key' is required."/>
+											
+										</h:panelGrid>
+										
+										<br/>
+										
+										<p:dataTable value="#{roleAdmBBean.listaPermission}" var="permission" rowKey="#{permission.id}" emptyMessage="#{msg.sem_registros}">
+											
+											<f:facet name="header">
+									            <div align="left" style="width: 10%; float: left;">
+									            	<p:outputLabel style="text-align: left">
+										           		<h:outputText value="#{msg.header_permissions}" styleClass="labelBold"/>
+										           </p:outputLabel>
+									           </div>
+									           <div align="right" style="width: 100%">
+										           <p:outputLabel id="commands" style="text-align: right">
+										           		<p:commandButton onclick="PF('permissionDialog').show()" value="#{msg.bt_add}" update=":newFormPerm"  disabled="#{roleAdmBBean.disabled}">
+										           			<f:setPropertyActionListener value="#{profile}" target="#{roleAdmBBean.profileSelecionado}" />										           			
+										           		</p:commandButton>
+										           </p:outputLabel>
+									           </div>
+									        </f:facet>
+											
+											<p:column headerText="#{msg.label_module}" filterBy="#{permission.tbSysModule.sDisplayName}">
+												<h:outputText value="#{permission.tbSysModule.sDisplayName}"/>
+											</p:column>
+											
+											<p:column headerText="Key" width="8%">
+												<h:outputText value="#{permission.sKey}"/>
+											</p:column>
+											
+											<p:column headerText="#{msg.label_display_name}">
+												<h:outputText value="#{permission.sKeyDisplayName}"/>
+											</p:column>
+											
+											<p:column headerText="#{msg.label_description}">
+												<h:outputText value="#{permission.sDescription}"/>
+											</p:column>
+											
+											<p:column style="width: 20px; text-align: center;" >
+												<p:commandButton action="#{roleAdmBBean.deletePermission}" icon="ui-icon-trash" title="#{msg.bt_delete}"  disabled="#{roleAdmBBean.disabled}">
+													<f:setPropertyActionListener value="#{permission}" target="#{roleAdmBBean.permissionSelecionado}" />
+												</p:commandButton>
+											</p:column>
+											 
+										</p:dataTable> 
+										
+										<br/>
+										
+										<div style="display: block; height: 31px;">
+											<p:commandButton action="#{roleAdmBBean.updateProfile}" value="#{msg.bt_save}" icon="ui-icon-check" style="float: right;"  disabled="#{roleAdmBBean.disabled}">
+												<f:setPropertyActionListener value="#{profile}" target="#{roleAdmBBean.profileSelecionado}" />
+											</p:commandButton>
+										</div>
+										
+								</p:tab>
+							
+						</p:accordionPanel>
+					
+						<div style="display: block;clear: both;"></div>
+					</div>				
+				</div>
+				</h:outputFormat>
+			</div>
+		</h:form>
+		
+		<p:dialog id="default" header="#{msg.header_access_profile_new}" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="profileDefault" width="400" height="100">
+			<h:form id="defaultProfile" prependId="false">
+				
+				<p:messages id="msgDefault" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid id="defRadio" columns="4">			
+						
+					<h:selectOneRadio id="rdoDef1" value="#{roleAdmBBean.radioDefaultNot}" styleClass="labelBold" >
+						<f:selectItem itemValue="true" />
+						<p:ajax event="click" listener="#{roleAdmBBean.rdoChangeDefFalse}"/> 
+					</h:selectOneRadio>
+					<h:outputText value="None" styleClass="labelBold"/>
+												
+					<h:selectOneRadio id="rdoDef2" value="#{roleAdmBBean.radioDefaultTrue}" styleClass="labelBold">
+						<f:selectItem itemValue="true" />
+						<p:ajax event="click" listener="#{roleAdmBBean.rdoChangeDefTrue}"/> 
+					</h:selectOneRadio>
+							
+					<h:selectOneMenu id="proDef" value="#{roleAdmBBean.radioProfileSelecionado}" style="padding: 4px;" disabled="#{roleAdmBBean.radioDefaultNot}"
+						onchange="document.getElementById('btnNinja').click();return false;">
+						<f:selectItem itemValue="-1" itemLabel=" "/>
+						<f:selectItems value="#{roleAdmBBean.listaProfile}" var="p" itemLabel="#{p.sDisplayName}" itemValue="#{p.id}"/>
+					</h:selectOneMenu>
+					
+					<p:commandButton id="btnNinja" action="#{roleAdmBBean.atualizaHidden}" style="display: none;" />
+					
+					<h:inputHidden value="#{roleAdmBBean.radioProfileSelecionado}" id="hiddenDef"/>
+						
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{roleAdmBBean.saveDefaultProfile}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgDefault :form">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update="form" onclick="PF('profileDefault').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>		
+		
+				
+		<p:dialog id="newProfile" header="#{msg.header_access_profile_new}" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="profileDialog" width="500" height="180">
+			<h:form id="newFormRole" prependId="false">
+				
+				<p:messages id="msgProfile" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_display_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleAdmBBean.novoProfile.sDisplayName}" style="padding: 4px;" required="true" requiredMessage="This Field 'Display Name' is required."/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleAdmBBean.novoProfile.sDescription}" style="padding: 4px; width: 350px;" required="true" requiredMessage="This Field 'Description' is required."/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{roleAdmBBean.saveProfile}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgProfile :form:profiles">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update="form" onclick="PF('profileDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="newPermissions" header="#{msg.header_permissions}" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="permissionDialog" width="650" height="500">
+			<h:form id="newFormPerm" prependId="false">
+				
+				<p:dataTable value="#{roleAdmBBean.listaModule}" var="module" rowKey="#{module.id}" emptyMessage="#{msg.sem_registros}" scrollable="true" scrollHeight="400">
+					
+					<p:columnGroup type="header">
+			            <p:row>
+			                <p:column rowspan="2" headerText="#{msg.label_module}" />
+			                <p:column colspan="3" headerText="#{msg.header_permissions}" />
+			            </p:row>
+			            <p:row>
+			                <p:column headerText="#{msg.label_display_name}" />
+			                <p:column headerText="#{msg.label_description}" />
+			            	<p:column headerText=" "/>
+			            </p:row>
+        			</p:columnGroup>
+					
+					 <p:subTable var="permission" value="#{module.tbSysSystemPermissions}">
+			            <p:column>
+			                <h:outputText value="#{module.sDisplayName}" />
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{permission.sKeyDisplayName}" />
+			            </p:column>
+			            <p:column>
+			                <h:outputText value="#{permission.sDescription}" />
+			            </p:column>
+			            <p:column width="3%" style="text-align:right">
+			           		<h:selectBooleanCheckbox value="#{permission.checked}"/>
+			           	</p:column>
+			            <p:columnGroup type="footer">
+			                <p:row>
+			                    <p:column footerText="Total: " style="text-align:right"/>
+			                    <p:column colspan="3" footerText="#{module.tbSysSystemPermissions.size()}" style="text-align:left"/>			                    
+			                </p:row>
+			            </p:columnGroup>
+			        </p:subTable>
+					
+				</p:dataTable>
+				
+				<div id="buttons" style="float: right; margin-top:3px;">
+					<p:commandButton  ajax="false" action="#{roleAdmBBean.savePermission}" value="#{msg.bt_save}" icon="ui-icon-check" 
+						update="form" onclick="PF('permissionDialog').hide()"/>
+											
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update="form" onclick="PF('permissionDialog').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+			
+		<p:dialog header="#{msg.header_access_profile_delete}" widgetVar="deleteDialog" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;">
+						<p:commandButton ajax="false" action="#{roleAdmBBean.deleteProfile}" value="Yes" icon="ui-icon-check"
+							update="form" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update="form" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_access_profile_clone}" widgetVar="cloneDetail" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="550" height="260">
+			<h:form id="cloneForm" prependId="false">
+				
+				<p:messages id="msgClone" showDetail="false" showSummary="true"/>
+				
+				<h:inputHidden id="hidden" value="#{roleAdmBBean.roleCloneSelecionado}" required="true" requiredMessage="This Field 'Organization Role' must be selected."/>
+				
+				<h:panelGrid id="tabclone" columns="2">
+					
+					<h:outputText value="#{msg.label_organization_role}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{roleAdmBBean.roleCloneSelecionado}" style="padding: 4px;">
+						<f:selectItem itemLabel=" " itemValue=" "/>
+						<f:selectItems value="#{roleAdmBBean.listaOrganizationRole}" var="role" itemLabel="#{role.sDisplayName}" itemValue="#{role.id}"/>
+						<p:ajax event="change" update="hidden"/>
+					</h:selectOneMenu> 
+					
+					<h:outputText value="#{msg.label_display_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleAdmBBean.novoProfile.sDisplayName}" style="padding: 4px;" required="true" requiredMessage="This Field 'Display Name' is required."/>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{roleAdmBBean.novoProfile.sDescription}" style="padding: 4px; width: 350px;" required="true" requiredMessage="This Field 'Description' is required."/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{roleAdmBBean.cloneProfile}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgClone :form:profiles">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('cloneDetail').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>

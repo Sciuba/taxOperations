@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="OperationsBussiness" transaction-type="JTA">
+		<jta-data-source>jdbc/Operations</jta-data-source>
+		
+		<!-- <jta-data-source>jdbc/SaboiaTest</jta-data-source> --> <!-- HOMOL -->
+		<!-- <jta-data-source>jdbc/SaboiaDev</jta-data-source> --> <!-- TST -->
+		<!-- <jta-data-source>jdbc/Saboia</jta-data-source> --> <!-- PROD -->
+		
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
+		
+		<!-- <class>br.com.saboia.entity.TbAdmMaterialManufacturer</class>
+		<class>br.com.saboia.entity.TbSysLogEmailSend</class> 
+		<class>br.com.saboia.entity.TbTaxQuoteLog</class>
+		<class>br.com.saboia.entity.TbAdmManufacturerStateOfOrigin</class>
+		<class>br.com.saboia.entity.TbSysGroup</class>
+		<class>br.com.saboia.entity.TbSysGroupUser</class>
+		<class>br.com.saboia.entity.TbSysHelp</class>
+		<class>br.com.saboia.entity.TbSysObject</class>
+		<class>br.com.saboia.entity.TbSysSecurity</class>
+		<class>br.com.saboia.entity.TbAdmCategory</class>
+		<class>br.com.saboia.entity.TbAdmPerson</class>
+		<class>br.com.saboia.entity.TbAdmDiscClass</class>
+		<class>br.com.saboia.entity.TbAdmOrigin</class>
+		<class>br.com.saboia.entity.TbAdmDestination</class>
+		<class>br.com.saboia.entity.TbAdmDestinationRate</class>
+		<class>br.com.saboia.entity.TbAdmOriginXTbAdmDestinaProtSt</class>
+		<class>br.com.saboia.entity.TbAdmOriginRate</class>
+		<class>br.com.saboia.entity.TbAdmRate</class>
+		<class>br.com.saboia.entity.TbAdmQuoteParameters</class>
+		<class>br.com.saboia.entity.TbAdmGroupOfContent</class>
+		<class>br.com.saboia.entity.TbAdmClienteEspecial</class>
+		<class>br.com.saboia.entity.TbAdmQuoteDiscountLevel</class>
+		<class>br.com.saboia.entity.TbAdmDailyDollar</class>
+		<class>br.com.saboia.entity.TbAdmDailyDollarTemp</class>
+		<class>br.com.saboia.entity.TbAdmDollarRate</class>
+		<class>br.com.saboia.entity.TbAdmMaterial</class>
+		<class>br.com.saboia.entity.TbAdmMaterialClass</class>
+		<class>br.com.saboia.entity.TbAdmProductType</class>
+		<class>br.com.saboia.entity.TbAdmManufacturerStateXTbAdmOrigin</class>
+		<class>br.com.saboia.entity.TbAdmMaterialClassXDestination</class>
+		<class>br.com.saboia.entity.TbAdmMaterialClassXOrigin</class>
+		<class>br.com.saboia.entity.TbAdmMaterialImportTemp</class>
+		<class>br.com.saboia.entity.TbTaxQuote</class>
+		<class>br.com.saboia.entity.TbTaxQuoteDetail</class>
+		<class>br.com.saboia.entity.TbTaxQuoteDisc</class>
+		<class>br.com.saboia.entity.TbTaxQuoteItem</class>
+		<class>br.com.saboia.entity.TbTaxQuoteParticipant</class>
+		<class>br.com.saboia.entity.TbTaxLastUpdateAdditionalCost</class>
+		<class>br.com.saboia.entity.TbAdmMarketSegment</class>
+		<class>br.com.saboia.entity.TbSysAccessProfilePermission</class>
+		<class>br.com.saboia.entity.TbSysAccessProfile</class>
+		<class>br.com.saboia.entity.TbSysOrganization</class>
+		<class>br.com.saboia.entity.TbSysOrganizationRole</class>
+		<class>br.com.saboia.entity.TbSysSystemPermission</class>
+		<class>br.com.saboia.entity.TbSysUser</class>
+		<class>br.com.saboia.entity.TbSysWorkGroup</class>
+		<class>br.com.saboia.entity.TbSysWorkGroupUser</class>
+		<class>br.com.saboia.entity.TbSysModule</class>
+		<class>br.com.saboia.entity.TbSysAccessProfileUser</class> -->
+		<!-- <properties>
+			<property name="eclipselink.logging.level" value="FINE"/>
+		</properties> -->
+	</persistence-unit>
+</persistence>

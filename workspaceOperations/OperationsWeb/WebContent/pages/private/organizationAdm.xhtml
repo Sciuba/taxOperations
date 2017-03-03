@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8" prependId="false">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{orgAdmBBean.disabledAll}">		 
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+				
+				<h:outputFormat value="" rendered="#{!orgAdmBBean.disabledAll}"> 
+				<div class="ui-panel ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all"><span class="ui-panel-title" style="font-size: 14px !important;">#{msg.label_organization_data}</span></div>
+					<div class="ui-panel-content ui-widget-content">
+						
+						<h:panelGrid columns="5" width="60%">
+							
+							<h:outputText value="#{msg.label_name}:" styleClass="labelBold" style="padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_comment}:" styleClass="labelBold" style="padding: 4px;"/>
+							
+							<h:outputText value="#{msg.label_organization_role}" styleClass="labelBold" style="padding: 4px;"/>
+							
+							<h:outputText value=" "/>
+							
+							<h:inputText value="#{orgAdmBBean.organizationSelecionado.sName}" style="width:120px;" required="true" requiredMessage="This Field 'Name' is required."/>
+														
+							<h:inputText value="#{orgAdmBBean.organizationSelecionado.sDescription}" style="width:150px;" required="true" requiredMessage="This Field 'Description' is required."/>
+							
+							<h:inputText value="#{orgAdmBBean.organizationSelecionado.sComment}" style="width:250px;"/>
+							
+							<h:selectOneMenu id="selRoleEdit" value="#{orgAdmBBean.roleSelecionado}" style="padding: 4px;">
+								<f:selectItem itemLabel=" " itemValue=" "/>
+								<f:selectItems value="#{orgAdmBBean.listaOrganizationRole}"/>
+							</h:selectOneMenu>
+							
+							<p:commandButton value="#{msg.bt_save}" icon="ui-icon-check" action="#{orgAdmBBean.update}" update="form" disabled="#{orgAdmBBean.disabled}"/>
+							
+						</h:panelGrid>
+						
+						<br/>
+						
+						<p:tabView id="tabView" activeIndex="#{orgAdmBBean.activeIndex}" prependId="false" >
+							
+							<p:tab title="#{msg.users}" id="users">
+								
+								<div style="display: block; height: 31px;">
+									<p:commandButton value="#{msg.bt_add}" onclick="PF('addUser').show();" style="float: right; margin-right: 5px;" disabled="#{orgAdmBBean.disabled}"/>
+								</div>
+								
+								<p:dataTable id="tabUsers" value="#{orgAdmBBean.listaUsers}" var="user" rowKey="#{user.id}" 
+									paginator="true" rows="20" emptyMessage="#{msg.sem_registros}">
+									
+									<p:column width="16" style="text-align: center;">
+										<p:commandLink onclick="PF('editUser').show();" update=":editUser" disabled="#{orgAdmBBean.disabled}">
+											<h:graphicImage library="images" name="icon-user.png"/>
+											<f:setPropertyActionListener value="#{user}" target="#{orgAdmBBean.usuarioSelecionado}" />
+										</p:commandLink>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_name}" sortBy="#{user.sFullName}" filterBy="#{user.sFullName}">
+										<h:outputText value="#{user.sFullName}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_list_workgroups}" >
+										<h:outputText value="#{user.listaGrupo}"/>
+									</p:column>
+									
+									<p:column headerText="#{msg.label_list_profiles}" >
+										<h:outputText value="#{user.listaPerfil}"/>
+									</p:column>
+									
+									<p:column width="16" style="text-align: center;">
+										<h:graphicImage library="images" name="icon-system-admin.png" rendered="#{user.fSystemAdmin}"/>
+										<h:graphicImage library="images" name="icon-channel-admin.png" rendered="#{!user.fSystemAdmin}"/>
+									</p:column>
+									
+									<p:column width="20" style="text-align: center;">
+										<p:commandButton oncomplete="PF('deleteUser').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{orgAdmBBean.disabled}">
+											<f:setPropertyActionListener value="#{user}" target="#{orgAdmBBean.usuarioSelecionado}" />
+										</p:commandButton>
+									</p:column>
+									
+								</p:dataTable>
+								
+							</p:tab>
+							
+							<p:tab title="#{msg.label_workgroups}" id="workGroup">
+								
+								<div style="display: block; height: 31px;">
+									<p:commandButton value="#{msg.bt_add}" onclick="PF('addWork').show();" style="float: right; margin-right: 5px;"/>
+								</div>
+								
+								<p:accordionPanel id="workGroups" value="#{orgAdmBBean.listaWorkGroup}" var="work" activeIndex="#{orgAdmBBean.countWork}" prependId="false"> 
+						
+									<p:ajax event="tabChange" listener="#{orgAdmBBean.loadUsers(work.id)}" update="workGroups"/>
+									
+									<p:tab title="#{work.sName}">
+										
+										<div style="display: block; height: 31px;">
+											<p:commandButton icon="ui-icon-trash" title="#{msg.bt_delete}" onclick="PF('deleteWork').show();" style="float: right; margin-right: 5px;" disabled="#{work.id == 0 or orgAdmBBean.disabled}">
+												<f:setPropertyActionListener value="#{work}" target="#{orgAdmBBean.grupoSelecionado}" />
+											</p:commandButton>											
+										</div>
+															
+										<h:panelGrid columns="2">
+											
+											<h:outputText value="Name:" styleClass="labelBold" style="padding: 4px;"/>
+											<h:outputText value="Comments:" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:inputText value="#{work.sName}" style="padding: 4px;" disabled="#{work.id == 0}"/>
+											<h:inputText value="#{work.sComments}" style="width: 400px; padding: 4px;" disabled="#{work.id == 0}"/>
+										
+										</h:panelGrid>
+										
+										<br/>
+										
+										<div style="display: block; height: 31px;">
+											<p:commandButton value="Manage Users" onclick="PF('addUserGroup').show();" style="float: right; margin-right: 5px;" disabled="#{work.id == 0 or orgAdmBBean.disabled}">
+												<f:setPropertyActionListener value="#{work}" target="#{orgAdmBBean.grupoSelecionado}" />
+											</p:commandButton>
+										</div>
+										
+										<p:dataTable id="tabWorkUser" value="#{orgAdmBBean.listaUsersGrupoSelecionado}" var="users" rowKey="#{users.id}"
+											paginator="true" rows="15" rowIndexVar="variable">
+									
+											<f:facet name="header">
+												<h:outputText value="Users"/>
+											</f:facet> 
+											
+											<p:column width="16" style="text-align: center;">
+												<h:graphicImage library="images" name="icon-user.png"/>
+											</p:column>
+											
+											<p:column headerText="#{msg.label_name}" filterBy="#{users.sFullName}" sortBy="#{users.sFullName}">
+												<h:outputText value="#{users.sFullName}"/>
+											</p:column>
+											
+											<p:column headerText="#{msg.label_logon}" filterBy="#{users.sFullName}" sortBy="#{users.sFullName}">
+												<h:outputText value="#{users.sLogon}"/>
+											</p:column>
+											
+											<p:column width="16" style="text-align: center;">
+																							
+												<p:commandLink rendered="#{users.fManager}" title="Manager of WorkGroup" onclick="PF('managerUser').show();" immediate="true" disabled="#{orgAdmBBean.disabled}">
+													<f:setPropertyActionListener target="#{orgAdmBBean.usuarioGrupoSelecionado}" value="#{users}" />
+													<h:graphicImage library="images" name="icon-system-admin.png"/>
+												</p:commandLink>
+												
+												<p:commandLink rendered="#{!users.fManager}" onclick="PF('managerUser').show();" immediate="true" disabled="#{orgAdmBBean.disabled}">
+													<f:setPropertyActionListener target="#{orgAdmBBean.usuarioGrupoSelecionado}" value="#{users}" />
+													<h:graphicImage library="images" name="icon-channel-admin.png" />
+												</p:commandLink>
+												
+											</p:column>
+											
+											<f:facet name="footer">
+												<h:outputText value="Total Users:"/>
+												<h:outputText value="#{orgAdmBBean.listaUsersGrupoSelecionado.size()}"/> 
+											</f:facet>
+									
+										</p:dataTable>
+										
+										<br/>
+										
+										<div style="display: block; height: 31px;">
+											<p:commandButton value="#{msg.bt_save}" update="workGroups" icon="ui-icon-check" action="#{orgAdmBBean.updateWork}" disabled="#{work.id == 0 or orgAdmBBean.disabled}" style="float: right; margin-right: 5px;" ajax="false">
+												<f:setPropertyActionListener value="#{work}" target="#{orgAdmBBean.grupoSelecionado}" />
+											</p:commandButton>
+										</div>
+										
+									</p:tab>
+								</p:accordionPanel>
+								
+								<div style="display: block;clear: both;"></div>
+								
+							</p:tab>
+							
+							<p:tab title="#{msg.user_profile}" id="perfil">
+								
+								<p:accordionPanel id="profiles" value="#{orgAdmBBean.listaAccessProfile}" var="profile" activeIndex="#{orgAdmBBean.countProfile}" prependId="false">
+							
+									<p:ajax event="tabChange" listener="#{orgAdmBBean.loadUsersProfile(profile.id)}" update="profiles"/>
+								
+									<p:tab title="#{profile.sDisplayName}">
+										
+										<h:panelGrid columns="2" cellspacing="5">
+											
+											<h:outputText value="#{msg.label_display_name}" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:outputText value="#{msg.label_description}" styleClass="labelBold" style="padding: 4px;"/>
+											
+											<h:outputText value="#{profile.sDisplayName}" style="padding: 4px;"/>
+											
+											<h:outputText value="#{profile.sDescription}" style="padding: 4px; width:350px;" />
+											
+										</h:panelGrid>
+										
+										<br/>
+										
+										<div style="display: block; height: 31px;">
+											<p:commandButton value="Manage Users" onclick="PF('addUserProfile').show();" style="float: right; margin-right: 5px;" disabled="#{orgAdmBBean.disabled}">
+												<f:setPropertyActionListener value="#{profile}" target="#{orgAdmBBean.profileSelecionado}" />
+											</p:commandButton>
+										</div>
+										
+										<br/>
+										
+										<p:dataTable value="#{orgAdmBBean.listaUsersProfileSelecionado}" var="users" rowKey="#{users.id}"
+											paginator="true" rows="15">
+									
+											<f:facet name="header">
+												<h:outputText value="Users"/>
+											</f:facet> 
+											
+											<p:column width="16" style="text-align: center;">
+												<h:graphicImage library="images" name="icon-user.png"/>
+											</p:column>
+											
+											<p:column headerText="#{msg.label_name}" filterBy="#{users.sFullName}" sortBy="#{users.sFullName}">
+												<h:outputText value="#{users.sFullName}"/>
+											</p:column>
+											
+											<p:column headerText="#{msg.label_logon}" filterBy="#{users.sFullName}" sortBy="#{users.sFullName}">
+												<h:outputText value="#{users.sLogon}"/>
+											</p:column>
+											
+										</p:dataTable>
+										
+									</p:tab>
+										
+								</p:accordionPanel>										
+								
+							</p:tab>
+							
+						</p:tabView>
+					
+					<div style="display: block;clear: both;"></div>
+					</div>				
+				</div>
+				</h:outputFormat>
+			</div>
+		</h:form>
+		
+		<p:dialog header="New User" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="addUser" width="500" height="380">
+			<h:form id="newUser" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:messages id="msgUser" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText id="nvLogon" value="#{msg.label_logon}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.novoUsuario.sLogon}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText id="nvPass" value="#{msg.label_password}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputSecret value="#{orgAdmBBean.novoUsuario.sPassword}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value="Retype password:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputSecret value="#{orgAdmBBean.password}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_full_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.novoUsuario.sFullName}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_email}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.novoUsuario.sEmail}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_phone}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.novoUsuario.sPhoneNumber}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="Alternate Phone:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.novoUsuario.sAltPhoneNumber}" style="width: 200px; padding: 4px;"/>
+										
+					<h:outputText value="#{msg.label_departament}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{orgAdmBBean.novoUsuario.sDepartment}" style="padding: 4px;">
+           			 	<f:selectItems value="#{orgAdmBBean.listaCategory}" var="c" itemValue="#{c.sCategory}" itemLabel="#{c.sCategory}"/>            	
+		            </h:selectOneMenu>
+		            
+	             	<h:outputText value="#{msg.label_active}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.novoUsuario.fActive}"/>
+		            
+		            <h:outputText value="#{msg.label_blocked}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.novoUsuario.fBlocked}"/>
+					
+				 	<h:outputText value="System Admin:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.novoUsuario.fSystemAdmin}"/>
+		            
+		            <h:outputText value="System Developer:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.novoUsuario.fSystemDeveloper}"/>
+					
+				</h:panelGrid>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{orgAdmBBean.saveUser}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgUser">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('addUser').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Edit User" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="editUser" width="500" height="380">
+			<h:form id="editUser" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:messages id="msgEditUser" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText id="edtLogon" value="#{msg.label_logon}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.usuarioSelecionado.sLogon}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText id="edtPass" value="#{msg.label_password}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputSecret value="#{orgAdmBBean.password}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value="Retype password:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputSecret value="#{orgAdmBBean.rePassword}" style="width: 100px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_full_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.usuarioSelecionado.sFullName}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_email}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.usuarioSelecionado.sEmail}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_phone}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.usuarioSelecionado.sPhoneNumber}" style="width: 200px; padding: 4px;"/>
+					
+					<h:outputText value="Alternate Phone:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.usuarioSelecionado.sAltPhoneNumber}" style="width: 200px; padding: 4px;"/>
+										
+					<h:outputText value="#{msg.label_departament}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectOneMenu value="#{orgAdmBBean.usuarioSelecionado.sDepartment}" style="padding: 4px;">
+           			 	<f:selectItems value="#{orgAdmBBean.listaCategory}" var="c" itemValue="#{c.sCategory}" itemLabel="#{c.sCategory}"/>            	
+		            </h:selectOneMenu>
+		            
+	             	<h:outputText value="#{msg.label_active}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.usuarioSelecionado.fActive}"/>
+		            
+		            <h:outputText value="#{msg.label_blocked}:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.usuarioSelecionado.fBlocked}"/>
+					
+				 	<h:outputText value="System Admin:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.usuarioSelecionado.fSystemAdmin}"/>
+		            
+		            <h:outputText value="System Developer:" styleClass="labelBold" style="padding: 4px;"/>
+		            <h:selectBooleanCheckbox value="#{orgAdmBBean.usuarioSelecionado.fSystemDeveloper}"/>
+					
+				</h:panelGrid>
+				
+				<div id="buttons" style="float: right;">
+					<p:commandLink action="#{orgAdmBBean.updateUser}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgEditUser">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('editUser').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_delete_user}" widgetVar="deleteUser"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;"> 
+						<p:commandButton ajax="false" action="#{orgAdmBBean.deleteUser}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('deleteUser').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('deleteUser').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		
+		<p:dialog header="New WorkGroup" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" widgetVar="addWork" width="500" height="250">
+			<h:form id="newWork" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:messages id="msgWork" showDetail="false" showSummary="true"/>
+				
+				<h:panelGrid columns="2">
+					
+					<h:outputText value="#{msg.label_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{orgAdmBBean.novoGrupo.sName}" style="width: 300px; padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_comment}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{orgAdmBBean.novoGrupo.sComments}" style="width: 300px; height:100px; padding: 4px;"/>
+															
+				</h:panelGrid>
+				
+				<div style="float: right;">
+					<p:commandLink action="#{orgAdmBBean.saveWork}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgWork">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('addWork').hide()" />
+				</div>
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Delete WorkGroup" widgetVar="deleteWork"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form id="workDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2" style="float: right;"> 
+						<p:commandButton ajax="false" action="#{orgAdmBBean.deleteWork}" value="Yes" icon="ui-icon-check"
+							update=":form" onclick="PF('deleteWork').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form" onclick="PF('deleteWork').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="add Users to WorkGroup" resizable="false" draggable="false" modal="true" showEffect="fade" hideEffect="fade"
+			widgetVar="addUserGroup" width="650" height="550">
+				
+			<h:form id="userToGroup" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:dataTable value="#{orgAdmBBean.listaUsersAddGrupo}" var="g" rowKey="#{g.id}" scrollable="true" scrollHeight="400">
+					
+					<f:facet name="header">
+						<h:outputText value="Users"/>
+					</f:facet>				
+					
+					<p:column headerText="#{msg.label_name}" sortBy="#{g.sFullName}" filterBy="#{g.sFullName}">
+						<h:outputText value="#{g.sFullName}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_logon}" sortBy="#{g.sLogon}" filterBy="#{g.sLogon}">
+						<h:outputText value="#{g.sLogon}"/>
+					</p:column>
+					
+					<p:column>
+						<h:selectBooleanCheckbox value="#{g.ckecked}"/>
+					</p:column>
+					
+				</p:dataTable>
+				
+				<br/>
+				
+				<div style="float: right;">
+					<p:commandButton icon="ui-icon-check" value="#{msg.bt_save}" action="#{orgAdmBBean.addUsersToGroup}"
+						update=":form" oncomplete="PF('addUserGroup').hide();" style="margin-right: 10px"/>
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('addUserGroup').hide()" />
+				</div>
+					
+			</h:form>
+			
+		</p:dialog>
+		
+		<p:dialog header="Manager User" widgetVar="managerUser"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="300">
+			<h:form acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<h:outputText value="You want to change the status manager for this user?" styleClass="labelDarkFontUp"/>
+				
+				<br/><br/><br/>
+				<h:panelGrid columns="2" style="float: right;"> 
+					<p:commandButton ajax="false" action="#{orgAdmBBean.changeUserManager}" value="Yes" icon="ui-icon-check"
+						update=":form" onclick="PF('managerUser').hide()" />
+						
+					<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+						update=":form" onclick="PF('managerUser').hide()" />
+				</h:panelGrid>
+				
+			</h:form>		
+		</p:dialog>
+		
+		
+		<p:dialog header="add Users to Profile" resizable="false" draggable="false" modal="true" showEffect="fade" hideEffect="fade"
+			widgetVar="addUserProfile" width="650" height="550">
+				
+			<h:form id="userToProfile" acceptcharset="UTF-8" lang="pt_BR" prependId="false">
+				
+				<p:dataTable value="#{orgAdmBBean.listaUsersAddProfile}" var="g" rowKey="#{g.id}" scrollable="true" scrollHeight="400">
+					
+					<f:facet name="header">
+						<h:outputText value="Users"/>
+					</f:facet>				
+					
+					<p:column headerText="#{msg.label_name}" sortBy="#{g.sFullName}" filterBy="#{g.sFullName}">
+						<h:outputText value="#{g.sFullName}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_logon}" sortBy="#{g.sLogon}" filterBy="#{g.sLogon}">
+						<h:outputText value="#{g.sLogon}"/>
+					</p:column>
+					
+					<p:column>
+						<h:selectBooleanCheckbox value="#{g.ckecked}"/>
+					</p:column>
+					
+				</p:dataTable>
+				
+				<br/>
+				
+				<div style="float: right;">
+					<p:commandButton icon="ui-icon-check" value="#{msg.bt_save}" action="#{orgAdmBBean.addUsersToProfile}"
+						update=":form" oncomplete="PF('addUserProfile').hide();" style="margin-right: 10px"/>
+					
+					<p:commandButton ajax="false" value="#{msg.bt_cancel}" icon="ui-icon-close" immediate="true"
+						update=":form" onclick="PF('addUserProfile').hide()" />
+				</div>
+					
+			</h:form>
+			
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>

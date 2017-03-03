@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+		
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid rendered="#{dailyDollarBBean.disabledAll}">		
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />
+				
+				<p:dataTable id="tbDollarDaily" var="dollar"
+					value="#{dailyDollarBBean.listaDailyDollar}" 
+					rowKey="#{dollar.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}" rendered="#{!dailyDollarBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_daily_dollar_rate}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('dailyDialog').show()" value="#{msg.bt_add}" disabled="#{dailyDollarBBean.disabled}"/>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":dailyEditDetail" oncomplete="PF('dailyEditDialog').show()" icon="ui-icon-search" title="View" disabled="#{dailyDollarBBean.disabled}">
+							<f:setPropertyActionListener value="#{dollar}" target="#{dailyDollarBBean.dailyDollarSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_date}" sortBy="#{dollar.dataFormat}" filterBy="#{dollar.dataFormat}" >
+						<h:outputText value="#{dollar.dataFormat}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_dollar_rate}" sortBy="#{dollar.rDollar}" filterBy="#{dollar.rDollar}" >
+						<h:outputText value="#{dollar.rDollar}"/>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}" disabled="#{dailyDollarBBean.disabled}">
+							<f:setPropertyActionListener value="#{dollar}" target="#{dailyDollarBBean.dailyDollarSelecionado}" />
+						</p:commandButton>
+					</p:column>	
+					
+				</p:dataTable>
+				
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_daily_rate}" widgetVar="dailyDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="550" height="120">
+			<h:form id="dailyDetail">
+			
+				<h:panelGrid columns="4">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					
+					<h:outputText value="#{msg.label_date}:" styleClass="labelBold" style="padding: 4px;"/>
+					<p:calendar value="#{dailyDollarBBean.novoDailyDollar.dtDollar}" pattern="#{msg.pattern_date}" navigator="true"
+					  	style="padding: 4px;"/>
+					
+					<h:outputText value="#{msg.label_dollar_rate}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{dailyDollarBBean.novoDailyDollar.rDollar}"  style="width: 200px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{dailyDollarBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbDollarDaily" onclick="PF('dailyDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbDollarDaily" onclick="PF('dailyDialog').hide()" />
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_daily_rate}" widgetVar="dailyEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="540" height="120">
+			<h:form id="dailyEditDetail">
+			
+				<h:panelGrid columns="4">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_date}:" styleClass="labelBold" style="padding: 4px;"/>
+					<p:calendar value="#{dailyDollarBBean.dailyDollarSelecionado.dtDollar}" pattern="#{msg.pattern_date}" navigator="true"
+					  	style="padding: 4px;"/>
+															
+					<h:outputText value="#{msg.label_dollar_rate}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{dailyDollarBBean.dailyDollarSelecionado.rDollar}"  style="width: 200px; padding: 4px;" converterMessage="#{msg.field_integer_only}">
+						<f:convertNumber minFractionDigits="2" pattern="#0.00"/>
+					</h:inputText>
+					
+				</h:panelGrid>
+				
+				<br/><br/><br/><br/>
+				
+				<p:commandButton ajax="false" action="#{dailyDollarBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+					update=":form:tbDollarDaily" onclick="PF('dailyEditDialog').hide()" />
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				
+				<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+					update=":form:tbDollarDaily" onclick="PF('dailyEditDialog').hide()" />
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_delete_daily_rate}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{dailyDollarBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbDollarDaily" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbDollarDaily" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+	
+</ui:composition>
+</html>

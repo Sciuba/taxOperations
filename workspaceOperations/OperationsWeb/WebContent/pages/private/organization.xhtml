@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form" acceptcharset="UTF-8">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+					
+					
+					<h:panelGrid rendered="#{organizationBBean.disabledAll}">		 
+						<div id="msgDsbl" class="ui-messages ui-widget" aria-live="polite">
+							<div class="ui-messages-fatal ui-corner-all">
+							<span class="ui-messages-fatal-icon"></span>
+								<ul>
+									<li>
+										<span class="ui-messages-fatal-summary">You are not allowed to access this module. Please contacts your System Administrator.</span>
+										<span class="ui-messages-fatal-detail"></span>
+									</li>
+								</ul>
+							</div>
+						</div>			
+					</h:panelGrid>
+					
+				</div>
+
+				<br />
+				
+				<p:dataTable id="tbOrganization" var="organization"	value="#{organizationBBean.listaOrganization}"  rowKey="#{org.id}" 
+					paginator="true" rows="20" emptyMessage="#{msg.sem_registros}" rendered="#{!organizationBBean.disabledAll}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_organization}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('organizationDialog').show()" value="#{msg.bt_add}" disabled="#{organizationBBean.disabled}"/>
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+					
+					<!-- <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":organizationEdit" oncomplete="PF('orgEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{organization}" target="#{organizationBBean.organizationSelecionado}" />
+						</p:commandButton>
+					</p:column> -->
+					
+					<p:column headerText="#{msg.label_name}" filterBy="#{organization.sName}" sortBy="#{organization.sName}" >
+						<h:outputText value="#{organization.sName}" style="font-weight: bold;"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_description}" filterBy="#{organization.sDescription}" sortBy="#{organization.sDescription}">
+						<h:outputText value="#{organization.sDescription}"/>
+					</p:column>
+				
+					<p:column headerText="#{msg.label_organization_role}" filterBy="#{organization.tbSysOrganizationRole.sDisplayName}" sortBy="#{organization.tbSysOrganizationRole.sDisplayName}">
+						<h:outputText value="#{organization.tbSysOrganizationRole.sDisplayName}"/>
+					</p:column>
+				
+					<p:column headerText="#{msg.label_main}" style="text-align: center;" width="8%">
+						<h:outputText value="#{organization.main}"/>
+					</p:column>
+				
+					<p:column headerText="#{msg.label_user_active}" width="5%">
+						<h:outputText value="#{organization.usersActive}"/>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_user_total}" width="5%">
+						<h:outputText value="#{organization.users}"/>
+					</p:column>
+				
+				 	<p:column style="text-align: center;" width="10%">
+						<p:commandButton value="#{msg.bt_administration}" ajax="false" action="#{organizationBBean.redirectOrganization}" disabled="#{organizationBBean.disabled}"> 
+							<f:setPropertyActionListener value="#{organization}" target="#{organizationBBean.organizationSelecionado}" />
+						</p:commandButton>
+					</p:column>
+				
+				</p:dataTable>
+				
+				
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_organization_new}" widgetVar="organizationDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="600" height="300">
+			<h:form id="organizationNew" prependId="false" acceptcharset="UTF-8" lang="pt_BR" >
+				
+				<p:messages id="msgOrg" showDetail="false" showSummary="true"/>
+				
+				<h:inputHidden id="hidden" value="#{organizationBBean.roleSelecionado}" required="true" requiredMessage="This Field 'Organization Role' must be selected."/>
+				
+				<h:panelGrid columns="2" width="100%">
+					
+					<h:outputText value="#{msg.label_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{organizationBBean.novoOrganization.sName}" style="padding: 4px;" required="true" requiredMessage="This Field 'Name' is required."/>
+					
+					<h:outputText value="#{msg.label_main}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectBooleanCheckbox value="#{organizationBBean.novoOrganization.fMain}" style="padding: 4px;" disabled="#{organizationBBean.main}"/>
+					
+					<h:outputText value="#{msg.label_organization_role}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu id="selRole" value="#{organizationBBean.roleSelecionado}" style="padding: 4px;" onchange="javascript:inputValueHidden('hidden', 'selRole')">
+						<f:selectItem itemLabel=" " itemValue=" "/>
+						<f:selectItems value="#{organizationBBean.listaOrganizationRole}"/>						
+					</h:selectOneMenu>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{organizationBBean.novoOrganization.sDescription}" style="padding: 4px; width: 400px;" required="true" requiredMessage="This Field 'Description' is required."/>
+					
+					<h:outputText value="#{msg.label_comment}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{organizationBBean.novoOrganization.sComment}" style="padding: 4px; width: 400px; height: 100px;"/>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<div style="float: right;">
+									
+					<p:commandLink action="#{organizationBBean.save}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgOrg :form:tbOrganization">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbOrganization" onclick="PF('materialDialog').hide()" immediate="true"/>
+				</div> 
+				
+			</h:form>		
+		</p:dialog>
+		
+		
+		<p:dialog header="#{msg.header_organization_edit}" widgetVar="orgEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="600" height="300">
+			<h:form id="organizationEdit" prependId="false" acceptcharset="UTF-8" lang="pt_BR" >
+				
+				<p:messages id="msgOrgEdit" showDetail="false" showSummary="true"/>
+				
+				<h:inputHidden id="hiddenOrg" value="#{organizationBBean.roleSelecionado}" required="true" requiredMessage="This Field 'Organization Role' must be selected."/>
+				
+				<h:panelGrid columns="2" width="100%">
+					
+					<h:outputText value="#{msg.label_name}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{organizationBBean.organizationSelecionado.sName}" style="padding: 4px;" required="true" requiredMessage="This Field 'Name' is required."/>
+					
+					<h:outputText value="#{msg.label_main}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectBooleanCheckbox value="#{organizationBBean.organizationSelecionado.fMain}" style="padding: 4px;" disabled="#{organizationBBean.main}"/>
+					
+					<h:outputText value="#{msg.label_organization_role}" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu id="selRoleEdit" value="#{organizationBBean.roleSelecionado}" style="padding: 4px;" onchange="javascript:inputValueHidden('hiddenOrg', 'selRoleEdit')">
+						<f:selectItem itemLabel=" " itemValue=" "/>
+						<f:selectItems value="#{organizationBBean.listaOrganizationRole}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px; "/>
+					<h:inputText value="#{organizationBBean.organizationSelecionado.sDescription}" style="padding: 4px; width: 400px;" required="true" requiredMessage="This Field 'Description' is required."/>
+					
+					<h:outputText value="#{msg.label_comment}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputTextarea value="#{organizationBBean.organizationSelecionado.sComment}" style="padding: 4px; width: 400px; height: 100px;"/>
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<div style="float: right;">
+									
+					<p:commandLink action="#{organizationBBean.update}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" update="msgOrgEdit :form:tbOrganization">
+						<span class="ui-button-icon-left ui-icon ui-c ui-icon-check"></span><span class="ui-button-text ui-c">#{msg.bt_save}</span>
+					</p:commandLink>
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbOrganization" onclick="PF('orgEditDialog').hide()" immediate="true"/>
+				</div> 
+				
+			</h:form>		
+		</p:dialog>
+		
+		
+	</ui:define>
+</ui:composition>
+</html>			

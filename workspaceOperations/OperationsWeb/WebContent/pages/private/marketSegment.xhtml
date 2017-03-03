@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="../../template/layout.xhtml">
+	
+	<ui:define name="content">
+	
+		<h:form id="form">
+			<div id="conteudo_padrao">
+				<div id="divMsg" align="center">
+					<h:panelGrid>
+						<p:messages id="msg" showDetail="true" showSummary="true" />
+					</h:panelGrid>
+				</div>
+						
+				<p:dataTable id="tbMarket" var="market"
+					value="#{marketBBean.listaMarket}" 
+					rowKey="#{market.id}" paginator="true" rows="20"
+					emptyMessage="#{msg.sem_registros}">
+				
+					<f:facet name="header">
+			            <div align="left" style="width: 10%; float: left;">
+			            	<p:outputLabel style="text-align: left">
+				           		<h:outputText value="#{msg.header_market_segment}" styleClass="labelBold"/>
+				           </p:outputLabel>
+			           </div>
+			           <div align="right" style="width: 100%">
+				           <p:outputLabel id="commands" style="text-align: right">
+				           		<p:commandButton onclick="PF('marketDialog').show()" value="#{msg.bt_add}" style="margin-right: 5px;"/>				           		
+				           </p:outputLabel>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column style="width: 20px; text-align: center;">
+						<p:commandButton update=":marketEditDetail" oncomplete="PF('marketEditDialog').show()" icon="ui-icon-search" title="View">
+							<f:setPropertyActionListener value="#{market}" target="#{marketBBean.segmentSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+					<p:column headerText="#{msg.label_description}" filterBy="#{market.sDescription}" sortBy="#{market.sDescription}">
+						<h:outputText value="#{market.sDescription}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de ICMS" filterBy="#{market.icms}" sortBy="#{market.icms}">
+						<h:outputText value="#{market.icms}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de IPI" filterBy="#{market.ipi}" sortBy="#{market.ipi}">
+						<h:outputText value="#{market.ipi}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de PIS" filterBy="#{market.pis}" sortBy="#{market.pis}">
+						<h:outputText value="#{market.pis}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de COFINS" filterBy="#{market.cofins}" sortBy="#{market.cofins}">
+						<h:outputText value="#{market.cofins}"/>
+					</p:column>
+					
+					<p:column headerText="Isenção de ISS" filterBy="#{market.iss}" sortBy="#{market.iss}">
+						<h:outputText value="#{market.iss}"/>
+					</p:column>
+					
+					<p:column style="width: 20px; text-align: center;" >
+						<p:commandButton oncomplete="PF('deleteDialog').show();" icon="ui-icon-trash" title="#{msg.bt_delete}">
+							<f:setPropertyActionListener value="#{cliente}" target="#{clienteBBean.clienteSelecionado}" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</div>
+		</h:form>
+		
+		<p:dialog header="#{msg.header_dialog_new_market_segment}" widgetVar="marketDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="550" height="300">
+			<h:form id="marketDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_group}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{marketBBean.groupSelecionado}" style="padding: 4px;"> 
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{marketBBean.listaGroupOfContents}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{marketBBean.novoSegment.sDescription}" style="width: 300px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<p:panel header="Isenção Fiscal de:">
+					
+					<h:panelGrid columns="10" style="width: 100%;">
+						
+						<h:outputText value="#{msg.label_icms}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.novoSegment.fIcms}"/>
+						
+						<h:outputText value="#{msg.label_ipi}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.novoSegment.fIpi}"/>
+						
+						<h:outputText value="#{msg.label_pis}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.novoSegment.fPis}"/>
+						 
+						<h:outputText value="#{msg.label_cofins}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.novoSegment.fCofins}"/>
+						
+						<h:outputText value="#{msg.label_iss}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.novoSegment.fIss}"/>
+						
+					</h:panelGrid>
+					
+				</p:panel>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+				
+					<h:outputText value="Waiver Percentage:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{marketBBean.novoSegment.sPercentIsencao}" style="width: 100px; padding: 4px;"/>
+					
+				</h:panelGrid>
+								
+				<br/><br/>
+				
+				<div style="float: right;">
+					<p:commandButton ajax="false" action="#{marketBBean.save}" value="#{msg.bt_save}" icon="ui-icon-check"
+						update=":form:tbMarket" onclick="PF('marketDialog').hide()" />
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbMarket" onclick="PF('marketDialog').hide()" />
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_edit_market_segment}" widgetVar="marketEditDialog" resizable="false" draggable="false"
+			modal="true" showEffect="fade" hideEffect="fade" width="550" height="300">
+			<h:form id="marketEditDetail" acceptcharset="UTF-8" lang="pt_BR">
+			
+				<h:panelGrid columns="2">
+				
+					<h:outputText value=""/>
+					<h:outputText value=""/>
+					
+					<h:outputText value="#{msg.label_group}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:selectOneMenu value="#{marketBBean.groupSelecionado}" style="padding: 4px;">
+						<f:selectItem itemLabel=" " itemValue="-1"/>
+						<f:selectItems value="#{marketBBean.listaGroupOfContents}"/>
+					</h:selectOneMenu>
+					
+					<h:outputText value="#{msg.label_description}:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{marketBBean.segmentSelecionado.sDescription}" style="width: 300px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/>
+				
+				<p:panel header="Isenção Fiscal de:">
+					
+					<h:panelGrid columns="10" style="width: 100%;">
+						
+						<h:outputText value="#{msg.label_icms}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.segmentSelecionado.fIcms}"/>
+						
+						<h:outputText value="#{msg.label_iss}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.segmentSelecionado.fIss}"/>
+						
+						<h:outputText value="#{msg.label_ipi}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.segmentSelecionado.fIpi}"/>
+						
+						<h:outputText value="#{msg.label_cofins}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.segmentSelecionado.fCofins}"/>
+						
+						<h:outputText value="#{msg.label_pis}:" styleClass="labelBold" style="float:right;"/>
+						<h:selectBooleanCheckbox value="#{marketBBean.segmentSelecionado.fPis}"/>
+						
+					</h:panelGrid>
+					
+				</p:panel>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">
+				
+					<h:outputText value="Waiver Percentage:" styleClass="labelBold" style="padding: 4px;"/>
+					<h:inputText value="#{marketBBean.segmentSelecionado.sPercentIsencao}" style="width: 100px; padding: 4px;"/>
+					
+				</h:panelGrid>
+				
+				<br/><br/>
+				
+				<div style="float: right;">					
+					<p:commandButton ajax="false" action="#{marketBBean.alter}" value="#{msg.bt_save}" icon="ui-icon-check"
+						update=":form:tbMarket" onclick="PF('marketEditDialog').hide()" />
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					
+					<p:commandButton value="#{msg.bt_cancel}" icon="ui-icon-close"
+						update=":form:tbMarket" onclick="PF('marketEditDialog').hide()" />
+				</div>	
+				
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="#{msg.header_dialog_delete_market_segment}" widgetVar="deleteDialog"
+			modal="true" showEffect="fade" hideEffect="fade" closable="false" resizable="false"  width="330">
+			<h:form id="userDelete">
+				<br/>
+				<p:outputPanel style="text-align: center;">
+					<h:outputText value="#{msg.confirmar_exclusao}" styleClass="labelDarkFontUp"/>
+					<br/><br/><br/>
+					<h:panelGrid columns="2">
+						<p:commandButton ajax="false" action="#{marketBBean.delete}" value="Yes" icon="ui-icon-check"
+							update=":form:tbMarket" onclick="PF('deleteDialog').hide()" />
+							
+						<p:commandButton ajax="false" value="No" icon="ui-icon-closethick"
+							update=":form:tbMarket" onclick="PF('deleteDialog').hide()" />
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>
