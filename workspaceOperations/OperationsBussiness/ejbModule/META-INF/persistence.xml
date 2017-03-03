@@ -3,62 +3,62 @@
 	<persistence-unit name="OperationsBussiness" transaction-type="JTA">
 		<jta-data-source>jdbc/Operations</jta-data-source>
 		
-		<!-- <jta-data-source>jdbc/SaboiaTest</jta-data-source> --> <!-- HOMOL -->
-		<!-- <jta-data-source>jdbc/SaboiaDev</jta-data-source> --> <!-- TST -->
-		<!-- <jta-data-source>jdbc/Saboia</jta-data-source> --> <!-- PROD -->
+		<!-- <jta-data-source>jdbc/operationsTest</jta-data-source> --> <!-- HOMOL -->
+		<!-- <jta-data-source>jdbc/operationsDev</jta-data-source> --> <!-- TST -->
+		<!-- <jta-data-source>jdbc/operations</jta-data-source> --> <!-- PROD -->
 		
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
         <shared-cache-mode>NONE</shared-cache-mode>
 		
-		<!-- <class>br.com.saboia.entity.TbAdmMaterialManufacturer</class>
-		<class>br.com.saboia.entity.TbSysLogEmailSend</class> 
-		<class>br.com.saboia.entity.TbTaxQuoteLog</class>
-		<class>br.com.saboia.entity.TbAdmManufacturerStateOfOrigin</class>
-		<class>br.com.saboia.entity.TbSysGroup</class>
-		<class>br.com.saboia.entity.TbSysGroupUser</class>
-		<class>br.com.saboia.entity.TbSysHelp</class>
-		<class>br.com.saboia.entity.TbSysObject</class>
-		<class>br.com.saboia.entity.TbSysSecurity</class>
-		<class>br.com.saboia.entity.TbAdmCategory</class>
-		<class>br.com.saboia.entity.TbAdmPerson</class>
-		<class>br.com.saboia.entity.TbAdmDiscClass</class>
-		<class>br.com.saboia.entity.TbAdmOrigin</class>
-		<class>br.com.saboia.entity.TbAdmDestination</class>
-		<class>br.com.saboia.entity.TbAdmDestinationRate</class>
-		<class>br.com.saboia.entity.TbAdmOriginXTbAdmDestinaProtSt</class>
-		<class>br.com.saboia.entity.TbAdmOriginRate</class>
-		<class>br.com.saboia.entity.TbAdmRate</class>
-		<class>br.com.saboia.entity.TbAdmQuoteParameters</class>
-		<class>br.com.saboia.entity.TbAdmGroupOfContent</class>
-		<class>br.com.saboia.entity.TbAdmClienteEspecial</class>
-		<class>br.com.saboia.entity.TbAdmQuoteDiscountLevel</class>
-		<class>br.com.saboia.entity.TbAdmDailyDollar</class>
-		<class>br.com.saboia.entity.TbAdmDailyDollarTemp</class>
-		<class>br.com.saboia.entity.TbAdmDollarRate</class>
-		<class>br.com.saboia.entity.TbAdmMaterial</class>
-		<class>br.com.saboia.entity.TbAdmMaterialClass</class>
-		<class>br.com.saboia.entity.TbAdmProductType</class>
-		<class>br.com.saboia.entity.TbAdmManufacturerStateXTbAdmOrigin</class>
-		<class>br.com.saboia.entity.TbAdmMaterialClassXDestination</class>
-		<class>br.com.saboia.entity.TbAdmMaterialClassXOrigin</class>
-		<class>br.com.saboia.entity.TbAdmMaterialImportTemp</class>
-		<class>br.com.saboia.entity.TbTaxQuote</class>
-		<class>br.com.saboia.entity.TbTaxQuoteDetail</class>
-		<class>br.com.saboia.entity.TbTaxQuoteDisc</class>
-		<class>br.com.saboia.entity.TbTaxQuoteItem</class>
-		<class>br.com.saboia.entity.TbTaxQuoteParticipant</class>
-		<class>br.com.saboia.entity.TbTaxLastUpdateAdditionalCost</class>
-		<class>br.com.saboia.entity.TbAdmMarketSegment</class>
-		<class>br.com.saboia.entity.TbSysAccessProfilePermission</class>
-		<class>br.com.saboia.entity.TbSysAccessProfile</class>
-		<class>br.com.saboia.entity.TbSysOrganization</class>
-		<class>br.com.saboia.entity.TbSysOrganizationRole</class>
-		<class>br.com.saboia.entity.TbSysSystemPermission</class>
-		<class>br.com.saboia.entity.TbSysUser</class>
-		<class>br.com.saboia.entity.TbSysWorkGroup</class>
-		<class>br.com.saboia.entity.TbSysWorkGroupUser</class>
-		<class>br.com.saboia.entity.TbSysModule</class>
-		<class>br.com.saboia.entity.TbSysAccessProfileUser</class> -->
+		<!-- <class>br.com.operations.entity.TbAdmMaterialManufacturer</class>
+		<class>br.com.operations.entity.TbSysLogEmailSend</class> 
+		<class>br.com.operations.entity.TbTaxQuoteLog</class>
+		<class>br.com.operations.entity.TbAdmManufacturerStateOfOrigin</class>
+		<class>br.com.operations.entity.TbSysGroup</class>
+		<class>br.com.operations.entity.TbSysGroupUser</class>
+		<class>br.com.operations.entity.TbSysHelp</class>
+		<class>br.com.operations.entity.TbSysObject</class>
+		<class>br.com.operations.entity.TbSysSecurity</class>
+		<class>br.com.operations.entity.TbAdmCategory</class>
+		<class>br.com.operations.entity.TbAdmPerson</class>
+		<class>br.com.operations.entity.TbAdmDiscClass</class>
+		<class>br.com.operations.entity.TbAdmOrigin</class>
+		<class>br.com.operations.entity.TbAdmDestination</class>
+		<class>br.com.operations.entity.TbAdmDestinationRate</class>
+		<class>br.com.operations.entity.TbAdmOriginXTbAdmDestinaProtSt</class>
+		<class>br.com.operations.entity.TbAdmOriginRate</class>
+		<class>br.com.operations.entity.TbAdmRate</class>
+		<class>br.com.operations.entity.TbAdmQuoteParameters</class>
+		<class>br.com.operations.entity.TbAdmGroupOfContent</class>
+		<class>br.com.operations.entity.TbAdmClienteEspecial</class>
+		<class>br.com.operations.entity.TbAdmQuoteDiscountLevel</class>
+		<class>br.com.operations.entity.TbAdmDailyDollar</class>
+		<class>br.com.operations.entity.TbAdmDailyDollarTemp</class>
+		<class>br.com.operations.entity.TbAdmDollarRate</class>
+		<class>br.com.operations.entity.TbAdmMaterial</class>
+		<class>br.com.operations.entity.TbAdmMaterialClass</class>
+		<class>br.com.operations.entity.TbAdmProductType</class>
+		<class>br.com.operations.entity.TbAdmManufacturerStateXTbAdmOrigin</class>
+		<class>br.com.operations.entity.TbAdmMaterialClassXDestination</class>
+		<class>br.com.operations.entity.TbAdmMaterialClassXOrigin</class>
+		<class>br.com.operations.entity.TbAdmMaterialImportTemp</class>
+		<class>br.com.operations.entity.TbTaxQuote</class>
+		<class>br.com.operations.entity.TbTaxQuoteDetail</class>
+		<class>br.com.operations.entity.TbTaxQuoteDisc</class>
+		<class>br.com.operations.entity.TbTaxQuoteItem</class>
+		<class>br.com.operations.entity.TbTaxQuoteParticipant</class>
+		<class>br.com.operations.entity.TbTaxLastUpdateAdditionalCost</class>
+		<class>br.com.operations.entity.TbAdmMarketSegment</class>
+		<class>br.com.operations.entity.TbSysAccessProfilePermission</class>
+		<class>br.com.operations.entity.TbSysAccessProfile</class>
+		<class>br.com.operations.entity.TbSysOrganization</class>
+		<class>br.com.operations.entity.TbSysOrganizationRole</class>
+		<class>br.com.operations.entity.TbSysSystemPermission</class>
+		<class>br.com.operations.entity.TbSysUser</class>
+		<class>br.com.operations.entity.TbSysWorkGroup</class>
+		<class>br.com.operations.entity.TbSysWorkGroupUser</class>
+		<class>br.com.operations.entity.TbSysModule</class>
+		<class>br.com.operations.entity.TbSysAccessProfileUser</class> -->
 		<!-- <properties>
 			<property name="eclipselink.logging.level" value="FINE"/>
 		</properties> -->

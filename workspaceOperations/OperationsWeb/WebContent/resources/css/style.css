@@ -48,7 +48,7 @@
 	float:right;
 }
 
-#logoSaboia{
+#logooperations{
 	float:left;
 }
 
@@ -124,14 +124,14 @@
 	pointer-events: none;
 	
 	border-top: 2px solid #9DBBC3;
-	background: url('images/logo-saboia.png') no-repeat right bottom;
+	background: url('images/logo-operations.png') no-repeat right bottom;
 	background: #ededed;
-	background: url('images/logo-saboia.png') no-repeat right bottom, -moz-linear-gradient(top,  #ededed 0%, #ffffff 100%);
-	background: url('images/logo-saboia.png') no-repeat right bottom, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededed), color-stop(100%,#ffffff));
-	background: url('images/logo-saboia.png') no-repeat right bottom, -webkit-linear-gradient(top,  #ededed 0%,#ffffff 100%);
-	background: url('images/logo-saboia.png') no-repeat right bottom, -o-linear-gradient(top,  #ededed 0%,#ffffff 100%);
-	background: url('images/logo-saboia.png') no-repeat right bottom, -ms-linear-gradient(top,  #ededed 0%,#ffffff 100%);
-	background: url('images/logo-saboia.png') no-repeat right bottom, linear-gradient(to bottom,  #ededed 0%,#ffffff 100%);
+	background: url('images/logo-operations.png') no-repeat right bottom, -moz-linear-gradient(top,  #ededed 0%, #ffffff 100%);
+	background: url('images/logo-operations.png') no-repeat right bottom, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededed), color-stop(100%,#ffffff));
+	background: url('images/logo-operations.png') no-repeat right bottom, -webkit-linear-gradient(top,  #ededed 0%,#ffffff 100%);
+	background: url('images/logo-operations.png') no-repeat right bottom, -o-linear-gradient(top,  #ededed 0%,#ffffff 100%);
+	background: url('images/logo-operations.png') no-repeat right bottom, -ms-linear-gradient(top,  #ededed 0%,#ffffff 100%);
+	background: url('images/logo-operations.png') no-repeat right bottom, linear-gradient(to bottom,  #ededed 0%,#ffffff 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#ffffff',GradientType=0 );
 	
 }

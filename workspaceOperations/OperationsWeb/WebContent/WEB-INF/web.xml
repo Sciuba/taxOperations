@@ -4,9 +4,9 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	id="WebApp_ID" version="3.1">
 	<display-name>OperationsWeb</display-name>
-	<!-- <display-name>SaboiaTest</display-name> --> <!-- HOMOL -->
-	<!-- <display-name>SaboiaDev</display-name> --> <!-- TST -->
-	<!-- <display-name>Saboia</display-name> --> <!-- PROD -->
+	<!-- <display-name>operationsTest</display-name> --> <!-- HOMOL -->
+	<!-- <display-name>operationsDev</display-name> --> <!-- TST -->
+	<!-- <display-name>operations</display-name> --> <!-- PROD -->
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
@@ -41,7 +41,7 @@
 
 	<filter> 
 		<filter-name>Login Filter</filter-name> 
-		<filter-class>br.com.saboia.filter.LoginFilter</filter-class> 
+		<filter-class>br.com.operations.filter.LoginFilter</filter-class> 
 	</filter> 
 	
 	<filter-mapping> 

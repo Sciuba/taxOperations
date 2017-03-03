@@ -983,7 +983,7 @@
 					<h:outputText value="#{msg.label_quote_all_participant}" styleClass="labelBold" style="margin-left: 11%"/>
 					<h:outputText value="#{msg.label_quote_participant_exist}" styleClass="labelBold" style="margin-left: 26%;"/>
 					
-					<p:pickList id="pickList" value="#{detailBBean.participants}" converter="br.com.saboia.converter.PersonConverter" var="part" itemLabel="(#{part.listaGrupoSigla}) #{part.sFullName}" itemValue="#{part.id}"/>
+					<p:pickList id="pickList" value="#{detailBBean.participants}" converter="br.com.operations.converter.PersonConverter" var="part" itemLabel="(#{part.listaGrupoSigla}) #{part.sFullName}" itemValue="#{part.id}"/>
 				</div>
 				
 				<br/>
